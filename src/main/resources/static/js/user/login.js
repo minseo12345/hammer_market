@@ -1,0 +1,1 @@
+document.querySelector('.signUpBtn').addEventListener('click', () => location.href = '/user/sign-up');
