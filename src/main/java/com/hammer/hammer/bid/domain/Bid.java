@@ -26,12 +26,12 @@ public class Bid {
 
     private LocalDateTime bidTime;
 
-//    @ManyToOne
-//    JoinColumn(name = "item_id")
-//    private Item item;
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
 
-//    @ManyToOne
-//    JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
