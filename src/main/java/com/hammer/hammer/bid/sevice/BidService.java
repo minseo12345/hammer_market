@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +25,12 @@ public class BidService {
     private final BidRepository bidRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final CacheManager cacheManager;
 
     /**
      * 입찰 등록
      */
     @Transactional
-//    @CachePut(value = "bid",key = "#requestBidDto.itemId")
+    @CachePut(value = "bid",key = "#requestBidDto.itemId")
     public void saveBid(RequestBidDto requestBidDto){
 
         User user = userRepository.findById(requestBidDto.getUserId()).orElseThrow(
@@ -57,14 +57,18 @@ public class BidService {
 
         bids.add(newBide);
 
-        var cache = cacheManager.getCache("bid");
-
-        if (cache != null) {
-            cache.put(requestBidDto.getItemId(), bids);
-        } else {
-            throw new IllegalStateException("캐시가 설정되지 않았습니다.");
-        }
-
         bidRepository.save(newBide);
+    }
+
+    /**
+     * 입찰 조회
+     */
+    @Cacheable(value = "bid", key = "#userId")
+    public List<Bid> getBidsByItemId(Long userId) {
+       List<Bid> bids = bidRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
+        );
+
+        return bids;
     }
 }
