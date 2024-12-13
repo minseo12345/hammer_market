@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1 Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #app {
+            display: flex;
+            height: 100vh;
+        }
+        #user-list, #chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 100%;
+            overflow-y: auto;
+        }
+        #user-list {
+            width: 25%;
+        }
+        #chat-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        #input-box {
+            display: flex;
+        }
+        #input-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        #input-box button {
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- User List -->
+    <div id="user-list">
+        <h3>Users</h3>
+        <ul id="users"></ul>
+    </div>
+
+    <!-- Room List -->
+    <div id="room-list">
+        <h3>Chat Rooms</h3>
+        <ul id="rooms"></ul>
+    </div>
+
+    <!-- Chat Box -->
+    <div id="chat-box">
+        <h3 id="chat-room-title">Select a user to chat</h3>
+        <div id="messages"></div>
+        <div id="input-box">
+            <input type="text" id="message-input" placeholder="Type a message..." />
+            <button id="send-message">Send</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>
