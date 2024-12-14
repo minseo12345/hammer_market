@@ -1,17 +1,23 @@
 package com.hammer.hammer.transaction.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess; // ?
-import org.hibernate.resource.transaction.spi.TransactionStatus;
-//import org.springframework.security.core.userdetails.User;
 import com.hammer.hammer.user.entity.User;
-import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.auction.entity.Item;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transactionId;
@@ -30,9 +36,4 @@ public class Transaction {
 
     private BigDecimal finalPrice;
     private Timestamp transactionDate;
-
-    @Enumerated(EnumType.STRING)
-    private TransactionStatus status;
-
-    // Getters and Setters
 }
