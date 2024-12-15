@@ -61,12 +61,24 @@ public class BidService {
     }
 
     /**
-     * 입찰 조회
+     *  사용자 별 입찰 조회
      */
     @Cacheable(value = "bid", key = "#userId")
-    public List<Bid> getBidsByItemId(Long userId) {
+    public List<Bid> getBidsByUser(Long userId) {
        List<Bid> bids = bidRepository.findByUserId(userId).orElseThrow(
                 () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
+        );
+
+        return bids;
+    }
+
+    /**
+     *  상품 별 입찰 조회
+     */
+    @Cacheable(value = "bid", key = "#itemId")
+    public List<Bid> getBidsByItem(Long itemId){
+        List<Bid> bids = bidRepository.findByItemId(itemId).orElseThrow(
+                () -> new IllegalStateException("상품 데이터를 찾을 수 없습니다.")
         );
 
         return bids;

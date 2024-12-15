@@ -33,17 +33,31 @@ public class BidController {
     }
 
     /**
-     * 입찰 내역 조회
+     * 사용자 별 입찰 내역 조회
      */
     @GetMapping("/{userId}")
-    public String getBidsByUserId(@PathVariable Long userId, Model model) {
+    public String getBidsByUser(@PathVariable Long userId, Model model) {
         if (userId == null) {
-            model.addAttribute("error", "사용자가 없습니다.");
+            model.addAttribute("userError", "사용자가 없습니다.");
         }
 
-        List<Bid> bids = bidService.getBidsByItemId(userId);
-        model.addAttribute("bids",bids);
+        List<Bid> bidsByUser = bidService.getBidsByUser(userId);
+        model.addAttribute("bids",bidsByUser);
         return "/mypage/";
 
     }
+
+    /**
+     *  상품 별 입찰 내역 조회
+     */
+    @GetMapping("/{itemId}")
+    public String getBidsByItem(@PathVariable Long itemId, Model model) {
+        if (itemId == null) {
+            model.addAttribute("itemError", "상품이 없습니다.");
+        }
+        List<Bid> bidsByItem = bidService.getBidsByItem(itemId);
+        model.addAttribute("bids",bidsByItem);
+        return "/item/";
+    }
+
 }
