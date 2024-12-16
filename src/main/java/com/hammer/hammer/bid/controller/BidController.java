@@ -35,7 +35,7 @@ public class BidController {
     /**
      * 사용자 별 입찰 내역 조회
      */
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public String getBidsByUser(@PathVariable Long userId, Model model) {
         if (userId == null) {
             model.addAttribute("userError", "사용자가 없습니다.");
@@ -43,21 +43,21 @@ public class BidController {
 
         List<Bid> bidsByUser = bidService.getBidsByUser(userId);
         model.addAttribute("bids",bidsByUser);
-        return "/mypage/";
+        return "mypage";
 
     }
 
     /**
      *  상품 별 입찰 내역 조회
      */
-    @GetMapping("/{itemId}")
+    @GetMapping("/item/{itemId}")
     public String getBidsByItem(@PathVariable Long itemId, Model model) {
         if (itemId == null) {
             model.addAttribute("itemError", "상품이 없습니다.");
         }
         List<Bid> bidsByItem = bidService.getBidsByItem(itemId);
         model.addAttribute("bids",bidsByItem);
-        return "/item/";
+        return "item";
     }
 
 }

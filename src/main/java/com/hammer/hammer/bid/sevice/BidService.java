@@ -44,6 +44,13 @@ public class BidService {
             throw new IllegalArgumentException("입찰 금액은 100원 단위로 입력해야 합니다.");
         }
 
+        BigDecimal currentHighestBid = bidRepository.findHighestBidByItemId(requestBidDto.getItemId())
+                .orElse(BigDecimal.ZERO);
+
+        if (requestBidDto.getBidAmount().compareTo(currentHighestBid) <= 0) {
+            throw new IllegalArgumentException("입찰 금액은 현재 최고 입찰가보다 커야 합니다.");
+        }
+
             Bid newBide = Bid.builder()
                     .user(user)
                     .item(item)
