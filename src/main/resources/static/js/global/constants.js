@@ -1,6 +1,6 @@
 const API_ENDPOINTS = {
   USER: {
-      SIGN_UP: '/user/sign-up',
+      JOIN: '/join',
       LOGIN: '/login',
       LOGOUT: '/logout',
       // 다른 유저 관련 엔드포인트들...

@@ -2,8 +2,13 @@ package com.hammer.hammer.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -11,7 +16,7 @@ import java.time.Instant;
 @Getter
 @ToString
 @Builder
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;  // 유저 ID, 기본키
@@ -58,4 +63,20 @@ public class User {
     public void onUpdate() {
         updatedAt = Instant.now();
     }
+
+    @Override // 권한 반환
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.getValue()));
+    }
+
+    @Override // 사용자의 패스워드를 반환
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override // 사용자의 id를 반환(고유 값)
+    public String getUsername() {
+        return this.email;
+    }
+
 }

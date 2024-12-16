@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<<html xmlns:th="http://www.thymeleaf.org">>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button type="button" class="btn btn-secondary" onclick="location.href='logout'">로그아웃</button>
+여기는 index.html 입니다.
+<hr>
+<b>${#authentication}</b>
+<div th:text="${#authentication}"></div>
+<hr>
+<b>${#authentication.principal}</b>
+<div th:text="${#authentication.principal}"></div>
+<hr>
+<b>${#authentication.principal.Username}</b>
+<div th:text="${#authentication.principal.Username}"></div>
+<hr>
+<b>${#authentication.principal.Password}</b>
+<div th:text="${#authentication.principal.Password}"></div>
+<hr>
+<b>${#authentication.principal.Enabled}</b>
+<div th:text="${#authentication.principal.Enabled}"></div>
+<hr>
+<b>${#authentication.principal.AccountNonExpired}</b>
+<div th:text="${#authentication.principal.AccountNonExpired}"></div>
+<hr>
+<b>${#authentication.principal.CredentialsNonExpired}</b>
+<div th:text="${#authentication.principal.CredentialsNonExpired}"></div>
+<hr>
+<b>${#authentication.principal.AccountNonLocked}</b>
+<div th:text="${#authentication.principal.AccountNonLocked}"></div>
+<hr>
+<b>${#authentication.principal.Authorities}</b>
+<div th:text="${#authentication.principal.Authorities}"></div>
+</body>
+</html>
