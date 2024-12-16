@@ -9,7 +9,6 @@ import com.hammer.hammer.bid.domain.User;
 import com.hammer.hammer.bid.dto.RequestBidDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -32,7 +31,6 @@ public class BidService {
      * 입찰 등록
      */
     @Transactional
-    @CachePut(value = "bid",key = "#requestBidDto.itemId")
     public void saveBid(RequestBidDto requestBidDto){
 
         User user = userRepository.findById(requestBidDto.getUserId()).orElseThrow(
@@ -53,26 +51,24 @@ public class BidService {
             throw new IllegalArgumentException("입찰 금액은 현재 최고 입찰가보다 커야 합니다.");
         }
 
-            Bid newBide = Bid.builder()
+            Bid newBid = Bid.builder()
                     .user(user)
                     .item(item)
                     .bidAmount(requestBidDto.getBidAmount())
                     .bidTime(requestBidDto.getBidDate())
                     .build();
 
-        List<Bid> bids = bidRepository.findByItemIdOrderByBidAmountDesc(requestBidDto.getItemId()).orElseThrow(
-                ()-> new IllegalStateException("입찰 목록을 찾을 수 없습니다.")
-        );
 
-        bids.add(newBide);
+        bidRepository.save(newBid);
+        updateFirstPageCache(requestBidDto.getItemId());
 
-        bidRepository.save(newBide);
     }
 
     /**
      *  사용자 별 입찰 조회
      */
-    @Cacheable(value = "bid", key = "#userId")
+    @Cacheable(value = "bidsByUser", key = "#userId + '_' + #pageable.pageNumber")
+    @Transactional(readOnly = true)
     public Page<Bid> getBidsByUser(Long userId, Pageable pageable) {
 
        Page<Bid> bids = bidRepository.findByUserIdOrderByBidAmountDesc(userId,pageable).orElseThrow(
@@ -85,7 +81,8 @@ public class BidService {
     /**
      *  상품 별 입찰 조회
      */
-    @Cacheable(value = "bid", key = "#itemId")
+    @Cacheable(value = "bidsByItem", key = "#itemId + '_0' + #pageable.pageNumber")
+    @Transactional(readOnly = true)
     public Page<Bid> getBidsByItem(Long itemId,Pageable pageable) {
 
         Page<Bid> bids = bidRepository.findByItemIdOrderByBidAmountDesc(itemId, pageable).orElseThrow(
@@ -93,5 +90,12 @@ public class BidService {
         );
 
         return bids;
+    }
+
+    @CachePut(value = "bidsByItem", key = "#itemId + '_0'")
+    public Page<Bid> updateFirstPageCache(Long itemId) {
+        Pageable firstPage = Pageable.ofSize(10).withPage(0);
+        return bidRepository.findByItemIdOrderByBidAmountDesc(itemId, firstPage)
+                .orElseThrow(() -> new IllegalStateException("첫 페이지 데이터를 찾을 수 없습니다."));
     }
 }
