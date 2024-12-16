@@ -6,11 +6,12 @@ import com.hammer.hammer.bid.dto.RequestBidDto;
 import com.hammer.hammer.bid.sevice.BidService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,13 +37,16 @@ public class BidController {
      * 사용자 별 입찰 내역 조회
      */
     @GetMapping("/user/{userId}")
-    public String getBidsByUser(@PathVariable Long userId, Model model) {
+    public String getBidsByUser(@PathVariable Long userId, Model model,
+                                @PageableDefault(page = 0, size = 10) Pageable pageable) {
         if (userId == null) {
             model.addAttribute("userError", "사용자가 없습니다.");
         }
 
-        List<Bid> bidsByUser = bidService.getBidsByUser(userId);
+        Page<Bid> bidsByUser = bidService.getBidsByUser(userId,pageable);
         model.addAttribute("bids",bidsByUser);
+        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("totalPages", bidsByUser.getTotalPages());
         return "mypage";
 
     }
@@ -51,12 +55,15 @@ public class BidController {
      *  상품 별 입찰 내역 조회
      */
     @GetMapping("/item/{itemId}")
-    public String getBidsByItem(@PathVariable Long itemId, Model model) {
+    public String getBidsByItem(@PathVariable Long itemId, Model model ,
+                                @PageableDefault(page = 0, size = 10) Pageable pageable) {
         if (itemId == null) {
             model.addAttribute("itemError", "상품이 없습니다.");
         }
-        List<Bid> bidsByItem = bidService.getBidsByItem(itemId);
+        Page<Bid> bidsByItem = bidService.getBidsByItem(itemId,pageable);
         model.addAttribute("bids",bidsByItem);
+        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("totalPages", bidsByItem.getTotalPages());
         return "item";
     }
 

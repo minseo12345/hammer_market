@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +60,7 @@ public class BidService {
                     .bidTime(requestBidDto.getBidDate())
                     .build();
 
-        List<Bid> bids = bidRepository.findByItemId(requestBidDto.getItemId()).orElseThrow(
+        List<Bid> bids = bidRepository.findByItemIdOrderByBidAmountDesc(requestBidDto.getItemId()).orElseThrow(
                 ()-> new IllegalStateException("입찰 목록을 찾을 수 없습니다.")
         );
 
@@ -71,8 +73,9 @@ public class BidService {
      *  사용자 별 입찰 조회
      */
     @Cacheable(value = "bid", key = "#userId")
-    public List<Bid> getBidsByUser(Long userId) {
-       List<Bid> bids = bidRepository.findByUserId(userId).orElseThrow(
+    public Page<Bid> getBidsByUser(Long userId, Pageable pageable) {
+
+       Page<Bid> bids = bidRepository.findByUserIdOrderByBidAmountDesc(userId,pageable).orElseThrow(
                 () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
         );
 
@@ -83,8 +86,9 @@ public class BidService {
      *  상품 별 입찰 조회
      */
     @Cacheable(value = "bid", key = "#itemId")
-    public List<Bid> getBidsByItem(Long itemId){
-        List<Bid> bids = bidRepository.findByItemId(itemId).orElseThrow(
+    public Page<Bid> getBidsByItem(Long itemId,Pageable pageable) {
+
+        Page<Bid> bids = bidRepository.findByItemIdOrderByBidAmountDesc(itemId, pageable).orElseThrow(
                 () -> new IllegalStateException("상품 데이터를 찾을 수 없습니다.")
         );
 
