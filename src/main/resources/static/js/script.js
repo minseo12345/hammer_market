@@ -58,7 +58,6 @@ function createChatRoomElement(room) {
     li.style.cursor = 'pointer';
     li.onclick = () => enterChatRoom(room);
     roomListEl.appendChild(li);
-
     // 초기 UnreadCount 불러오기
     fetch(`/api/chatrooms/${room.id}/unreadCount?userId=${currentUser.id}`)
         .then((res) => res.json())
@@ -70,7 +69,7 @@ function createChatRoomElement(room) {
 // UnreadCount UI 업데이트
 function updateUnreadUI(roomElement, unreadCount) {
     const unreadSpan = roomElement.querySelector('.unread-count');
-    unreadSpan.textContent = unreadCount > 0 ? ` (${unreadCount} unread)` : '';
+    unreadSpan.textContent = unreadCount > 0 ? ` (${unreadCount} !)` : '';
 }
 // 특정 채팅방 UnreadCount 실시간 업데이트
 function updateUnreadCount(chatRoomId) {
@@ -126,37 +125,32 @@ function selectUser(user) {
     fetch(`/chat/${currentUser.id}/${user.id}`)
         .then((response) => response.json())
         .then((chatRoom) => {
-            currentChatRoomId = chatRoom.id;
+            loadChatRooms();
         })
         .catch((err) => console.error('Error fetching chat room:', err));
 }
 
 // 메시지를 채팅창에 추가
 function addMessage(senderId, content) {
-    const div = document.createElement('div');
-
-    // 현재 사용자의 메시지인지 확인
-    if (senderId === currentUser.id) {
-        div.textContent = content;
-        div.style.textAlign = 'right';
-        div.style.backgroundColor = '#d1f7ff';
-        div.style.padding = '5px 10px';
-        div.style.marginBottom = '10px';
-        div.style.borderRadius = '10px';
-        div.style.maxWidth = '60%';
-        div.style.marginLeft = 'auto';
-    } else {
-        div.textContent = content;
-        div.style.textAlign = 'left';
-        div.style.backgroundColor = '#f1f1f1';
-        div.style.padding = '5px 10px';
-        div.style.marginBottom = '10px';
-        div.style.borderRadius = '10px';
-        div.style.maxWidth = '60%';
-    }
+    const div = createMessageElement(senderId, content);
 
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight; // 스크롤 하단으로 이동
+}
+
+// 메시지 DOM 요소 생성
+function createMessageElement(senderId, content) {
+    const div = document.createElement('div');
+    div.textContent = content;
+
+    // CSS 클래스 추가
+    if (senderId === currentUser.id) {
+        div.classList.add('message', 'message-sent');
+    } else {
+        div.classList.add('message', 'message-received');
+    }
+
+    return div;
 }
 
 // 메시지 전송
@@ -194,6 +188,5 @@ function login() {
             window.location.href = '/login';
         });
 }
-
 // 시작
 login();

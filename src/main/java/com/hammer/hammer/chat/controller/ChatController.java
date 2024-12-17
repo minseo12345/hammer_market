@@ -22,8 +22,12 @@ import java.util.List;
 @RestController
 public class ChatController {
 
+    private final ChatService chatService;
+
     @Autowired
-    private ChatService chatService;
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
+    }
 
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
@@ -43,9 +47,8 @@ public class ChatController {
         return ResponseEntity.ok(chatRoom);
     }
     @GetMapping("/chat/{chatRoomId}")
-    public ResponseEntity<List<Message>> getMessagesByChatRoom(@PathVariable String chatRoomId,HttpSession session) {
-        User currentUser = (User) session.getAttribute("user");
-        List<Message> messages= chatService.getMessagesByChatRoom(chatRoomId,currentUser.getId());
+    public ResponseEntity<List<Message>> getMessagesByChatRoom(@PathVariable String chatRoomId) {
+        List<Message> messages= chatService.getMessagesByChatRoom(chatRoomId);
         if(messages==null) {
             log.info("messages is null");
             return ResponseEntity.ok(Collections.emptyList());

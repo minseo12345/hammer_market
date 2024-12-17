@@ -25,8 +25,6 @@ public class LoginController {
     @PostMapping("/login")
     public User login(@RequestBody User loginUser, HttpSession session) {
         User user = userRepository.findByUsername(loginUser.getUsername());
-        log.info("login user: " + loginUser.getUsername()+", "+loginUser.getPassword());
-        log.info("find user:"+user.getUsername());
         if (user != null && user.getPassword().equals(loginUser.getPassword())) {
             session.setAttribute("user", user);
             return user;

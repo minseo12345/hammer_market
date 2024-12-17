@@ -2,6 +2,7 @@ package com.hammer.hammer.chat.Entity;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -19,8 +20,8 @@ public class Message {
     private String senderId; // 보낸 사용자 ID
     private String content; // 메시지 내용
 
-    private boolean readStatus;
+    private boolean readStatus = false;
 
     @CreatedDate
-    private LocalDateTime timestamp; // 전송 시간
+    private LocalDateTime createdAt; // 전송 시간
 }
