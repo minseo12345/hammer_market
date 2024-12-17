@@ -8,9 +8,20 @@
 </head>
 <body>
 <div class="container">
+
+    <div class="sort-bar">
+        <label for="sortSelect"></label><select id="sortSelect">
+            <option value="" disabled selected>정렬</option>
+            <option value="myPrice_asc">내 입찰가 오름차순</option>
+            <option value="myPrice_desc">내 입찰가 내림차순</option>
+            <option value="currentPrice_asc">현재가 오름차순</option>
+            <option value="currentPrice_desc">현재가 내림차순</option>
+        </select>
+    </div>
+
     <h2 class="table-title">*입찰 내역</h2>
     <div class="bid-list">
-        <table class="bid-table">
+        <table id="bidTable" class="bid-table">
             <thead>
             <tr>
                 <th>번호</th>
@@ -31,11 +42,10 @@
                 <td th:text="${bid.currentPrice}">현재가</td>
             </tr>
             </tbody>
-
         </table>
+
     </div>
 
-    <!-- 페이지네이션 버튼 -->
     <div class="pagination">
         <ul>
             <!-- 이전 페이지 버튼 -->

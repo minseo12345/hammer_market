@@ -73,15 +73,39 @@ body {
     background-color: #f2f2f2;
 }
 .pagination li.disabled a {
-    pointer-events: none; /* 클릭 방지 */
-    color: #ccc; /* 비활성화 색상 */
+    pointer-events: none;
+    color: #ccc;
     text-decoration: none;
 }
 
 .pagination li.active a {
     font-weight: bold;
-    color: #007bff; /* 강조된 페이지 번호 */
-    pointer-events: none; /* 현재 페이지는 클릭 방지 */
+    color: #007bff;
+    pointer-events: none;
 }
 
+.sort-bar {
+    position: absolute;
+    top: 50px;
+    right: 100px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.sort-bar select {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.sort-bar select:hover {
+    background-color: #ddd;
+}
 
