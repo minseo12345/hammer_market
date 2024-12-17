@@ -7,6 +7,8 @@ import com.hammer.hammer.bid.domain.Bid;
 import com.hammer.hammer.bid.domain.Item;
 import com.hammer.hammer.bid.domain.User;
 import com.hammer.hammer.bid.dto.RequestBidDto;
+import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
+import com.hammer.hammer.bid.dto.ResponseBidByUserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +40,6 @@ public class BidService {
         Item item = itemRepository.findById(requestBidDto.getItemId()).orElseThrow(
                 ()-> new IllegalStateException("상품을 찾을 수 없습니다.")
         );
-        // 100원 단위 검증 로직
-        if (requestBidDto.getBidAmount().remainder(BigDecimal.valueOf(100)).compareTo(BigDecimal.ZERO) != 0) {
-            throw new IllegalArgumentException("입찰 금액은 100원 단위로 입력해야 합니다.");
-        }
 
         BigDecimal currentHighestBid = bidRepository.findHighestBidByItemId(requestBidDto.getItemId())
                 .orElse(BigDecimal.ZERO);
@@ -69,13 +66,26 @@ public class BidService {
      */
     @Cacheable(value = "bidsByUser", key = "#userId + '_0' + #pageable.pageNumber")
     @Transactional(readOnly = true)
-    public Page<Bid> getBidsByUser(Long userId, Pageable pageable) {
+    public Page<ResponseBidByUserDto> getBidsByUser(String userId, Pageable pageable) {
 
        Page<Bid> bids = bidRepository.findByUserIdOrderByBidAmountDesc(userId,pageable).orElseThrow(
                 () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
         );
 
-        return bids;
+
+        return bids.map(bid -> {
+
+            BigDecimal currentPrice = bidRepository.findHighestBidByItemId(bid.getItem().getId())
+                    .orElse(BigDecimal.ZERO);
+
+            return ResponseBidByUserDto.builder()
+                    .itemId(bid.getItem().getId())
+//                    .itemName(bid.getItem().getItemName())
+//                    .img(bid.getItem().getImg())
+                    .myPrice(bid.getBidAmount())
+                    .currentPrice(currentPrice)
+                    .build();
+        });
     }
 
     /**
@@ -83,13 +93,16 @@ public class BidService {
      */
     @Cacheable(value = "bidsByItem", key = "#itemId + '_0' + #pageable.pageNumber")
     @Transactional(readOnly = true)
-    public Page<Bid> getBidsByItem(Long itemId,Pageable pageable) {
+    public Page<ResponseBidByItemDto> getBidsByItem(Long itemId, Pageable pageable) {
 
         Page<Bid> bids = bidRepository.findByItemIdOrderByBidAmountDesc(itemId, pageable).orElseThrow(
                 () -> new IllegalStateException("상품 데이터를 찾을 수 없습니다.")
         );
 
-        return bids;
+        return bids.map(bid -> ResponseBidByItemDto.builder()
+                .userId(bid.getUser().getId())
+                .bidAmount(bid.getBidAmount())
+                .build());
     }
 
     @CachePut(value = "bidsByItem", key = "#itemId + '_0'")

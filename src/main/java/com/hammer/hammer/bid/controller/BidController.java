@@ -3,6 +3,8 @@ package com.hammer.hammer.bid.controller;
 
 import com.hammer.hammer.bid.domain.Bid;
 import com.hammer.hammer.bid.dto.RequestBidDto;
+import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
+import com.hammer.hammer.bid.dto.ResponseBidByUserDto;
 import com.hammer.hammer.bid.sevice.BidService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +39,13 @@ public class BidController {
      * 사용자 별 입찰 내역 조회
      */
     @GetMapping("/user/{userId}")
-    public String getBidsByUser(@PathVariable Long userId, Model model,
+    public String getBidsByUser(@PathVariable String userId, Model model,
                                 @PageableDefault(page = 0, size = 10) Pageable pageable) {
         if (userId == null) {
             model.addAttribute("userError", "사용자가 없습니다.");
         }
 
-        Page<Bid> bidsByUser = bidService.getBidsByUser(userId,pageable);
+        Page<ResponseBidByUserDto> bidsByUser = bidService.getBidsByUser(userId,pageable);
         model.addAttribute("bids",bidsByUser);
         model.addAttribute("currentPage", pageable.getPageNumber());
         model.addAttribute("totalPages", bidsByUser.getTotalPages());
@@ -60,7 +62,7 @@ public class BidController {
         if (itemId == null) {
             model.addAttribute("itemError", "상품이 없습니다.");
         }
-        Page<Bid> bidsByItem = bidService.getBidsByItem(itemId,pageable);
+        Page<ResponseBidByItemDto> bidsByItem = bidService.getBidsByItem(itemId,pageable);
         model.addAttribute("bids",bidsByItem);
         model.addAttribute("currentPage", pageable.getPageNumber());
         model.addAttribute("totalPages", bidsByItem.getTotalPages());
