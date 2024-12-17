@@ -67,7 +67,7 @@ public class BidService {
     /**
      *  사용자 별 입찰 조회
      */
-    @Cacheable(value = "bidsByUser", key = "#userId + '_' + #pageable.pageNumber")
+    @Cacheable(value = "bidsByUser", key = "#userId + '_0' + #pageable.pageNumber")
     @Transactional(readOnly = true)
     public Page<Bid> getBidsByUser(Long userId, Pageable pageable) {
 
