@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 @Service
 @RequiredArgsConstructor
@@ -72,18 +73,23 @@ public class BidService {
                 () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
         );
 
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
         return bids.map(bid -> {
 
             BigDecimal currentPrice = bidRepository.findHighestBidByItemId(bid.getItem().getId())
                     .orElse(BigDecimal.ZERO);
 
+
+            String formattedMyPrice = decimalFormat.format(bid.getBidAmount()) + " 원";
+            String formattedCurrentPrice = decimalFormat.format(currentPrice) + " 원";
+
             return ResponseBidByUserDto.builder()
                     .itemId(bid.getItem().getId())
 //                    .itemName(bid.getItem().getItemName())
 //                    .img(bid.getItem().getImg())
-                    .myPrice(bid.getBidAmount())
-                    .currentPrice(currentPrice)
+                    .myPrice(formattedMyPrice)
+                    .currentPrice(formattedCurrentPrice)
                     .build();
         });
     }

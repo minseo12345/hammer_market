@@ -49,7 +49,8 @@ public class BidController {
         model.addAttribute("bids",bidsByUser);
         model.addAttribute("currentPage", pageable.getPageNumber());
         model.addAttribute("totalPages", bidsByUser.getTotalPages());
-        return "mypage";
+
+        return "bid/bidsByUser";
 
     }
 

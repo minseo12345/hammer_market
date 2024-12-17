@@ -15,6 +15,6 @@ public class ResponseBidByUserDto {
     private Long itemId;
     private String itemName;
     private String img;
-    private BigDecimal myPrice;
-    private BigDecimal currentPrice;
+    private String myPrice;
+    private String currentPrice;
 }
