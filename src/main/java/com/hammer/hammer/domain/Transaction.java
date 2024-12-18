@@ -1,50 +1,56 @@
 package com.hammer.hammer.domain;
 
-
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Id;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-
 @Entity
-@Table(name = "transaction")
 @Getter
 @Setter
+@AllArgsConstructor
+@RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class Transaction {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
-	@Column(name="transaction_id",nullable = false)
-	private Integer transactionId; //pk
 
-    @Column(name = "final_price", precision = 38, scale = 2, nullable = true)
-    private BigDecimal finalPrice;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transaction_id", nullable = false)  // `nullable` 설정을 통해 필드 강제 설정
+    private Long transactionId; // pk
 
-    @Column(name = "transaction_date", nullable = true)
-    private LocalDateTime transactionDate;
-    
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
-    private User buyer; // 구매자 (BUYER 역할)
+    private final User buyer;
 
     @ManyToOne
     @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
-    private User seller; 
-    
-    //item_id 1:1 관계
+    private final User seller;
+
     @OneToOne
     @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    private final Item item; //1:1 관계로 수정
+
+    @Column(name = "final_price", precision = 38, scale = 2, nullable = true)  // 금액 설정
+    private BigDecimal finalPrice;
+
+    @Column(name = "transaction_date", nullable = true)  // 거래 날짜
+    private LocalDateTime transactionDate;
+
+
+    public void setBuyer(User user) {
+
+    }
+
+    public void setSeller(User user) {
+
+    }
+
+    public void setTransactionDate(LocalDateTime localDateTime) {
+    }
 }
+
