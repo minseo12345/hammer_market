@@ -1,5 +1,7 @@
 package com.hammer.hammer.bid.entity;
 
+import com.hammer.hammer.domain.User;
+import com.hammer.hammer.item.entity.Item;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Positive;

@@ -1,15 +1,15 @@
 package com.hammer.hammer.bid.service;
 
 import com.hammer.hammer.bid.Repository.BidRepository;
-import com.hammer.hammer.bid.Repository.ItemRepository;
-import com.hammer.hammer.bid.Repository.UserRepository;
 import com.hammer.hammer.bid.entity.Bid;
-import com.hammer.hammer.bid.entity.Item;
-import com.hammer.hammer.bid.entity.User;
 import com.hammer.hammer.bid.dto.RequestBidDto;
 import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
 import com.hammer.hammer.bid.dto.ResponseBidByUserDto;
 import com.hammer.hammer.bid.exception.BidAmountTooLowException;
+import com.hammer.hammer.domain.User;
+import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.item.repository.ItemRepository;
+import com.hammer.hammer.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -73,7 +73,7 @@ public class BidService {
 
         return bids.map(bid -> {
 
-            BigDecimal currentPrice = bidRepository.findHighestBidByItemId(bid.getItem().getId())
+            BigDecimal currentPrice = bidRepository.findHighestBidByItemId(bid.getItem().getItemId())
                     .orElse(BigDecimal.ZERO);
 
 
@@ -81,9 +81,9 @@ public class BidService {
             String formattedCurrentPrice = decimalFormat.format(currentPrice) + " 원";
 
             return ResponseBidByUserDto.builder()
-                    .itemId(bid.getItem().getId())
-//                    .itemName(bid.getItem().getItemName())
-//                    .img(bid.getItem().getImg())
+                    .itemId(bid.getItem().getItemId())
+                    .itemName(bid.getItem().getTitle())
+                    .img(bid.getItem().getFileUrl())
                     .myPrice(formattedMyPrice)
                     .currentPrice(formattedCurrentPrice)
                     .build();
@@ -101,7 +101,7 @@ public class BidService {
         );
 
         return bids.map(bid -> ResponseBidByItemDto.builder()
-                .userId(bid.getUser().getId())
+                .userId(bid.getUser().getUserId())
                 .bidAmount(bid.getBidAmount())
                 .build());
     }
