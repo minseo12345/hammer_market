@@ -1,18 +1,17 @@
-package com.hammer.hammer.bid.sevice;
+package com.hammer.hammer.bid.service;
 
 import com.hammer.hammer.bid.Repository.BidRepository;
 import com.hammer.hammer.bid.Repository.ItemRepository;
 import com.hammer.hammer.bid.Repository.UserRepository;
-import com.hammer.hammer.bid.domain.Bid;
-import com.hammer.hammer.bid.domain.Item;
-import com.hammer.hammer.bid.domain.User;
+import com.hammer.hammer.bid.entity.Bid;
+import com.hammer.hammer.bid.entity.Item;
+import com.hammer.hammer.bid.entity.User;
 import com.hammer.hammer.bid.dto.RequestBidDto;
 import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
 import com.hammer.hammer.bid.dto.ResponseBidByUserDto;
+import com.hammer.hammer.bid.exception.BidAmountTooLowException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class BidService {
      * 입찰 등록
      */
     @Transactional
-    public boolean saveBid(RequestBidDto requestBidDto){
+    public void saveBid(RequestBidDto requestBidDto){
 
         User user = userRepository.findById(requestBidDto.getUserId()).orElseThrow(
                 ()-> new IllegalStateException("사용자를 찾을 수 없습니다.")
@@ -46,7 +45,7 @@ public class BidService {
                 .orElse(BigDecimal.ZERO);
 
         if (requestBidDto.getBidAmount().compareTo(currentHighestBid) <= 0) {
-            return false;
+            throw new BidAmountTooLowException("입찰 금액이 현재 최고 입찰가보다 작습니다.");
         }
 
             Bid newBid = Bid.builder()
@@ -58,7 +57,6 @@ public class BidService {
 
 
         bidRepository.save(newBid);
-        return true;
     }
 
     /**
