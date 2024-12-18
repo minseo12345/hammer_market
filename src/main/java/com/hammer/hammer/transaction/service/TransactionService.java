@@ -1,14 +1,14 @@
 package com.hammer.hammer.transaction.service;
 
+import com.hammer.hammer.transaction.TransactionRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.hammer.hammer.transaction.entity.Transaction;
-import com.hammer.hammer.transaction.repository.TransactionRepository;
-import com.hammer.hammer.auction.entity.Item;
+import com.hammer.hammer.domain.Transaction;
+import com.hammer.hammer.domain.Item;
 import com.hammer.hammer.bid.entity.Bid;
-import com.hammer.hammer.bid.repository.BidRepository;
-import com.hammer.hammer.auction.repository.ItemRepository;
+import com.hammer.hammer.bid.Repository.BidRepository;
+import com.hammer.hammer.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.Timestamp;
@@ -45,7 +45,7 @@ public class TransactionService {
     // 거래 생성 로직 (즉시구매와 경매시간마감 공통)
     private void createTransaction(Item item) {
         // 낙찰자 조회 (가장 높은 bid_amount)
-        Bid bid = bidRepository.findTopByItemIdOrderByBidAmountDesc(item.getItemId())
+        Bid bid = (Bid) bidRepository.findTopByItemIdOrderByBidAmountDesc(item.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 입찰을 찾을 수 없습니다. 아이템 ID: " + item.getItemId()));
 
         // 낙찰자와 판매자 정보 설정
@@ -54,13 +54,13 @@ public class TransactionService {
         transaction.setBuyer(bid.getUser());
         transaction.setSeller(item.getUser());
         transaction.setFinalPrice(bid.getBidAmount());
-        transaction.setTransactionDate(Timestamp.valueOf(LocalDateTime.now()));  // 거래 시점
+        transaction.setTransactionDate(Timestamp.valueOf(LocalDateTime.now()).toLocalDateTime());  // 거래 시점
 
         // 트랜잭션 생성
         transactionRepository.save(transaction);
 
         // 아이템 상태를 '낙찰'로 변경
-        item.setStatus(Item.AuctionStatus.BIDDING_END);
+        item.setStatus(Item.ItemStatus.BIDDING_END);
         itemRepository.save(item);
     }
 
@@ -93,7 +93,7 @@ public class TransactionService {
     @Scheduled(fixedRate = 60000)  // 1분마다 실행
     public void checkAuctionEndAndUpdateStatus() {
         // 경매 진행 중인 아이템을 조회
-        List<Item> ongoingItems = itemRepository.findByStatus(Item.AuctionStatus.ONGOING);
+        List<Item> ongoingItems = itemRepository.findByStatus(Item.ItemStatus.ONGOING);
 
         // 각 아이템에 대해 경매 종료 시점을 확인
         for (Item item : ongoingItems) {

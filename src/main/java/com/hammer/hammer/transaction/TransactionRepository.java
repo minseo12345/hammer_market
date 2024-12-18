@@ -22,4 +22,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 		       "FROM Transaction t ")
 
 	    List<TransactionStatusDto> findAllTransactionStatus();
+
+	void deleteById(Long id);
 }

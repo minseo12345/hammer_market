@@ -1,6 +1,6 @@
 package com.hammer.hammer.transaction.controller;
 
-import com.hammer.hammer.transaction.entity.Transaction;
+import com.hammer.hammer.domain.Transaction;
 import com.hammer.hammer.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
