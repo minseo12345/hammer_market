@@ -9,18 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.hammer.hammer.domain.User;
 import com.hammer.hammer.dto.TransactionStatusDto;
 
+import lombok.RequiredArgsConstructor;
 
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 	
 	//외부 접근하지 못하게 private
+	
 	 private final AdminService adminService;
-
-	    public AdminController(AdminService adminService) {
-	        this.adminService = adminService;
-	    }
 	 
 	
 	//관리자페이지 이동
