@@ -33,7 +33,7 @@ function connectWebSocket() {
     });
 }
 function loadChatRooms() {
-    fetch('/api/chatrooms')
+    fetch('/chat/chatrooms')
         .then((response) => response.json())
         .then((chatRooms) => {
             roomListEl.innerHTML = ''; // 기존 목록 초기화
@@ -45,7 +45,11 @@ function loadChatRooms() {
 // 채팅방 요소 생성
 function createChatRoomElement(room) {
     const li = document.createElement('li');
-    li.textContent = room.title;
+    if (currentUser.id !== room.sellerId) {
+        li.textContent = room.buyerTitle;
+    } else {
+        li.textContent = room.sellerTitle;
+    }
     li.dataset.roomId = room.id;
 
     // UnreadCount 표시용 요소 추가
@@ -59,7 +63,7 @@ function createChatRoomElement(room) {
     li.onclick = () => enterChatRoom(room);
     roomListEl.appendChild(li);
     // 초기 UnreadCount 불러오기
-    fetch(`/api/chatrooms/${room.id}/unreadCount?userId=${currentUser.id}`)
+    fetch(`/chat/chatrooms/${room.id}/unreadCount?userId=${currentUser.id}`)
         .then((res) => res.json())
         .then((unreadCount) => {
             updateUnreadUI(li, unreadCount);
@@ -75,7 +79,7 @@ function updateUnreadUI(roomElement, unreadCount) {
 function updateUnreadCount(chatRoomId) {
     const roomElement = document.querySelector(`[data-room-id="${chatRoomId}"]`);
     if (roomElement) {
-        fetch(`/api/chatrooms/${chatRoomId}/unreadCount?userId=${currentUser.id}`)
+        fetch(`/chat/chatrooms/${chatRoomId}/unreadCount?userId=${currentUser.id}`)
             .then((res) => res.json())
             .then((unreadCount) => {
                 updateUnreadUI(roomElement, unreadCount);
@@ -101,7 +105,11 @@ function fetchUsers() {
 // 채팅방 입장
 function enterChatRoom(room) {
     currentChatRoomId = room.id;
-    chatRoomTitleEl.textContent = `Chat Title: ${room.title}`;
+    if (currentUser.id === room.sellerId) {
+        chatRoomTitleEl.textContent = `Chat Title: ${room.sellerTitle}`;
+    } else {
+        chatRoomTitleEl.textContent = `Chat Title: ${room.buyerTitle}`;
+    }
     messagesEl.innerHTML = ''; // 기존 메시지 초기화
 
     // 읽지 않은 메시지를 읽은 상태로 표시
@@ -121,11 +129,19 @@ function selectUser(user) {
         alert("You can't chat with yourself!");
         return;
     }
-    // 서버에 채팅방 요청
-    fetch(`/chat/${currentUser.id}/${user.id}`)
-        .then((response) => response.json())
+    fetch('/chat/getChatRoom', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            buyerId: currentUser.id,
+            sellerId: user.id,
+        }),
+    })
         .then((chatRoom) => {
-            loadChatRooms();
+            console.log('Chat room created or retrieved:', chatRoom);
+            loadChatRooms(); // 채팅방 목록 갱신
         })
         .catch((err) => console.error('Error fetching chat room:', err));
 }

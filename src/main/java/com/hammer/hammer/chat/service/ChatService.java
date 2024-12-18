@@ -6,6 +6,7 @@ import com.hammer.hammer.chat.repository.ChatRoomRepository;
 import com.hammer.hammer.chat.repository.CustomMessageRepository;
 import com.hammer.hammer.chat.repository.MessageRepository;
 import com.hammer.hammer.chat.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,14 +38,18 @@ public class ChatService {
     @Transactional
     public ChatRoom findOrCreateChatRoom(String sellerId, String buyerId) {
         ChatRoom chatRoom = chatRoomRepository.findBySellerIdAndBuyerId(sellerId, buyerId);
-        User seller = userRepository.findById(sellerId)
-                .orElseThrow(() -> new RuntimeException("Seller not found"));
-        User buyer = userRepository.findById(buyerId)
-                .orElseThrow(() -> new RuntimeException("Buyer not found"));
-
+        if (chatRoom == null)
+            chatRoom = chatRoomRepository.findBySellerIdAndBuyerId(buyerId, sellerId);
+        else
+            return chatRoom;
         if (chatRoom == null) {
+            User seller = userRepository.findById(sellerId)
+                    .orElseThrow(() -> new EntityNotFoundException("Seller not found"));
+            User buyer = userRepository.findById(buyerId)
+                    .orElseThrow(() -> new EntityNotFoundException("Buyer not found"));
             chatRoom = ChatRoom.builder()
-                    .title(seller.getUsername()+"님 과"+buyer.getUsername()+"의 채팅방")
+                    .sellerTitle(buyer.getUsername())
+                    .buyerTitle(seller.getUsername())
                     .sellerId(sellerId)
                     .buyerId(buyerId)
                     .build();
@@ -67,7 +72,7 @@ public class ChatService {
                 .build();
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+                .orElseThrow(() -> new EntityNotFoundException("ChatRoom not found"));
 
         chatRoom.setUpdatedAt(LocalDateTime.now());
         chatRoomRepository.save(chatRoom);
@@ -83,11 +88,11 @@ public class ChatService {
     @Transactional(readOnly = true)
     public int getUnreadCount(String roomId, String userId) {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+                .orElseThrow(() -> new EntityNotFoundException("ChatRoom not found"));
         if(chatRoom.getBuyerId().equals(userId)) {
             return messageRepository.countUnreadMessagesByChatRoomIdAndSenderId(roomId, chatRoom.getSellerId());
         }else{
-            return messageRepository.countUnreadMessagesByChatRoomIdAndSenderId(roomId,chatRoom.getBuyerId());
+            return messageRepository.countUnreadMessagesByChatRoomIdAndSenderId(roomId, chatRoom.getBuyerId());
         }
     }
 
