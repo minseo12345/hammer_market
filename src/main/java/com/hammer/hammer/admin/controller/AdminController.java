@@ -1,18 +1,19 @@
 package com.hammer.hammer.admin.controller;
 
+import com.hammer.hammer.global.jwt.dto.JwtTokenResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admin")
 public class AdminController {
 
-//	private final AdminService adminService;
-
-    @GetMapping
-    public String adminPage() {
-        return "Welcome to Admin Page!";
+    @GetMapping("/admin")
+    public ResponseEntity<String> adminPage() {
+        // 간단한 JSON 응답 생성
+        return ResponseEntity.ok("message");
     }
 //
 //	@GetMapping("/users")

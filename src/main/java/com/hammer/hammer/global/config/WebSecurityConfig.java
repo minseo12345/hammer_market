@@ -1,25 +1,27 @@
 package com.hammer.hammer.global.config;
 
+import com.hammer.hammer.global.exception.AccessDeniedHandlerImpl;
+import com.hammer.hammer.global.exception.AuthenticationEntryPointImpl;
+import com.hammer.hammer.global.jwt.filter.JwtFilter;
 import com.hammer.hammer.user.entity.Role;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
-import com.hammer.hammer.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 //import com.hammer.hammer.global.jwt.filter.JwtAuthenticationFilter;
 
 
@@ -27,7 +29,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+    private final AuthenticationEntryPointImpl authenticationEntryPointImpl;
+    private final AccessDeniedHandlerImpl accessDeniedHandlerImpl;
     private final UserDetailsService userDetailsService;
+    private final JwtFilter jwtFilter; // JwtFilter 생성자 주입 코드 추가
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -42,23 +47,33 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/", "/login", "/login/**",
                                 "/signup", "/user",
+                                "/jwt-login",
+                                "/error",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()  // 로그인 API는 인증 없이 접근 가능
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form // 4. 폼 기반 로그인 설정
-                        .loginPage("/login") // 커스텀 로그인 페이지
-                        .defaultSuccessUrl("/") // 로그인 성공시 URL
-                        .failureUrl("/login?fail")
-                        .permitAll() // 모든 사용자 - 로그인 페이지 접근 허용
-                )
+//                .formLogin(form -> form // 4. 폼 기반 로그인 설정
+//                        .loginPage("/login") // 커스텀 로그인 페이지
+//                        .defaultSuccessUrl("/") // 로그인 성공시 URL
+//                        .failureUrl("/login?fail")
+//                        .permitAll() // 모든 사용자 - 로그인 페이지 접근 허용
+//                )
                 .logout(logout -> logout // 5. 로그아웃 설정
                         .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true)
                         .permitAll()
                 )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPointImpl) // 인증 실패 처리
+                        .accessDeniedHandler(accessDeniedHandlerImpl) // 권한 부족 처리
+                )
                 .csrf(csrf -> csrf.disable())
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // 8. JWT 필터 추가
                 .build();
     }
 
@@ -82,7 +97,7 @@ public class WebSecurityConfig {
             User adminUser = User.builder()
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("123"))
-                    .userName("관리자1")
+                    .userName("관리자")
                     .phoneNumber("01012341234")
                     .role(Role.ADMIN)
                     .build();
