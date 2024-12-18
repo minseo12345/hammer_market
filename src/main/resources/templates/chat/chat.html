@@ -18,13 +18,20 @@
     <!-- Room List -->
     <div id="room-list" class="col-md-3 bg-light p-3">
         <h5 class="mb-3 text-secondary">Chat Rooms</h5>
-        <ul id="rooms" class="list-group"></ul>
+
+        <!-- Seller Chat Rooms -->
+        <h6 class="text-warning">Seller Chat Rooms</h6>
+        <ul id="seller-rooms" class="list-group mb-3"></ul>
+
+        <!-- Buyer Chat Rooms -->
+        <h6 class="text-info">Buyer Chat Rooms</h6>
+        <ul id="buyer-rooms" class="list-group"></ul>
     </div>
 
     <!-- Chat Box -->
     <div id="chat-box" class="col-md-6 d-flex flex-column p-3">
         <h5 id="chat-room-title" class="mb-3 text-success">Select a user to chat</h5>
-        <div id="messages" class="rounded border"></div>
+        <div id="messages" class="rounded border mb-3"></div>
         <div id="input-box" class="input-group">
             <input type="text" id="message-input" class="form-control" placeholder="Type a message..."/>
             <button id="send-message" class="btn btn-primary">Send</button>

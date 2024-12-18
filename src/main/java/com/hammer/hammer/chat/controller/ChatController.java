@@ -7,7 +7,6 @@ import com.hammer.hammer.chat.service.ChatService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,15 +29,16 @@ public class ChatController {
         return chatService.saveMessage(message.getChatRoomId(), message.getSenderId(), message.getContent());
     }
 
-    @PostMapping("/chat/getChatRoom")//객체로 받기
+    @PostMapping("/chat/createChatRoom")//객체로 받기
     public ResponseEntity<ChatRoom> getChatRoom(@RequestBody ChatRoomRequest request) {
         ChatRoom chatRoom = chatService.findOrCreateChatRoom(request.getSellerId(),request.getBuyerId());
+        log.info("chatRoomId : {}", chatRoom.getId());
         return ResponseEntity.ok(chatRoom);
     }
 
-    @GetMapping("/chat/{chatRoomId}")
-    public ResponseEntity<List<Message>> getMessagesByChatRoom(@PathVariable String chatRoomId) {
-        List<Message> messages= chatService.getMessagesByChatRoom(chatRoomId);
+    @GetMapping("/chat/{roomId}")
+    public ResponseEntity<List<Message>> getMessagesByChatRoom(@PathVariable String roomId) {
+        List<Message> messages= chatService.getMessagesByChatRoom(roomId);
         return ResponseEntity.ok(messages);
     }
 
@@ -49,8 +49,9 @@ public class ChatController {
         if (currentUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not logged in");
         }
-
+        log.info("start");
         List<ChatRoom> chatRooms = chatService.getChatRooms(currentUser.getId());
+        log.info("List size:{}", chatRooms.size());
         return ResponseEntity.ok(chatRooms);
     }
 

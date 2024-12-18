@@ -1,6 +1,5 @@
 package com.hammer.hammer.chat.repository;
 import com.hammer.hammer.chat.Entity.Message;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

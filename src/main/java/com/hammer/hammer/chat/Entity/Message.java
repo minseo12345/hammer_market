@@ -28,6 +28,7 @@ public class Message {
     @Size(min = 1, max = 100, message = "content must be between 1 and 100 characters")
     private String content;
 
+    @NotNull
     private boolean readStatus = false;
 
     @CreatedDate

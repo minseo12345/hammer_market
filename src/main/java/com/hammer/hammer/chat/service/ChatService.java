@@ -28,10 +28,6 @@ public class ChatService {
     @Transactional
     public ChatRoom findOrCreateChatRoom(String sellerId, String buyerId) {
         ChatRoom chatRoom = chatRoomRepository.findBySellerIdAndBuyerId(sellerId, buyerId);
-        if (chatRoom == null)
-            chatRoom = chatRoomRepository.findBySellerIdAndBuyerId(buyerId, sellerId);
-        else
-            return chatRoom;
         if (chatRoom == null) {
             User seller = userRepository.findById(sellerId)
                     .orElseThrow(() -> new EntityNotFoundException("Seller not found"));
