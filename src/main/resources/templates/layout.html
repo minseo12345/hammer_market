@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>망치 마켓</title>
+</head>
+<body>
+
+<header class="d-flex justify-content-between align-items-center p-3 border-bottom">
+    <div class="logo">
+        <a href="/"><img src="/img/logo.png" alt="망치 마켓 로고" style="height: 200px;"></a>
+    </div>
+    <nav class="d-flex align-items-center">
+        <a href="/login" class="me-3">로그인</a>
+        <a href="/register" class="me-3">회원가입</a>
+        <a href="/sell" class="me-3">판매하기</a>
+        <a href="/profile" class="me-3">내 정보</a>
+        <a href="/cart">장바구니</a>
+    </nav>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- 좌측 네비게이션 바 -->
+        <aside class="col-2 border-end bg-light">
+            <nav class="p-3">
+                <h5>카테고리</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/category/clothing" class="text-decoration-none">의류</a></li>
+                    <li><a href="/category/furniture" class="text-decoration-none">가구/제품</a></li>
+                    <li><a href="/category/books" class="text-decoration-none">도서</a></li>
+                    <li><a href="/category/electronics" class="text-decoration-none">전자기기</a></li>
+                    <li><a href="/category/others" class="text-decoration-none">기타</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="col-10 p-3" layout:fragment="content">
+            <div class="filter-bar d-flex align-items-center mb-3">
+                <select class="form-select me-3" style="width: 150px;">
+                    <option value="">카테고리 선택</option>
+                    <option value="clothing">의류</option>
+                    <option value="furniture">가구/제품</option>
+                    <option value="books">도서</option>
+                    <option value="electronics">전자기기</option>
+                    <option value="others">기타</option>
+                </select>
+                <div class="input-group" style="width: 400px;">
+                    <input type="text" class="form-control" placeholder="검색어를 입력하세요">
+                    <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<footer class="bg-dark text-white text-center p-3">
+    <p>ⓒ 2024 망치 마켓. All rights reserved.</p>
+    <p>Contact: gogo5896544@naver.com</p>
+    <a href="https://kdt-gitlab.elice.io/cloud_track/class_05/web_project2/team04/hammer_market" class="text-white">Repository</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경매 목록</title>
+</head>
+<body>
+    <h1>경매 목록</h1>
+    <button onclick="window.location.href='/items/create'">경매 생성</button>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>제목</th>
+                <th>이미지</th>
+                <th>시작 가격</th>
+                <th>현재 가격(구현x)</th>
+                <th>즉시 거래 가격</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${items}">
+                <td>
+  					<a th:href="@{/items/detail/{id}(id=${item.itemId})}" th:text="${item.title}">상품 제목</a>
+				</td>
+                <td>
+                    <img th:src="${item.fileUrl}" alt="상품 이미지" style="max-width: 100px; max-height: 100px;">
+                </td>
+                <td th:text="${item.startingBid} + ' 원'">시작가</td>
+                <td th:text="${item.startingBid} + ' 원'">현재가</td>
+                <td th:text="${item.buyNowPrice != null ? item.buyNowPrice + ' 원' : '없음'}">즉시 거래가</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
