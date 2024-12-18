@@ -58,14 +58,11 @@ public class BidService {
 
 
         bidRepository.save(newBid);
-        updateFirstPageCache(requestBidDto.getItemId());
-
     }
 
     /**
      *  사용자 별 입찰 조회
      */
-    @Cacheable(value = "bidsByUser", key = "#userId + '_0' + #pageable.pageNumber")
     @Transactional(readOnly = true)
     public Page<ResponseBidByUserDto> getBidsByUser(String userId, Pageable pageable) {
 
@@ -97,7 +94,6 @@ public class BidService {
     /**
      *  상품 별 입찰 조회
      */
-    @Cacheable(value = "bidsByItem", key = "#itemId + '_0' + #pageable.pageNumber")
     @Transactional(readOnly = true)
     public Page<ResponseBidByItemDto> getBidsByItem(Long itemId, Pageable pageable) {
 
@@ -111,10 +107,4 @@ public class BidService {
                 .build());
     }
 
-    @CachePut(value = "bidsByItem", key = "#itemId + '_0'")
-    public Page<Bid> updateFirstPageCache(Long itemId) {
-        Pageable firstPage = Pageable.ofSize(10).withPage(0);
-        return bidRepository.findByItemIdOrderByBidAmountDesc(itemId, firstPage)
-                .orElseThrow(() -> new IllegalStateException("첫 페이지 데이터를 찾을 수 없습니다."));
-    }
 }
