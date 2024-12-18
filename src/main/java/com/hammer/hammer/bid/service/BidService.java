@@ -33,7 +33,7 @@ public class BidService {
      * 입찰 등록
      */
     @Transactional
-    public void saveBid(RequestBidDto requestBidDto){
+    public boolean saveBid(RequestBidDto requestBidDto){
 
         User user = userRepository.findById(requestBidDto.getUserId()).orElseThrow(
                 ()-> new IllegalStateException("사용자를 찾을 수 없습니다.")
@@ -46,7 +46,7 @@ public class BidService {
                 .orElse(BigDecimal.ZERO);
 
         if (requestBidDto.getBidAmount().compareTo(currentHighestBid) <= 0) {
-            throw new IllegalArgumentException("입찰 금액은 현재 최고 입찰가보다 커야 합니다.");
+            return false;
         }
 
             Bid newBid = Bid.builder()
@@ -58,6 +58,7 @@ public class BidService {
 
 
         bidRepository.save(newBid);
+        return true;
     }
 
     /**
