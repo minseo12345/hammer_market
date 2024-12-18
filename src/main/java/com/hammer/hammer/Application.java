@@ -2,17 +2,10 @@ package com.hammer.hammer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.cache.annotation.EnableCaching;
 
-@EnableMongoRepositories(basePackages = {"com.hammer.hammer.chat.repository"
-,"com.hammer.hammer.chat.Entity"})
-
-@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, DataSourceAutoConfiguration.class})
-@EnableMongoAuditing
+@SpringBootApplication
+@EnableCaching
 public class Application {
 
 	public static void main(String[] args) {
