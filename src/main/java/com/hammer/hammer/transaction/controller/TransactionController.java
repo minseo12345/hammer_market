@@ -2,53 +2,67 @@ package com.hammer.hammer.transaction.controller;
 
 import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.transaction.service.TransactionService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/transactions")
+@RequiredArgsConstructor
 public class TransactionController {
 
     private final TransactionService transactionService;
 
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    // 모든 트랜잭션 조회 (관리자)
+    @GetMapping
+    public String getAllTransactions(Model model) {
+        List<Transaction> transactions = transactionService.findAllTransactions();
+        model.addAttribute("transactions", transactions);
+        return "transaction-list";  // 타임리프 템플릿 이름 반환
     }
 
-    //경매 종료 후 트랜젝션 생성
-    @PostMapping("/create/{itemId}")
-    public ResponseEntity<String> createTransaction(@PathVariable Long itemId) {
+    // ID로 트랜잭션 조회
+    @GetMapping("/{id}")
+    public String getTransactionById(@PathVariable Long id, Model model) {
+        return transactionService.findTransactionById(id)
+                .map(transaction -> {
+                    model.addAttribute("transaction", transaction);
+                    return "transaction-detail";  // 타임리프 템플릿 이름 반환
+                })
+                .orElse("error");  // 트랜잭션을 찾을 수 없으면 에러 페이지 반환
+    }
+
+    // 트랜잭션 삭제
+    @DeleteMapping("/{id}")
+    public String deleteTransaction(@PathVariable Long id) {
+        transactionService.deleteTransaction(id);
+        return "redirect:/transactions";  // 삭제 후 트랜잭션 목록 페이지로 리디렉션
+    }
+
+    // 즉시구매 버튼을 눌러서 경매 종료 처리
+    @PostMapping("/immediate-purchase/{itemId}")
+    public String createTransactionForImmediatePurchase(@PathVariable Long itemId) {
         try {
-            transactionService.createTransactionForAuctionEnd(itemId);
-            return ResponseEntity.status(HttpStatus.CREATED).body("거래가 성공적으로 생성되었습니다.");
+            transactionService.createTransactionForImmediatePurchase(itemId);
+            return "redirect:/transactions";  // 즉시구매 후 트랜잭션 목록 페이지로 리디렉션
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return "error";  // 오류가 발생하면 에러 페이지로 이동
         }
     }
 
-    //모든 트랜젝션 조회
-    @GetMapping
-    public ResponseEntity<List<Transaction>> getAllTransactions() {
-        List<Transaction> transactions = transactionService.findAllTransactions();
-        return ResponseEntity.ok(transactions);
+    // 경매 종료 후 트랜잭션 생성
+    @PostMapping("/auction-end/{itemId}")
+    public String createTransactionForAuctionEnd(@PathVariable Long itemId) {
+        try {
+            transactionService.createTransactionForAuctionEnd(itemId);
+            return "redirect:/transactions";
+        } catch (IllegalArgumentException e) {
+            return "error";
+        }
     }
-
-    //ID로 트랜젝션 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
-        return transactionService.findTransactionById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    //트랜젝션 삭제
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
-        transactionService.deleteTransaction(id);
-        return ResponseEntity.noContent().build();
-    }
-
 }
+
+
