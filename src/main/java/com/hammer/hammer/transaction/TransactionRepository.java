@@ -1,6 +1,7 @@
 package com.hammer.hammer.transaction;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 	    List<TransactionStatusDto> findAllTransactionStatus();
 
 	void deleteById(Long id);
+
+	Optional<Transaction> findById(Long id);
 }

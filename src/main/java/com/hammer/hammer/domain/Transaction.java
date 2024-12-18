@@ -52,5 +52,8 @@ public class Transaction {
 
     public void setTransactionDate(LocalDateTime localDateTime) {
     }
+
+    public void setItem(Item item) {
+    }
 }
 

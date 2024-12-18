@@ -13,7 +13,7 @@ import com.hammer.hammer.bid.entity.Bid;
 @Entity
 @Getter
 @Setter
-public class Item {
+public class Item extends com.hammer.hammer.domain.Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
