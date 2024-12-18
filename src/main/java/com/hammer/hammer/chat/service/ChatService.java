@@ -7,8 +7,8 @@ import com.hammer.hammer.chat.repository.CustomMessageRepository;
 import com.hammer.hammer.chat.repository.MessageRepository;
 import com.hammer.hammer.chat.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,23 +17,13 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final CustomMessageRepository customMessageRepository;
-
-    @Autowired
-    public ChatService(ChatRoomRepository chatRoomRepository,
-                       MessageRepository messageRepository,
-                       UserRepository userRepository,
-                       CustomMessageRepository customMessageRepository) {
-        this.chatRoomRepository = chatRoomRepository;
-        this.messageRepository = messageRepository;
-        this.userRepository = userRepository;
-        this.customMessageRepository = customMessageRepository;
-    }
 
     @Transactional
     public ChatRoom findOrCreateChatRoom(String sellerId, String buyerId) {

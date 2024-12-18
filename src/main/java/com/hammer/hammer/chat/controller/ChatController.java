@@ -5,6 +5,7 @@ import com.hammer.hammer.chat.Entity.Message;
 import com.hammer.hammer.chat.Entity.User;
 import com.hammer.hammer.chat.service.ChatService;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,10 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
-
-    @Autowired
-    public ChatController(ChatService chatService) {
-        this.chatService = chatService;
-    }
 
     @MessageMapping("/chat")
     @SendTo("/topic/messages")

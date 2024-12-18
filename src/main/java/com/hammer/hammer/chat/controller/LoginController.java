@@ -2,8 +2,9 @@ package com.hammer.hammer.chat.controller;
 import com.hammer.hammer.chat.Entity.User;
 import com.hammer.hammer.chat.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +13,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class LoginController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
