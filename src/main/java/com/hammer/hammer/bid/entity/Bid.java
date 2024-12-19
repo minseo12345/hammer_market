@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Bids")
+@Table(name = "bids")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

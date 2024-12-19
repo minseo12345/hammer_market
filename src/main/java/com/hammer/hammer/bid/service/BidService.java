@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +53,7 @@ public class BidService {
                     .user(user)
                     .item(item)
                     .bidAmount(requestBidDto.getBidAmount())
-                    .bidTime(requestBidDto.getBidDate())
+                    .bidTime(LocalDateTime.now())
                     .build();
 
 
