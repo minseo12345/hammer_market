@@ -33,8 +33,8 @@ public class UserService {
         return userRepository.save(User.builder()
                 .email(userDto.getEmail())
                 .password(bCryptPasswordEncoder.encode(userDto.getPassword())) // 패스워드 저장시 시큐리티 설정에 등록한 빈을 사용해서 암호화 한 후 저장
-                .userName(userDto.getUserName())
-                .phoneNumber(userDto.getPhoneNumber())
+                .username(userDto.getUsername())
+                .phonenumber(userDto.getPhoneNumber())
                 .role(Role.USER) // 유저 권한 추가 코드
                 .build()).getUserId();
     }

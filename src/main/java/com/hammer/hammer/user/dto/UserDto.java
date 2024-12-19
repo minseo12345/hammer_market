@@ -13,7 +13,7 @@ import lombok.ToString;
 public class UserDto {
     private String email;
     private String password;
-    private String userName;
+    private String username;
     private String phoneNumber;
     private Role role;
 }
