@@ -1,20 +1,14 @@
-package com.hammer.hammer.domain;
+package com.hammer.hammer.user.entity;
 
+import com.hammer.hammer.item.entity.Item;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "Users")
@@ -63,23 +57,17 @@ public class User {
     private LocalDateTime updatedAt;
 
     @PrePersist
-	public void prePersist() {
-	    this.createdAt = LocalDateTime.now();
-	    this.updatedAt = LocalDateTime.now();
-	}
-	
-	@PreUpdate
-	public void preUpdate() {
-	    this.updatedAt = LocalDateTime.now();
-	}
-    // Enum for Role
-    public enum Role {
-        ADMIN, SELLER, BUYER
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
-    
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+    // Enum for Role
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Item> items;
-
-   
 }
-

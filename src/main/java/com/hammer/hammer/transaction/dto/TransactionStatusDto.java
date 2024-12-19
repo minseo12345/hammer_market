@@ -1,4 +1,4 @@
-package com.hammer.hammer.dto;
+package com.hammer.hammer.transaction.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

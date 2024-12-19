@@ -1,5 +1,7 @@
-package com.hammer.hammer.domain;
+package com.hammer.hammer.transaction.entity;
 
+import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

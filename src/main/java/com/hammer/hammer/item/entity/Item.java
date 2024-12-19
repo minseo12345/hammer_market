@@ -1,57 +1,66 @@
 package com.hammer.hammer.item.entity;
 
+import com.hammer.hammer.transaction.entity.Transaction;
+import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import com.hammer.hammer.bid.entity.Bid;
 
 @Entity
+@Table(name = "items")
 @Getter
 @Setter
 public class Item extends com.hammer.hammer.domain.Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT 대응
     @Column(name = "item_id")
-    private Long itemId;
+    private Integer itemId;
 
-    @Column(name = "title")
+
+    @Column(name = "category_id", nullable = false)
+    private Integer categoryId;
+
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "description") 
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "starting_bid")
+    @Column(name = "starting_bid", precision = 10, scale = 2)
     private BigDecimal startingBid;
 
-    @Column(name = "buyNowPrice")
+    @Column(name = "buyNowPrice", precision = 10, scale = 2)
     private BigDecimal buyNowPrice;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private AuctionStatus status;
+    @Enumerated(EnumType.STRING) // ENUM을 문자열로 저장
+    @Column(name = "status", nullable = false)
+    private ItemStatus status;
 
-    @Column(name = "fileUrl")
+    @Column(name = "fileUrl", length = 100, nullable= false)
     private String fileUrl;
 
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-    
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bid> bids; 
 
-    public enum AuctionStatus {
-        ONGOING, BIDDING_END, COMPLETED
+    // ENUM 선언
+    public enum ItemStatus {
+        ONGOING,BIDDING_END,COMPLETED
     }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+    private Transaction transaction;
 }

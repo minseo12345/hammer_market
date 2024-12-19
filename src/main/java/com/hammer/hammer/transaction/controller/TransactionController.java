@@ -1,6 +1,6 @@
 package com.hammer.hammer.transaction.controller;
 
-import com.hammer.hammer.domain.Transaction;
+import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,15 +25,15 @@ public class TransactionController {
     }
 
     // ID로 트랜잭션 조회
-    @GetMapping("/{id}")
-    public String getTransactionById(@PathVariable Long id, Model model) {
-        return transactionService.findTransactionById(id)
-                .map(transaction -> {
-                    model.addAttribute("transaction", transaction);
-                    return "transaction-detail";  // 타임리프 템플릿 이름 반환
-                })
-                .orElse("error");  // 트랜잭션을 찾을 수 없으면 에러 페이지 반환
-    }
+//    @GetMapping("/{id}")        수정
+//    public String getTransactionById(@PathVariable Long id, Model model) {
+//        return transactionService.findTransactionById(id)
+//                .map(transaction -> {
+//                    model.addAttribute("transaction", transaction);
+//                    return "transaction-detail";  // 타임리프 템플릿 이름 반환
+//                })
+//                .orElse("error");  // 트랜잭션을 찾을 수 없으면 에러 페이지 반환
+//    }
 
     // 트랜잭션 삭제
     @DeleteMapping("/{id}")
