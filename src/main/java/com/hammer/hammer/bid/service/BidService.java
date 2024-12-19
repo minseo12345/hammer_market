@@ -69,19 +69,15 @@ public class BidService {
     @Transactional(readOnly = true)
     public Page<ResponseBidByUserDto> getBidsByUser(Long userId, Pageable pageable, String sort) {
 
-        // 정렬 조건을 메서드로 분리
         Sort sortOrder = getSortOrder(sort);
 
-        // 페이지 요청 시 정렬을 포함한 Pageable 객체 생성
         Pageable sortedPageable = getSortedPageable(pageable, sortOrder);
 
-        // 정렬된 페이지 조회
         Page<Bid> bids = bidRepository.findByUser_UserId(userId, sortedPageable)
                 .orElseThrow(() -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다."));
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-        // ResponseBidByUserDto로 변환
         return bids.map(bid -> {
             BigDecimal currentPrice = bidRepository.findHighestBidByItemId(bid.getItem().getItemId())
                     .orElse(BigDecimal.ZERO);
@@ -124,12 +120,11 @@ public class BidService {
      * 정렬 조건 반환 메서드
      */
     private Sort getSortOrder(String sort) {
-        if ("myPrice_asc".equals(sort)) {
+        if ("price_asc".equals(sort)) {
             return Sort.by(Sort.Order.asc("bidAmount"));
-        } else if ("myPrice_desc".equals(sort)) {
+        } else if ("price_desc".equals(sort)) {
             return Sort.by(Sort.Order.desc("bidAmount"));
         }
-        // 기본 내림차순 정렬
         return Sort.by(Sort.Order.desc("bidAmount"));
     }
 
