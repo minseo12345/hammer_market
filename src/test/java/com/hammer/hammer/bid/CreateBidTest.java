@@ -1,6 +1,6 @@
 package com.hammer.hammer.bid;
 
-import com.hammer.hammer.bid.Repository.BidRepository;
+import com.hammer.hammer.bid.repository.BidRepository;
 import com.hammer.hammer.bid.dto.RequestBidDto;
 import com.hammer.hammer.bid.entity.Bid;
 import com.hammer.hammer.bid.exception.BidAmountTooLowException;
@@ -43,7 +43,7 @@ public class CreateBidTest {
     void setUp() {
         // 테스트에 필요한 DTO 초기화
         requestBidDto = new RequestBidDto();
-        requestBidDto.setUserId("1L");
+        requestBidDto.setUserId(1L);
         requestBidDto.setItemId(1L);
         requestBidDto.setBidAmount(new BigDecimal("100"));
         requestBidDto.setBidDate(LocalDateTime.now());
@@ -53,14 +53,14 @@ public class CreateBidTest {
     void saveBid_ShouldSaveBidSuccessfully() {
         // Given
         User user = new User();
-        user.setUserId("1L");
+        user.setUserId(1L);
         Item item = new Item();
         item.setItemId(1L);
 
         // 최고 입찰가
         BigDecimal highestBid = new BigDecimal("50");
 
-        when(userRepository.findById("1L")).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(highestBid));
 
@@ -76,14 +76,14 @@ public class CreateBidTest {
     void saveBidWhenBidAmountIsLow() {
         // Given
         User user = new User();
-        user.setUserId("1L");
+        user.setUserId(1L);
         Item item = new Item();
         item.setItemId(1L);
 
         // 최고 입찰가
         BigDecimal highestBid = new BigDecimal("200");
 
-        when(userRepository.findById("1L")).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(highestBid));
 
@@ -99,12 +99,12 @@ public class CreateBidTest {
     void saveBidWhenUserNotFound() {
         // Given
         RequestBidDto invalidRequestBidDto = new RequestBidDto();
-        invalidRequestBidDto.setUserId("999L"); // 존재하지 않는 사용자 ID
+        invalidRequestBidDto.setUserId(999L); // 존재하지 않는 사용자 ID
         invalidRequestBidDto.setItemId(1L);
         invalidRequestBidDto.setBidAmount(new BigDecimal("100"));
         invalidRequestBidDto.setBidDate(LocalDateTime.now());
 
-        when(userRepository.findById("999L")).thenReturn(Optional.empty());
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
         // When and Then
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
@@ -118,12 +118,12 @@ public class CreateBidTest {
     void saveBidWhenItemNotFound() {
         // Given
         RequestBidDto invalidRequestBidDto = new RequestBidDto();
-        invalidRequestBidDto.setUserId("1L");
+        invalidRequestBidDto.setUserId(1L);
         invalidRequestBidDto.setItemId(999L); // 존재하지 않는 상품 ID
         invalidRequestBidDto.setBidAmount(new BigDecimal("100.00"));
         invalidRequestBidDto.setBidDate(LocalDateTime.now());
 
-        when(userRepository.findById("1L")).thenReturn(Optional.of(new User()));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
         when(itemRepository.findById(999L)).thenReturn(Optional.empty());
 
         // When and Then

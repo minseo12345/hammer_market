@@ -1,6 +1,6 @@
 package com.hammer.hammer.bid;
 
-import com.hammer.hammer.bid.Repository.BidRepository;
+import com.hammer.hammer.bid.repository.BidRepository;
 import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
 import com.hammer.hammer.bid.entity.Bid;
 import com.hammer.hammer.bid.service.BidService;
@@ -54,7 +54,7 @@ public class SelectBidByItemTest {
     void selectAllBidByItem(){
         //Given
         User user = new User();
-        user.setUserId("1");
+        user.setUserId(1L);
 
         Item item = new Item();
         item.setItemId(1L);

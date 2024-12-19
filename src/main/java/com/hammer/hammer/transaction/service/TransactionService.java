@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hammer.hammer.transaction.entity.Transaction;
 
 import com.hammer.hammer.bid.entity.Bid;
-import com.hammer.hammer.bid.Repository.BidRepository;
+import com.hammer.hammer.bid.repository.BidRepository;
 import com.hammer.hammer.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -67,7 +67,7 @@ public class TransactionService {
 //        itemRepository.save(item);
 //    }
     private void createTransaction(Item item) {
-        Bid bid = (Bid) bidRepository.findTopByItemIdOrderByBidAmountDesc(item.getItemId())
+        Bid bid = (Bid) bidRepository.findTopByItem_ItemIdOrderByBidAmountDesc(item.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 입찰을 찾을 수 없습니다. 아이템 ID: " + item.getItemId()));
 
         // 낙찰자 (입찰자) 정보

@@ -16,15 +16,18 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
-    @Column(name = "user_id", nullable = false, length = 50)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", length = 50)
     private Long userId; // 로그인 ID (Primary Key)
 
     //왜래키 설정 -> 수정해야함 (report)
-    @Column(name = "report_id")
-    private Long reportId; // 신고 ID
+//    @Column(name = "report_id")
+//    private Long reportId; // 신고 ID
 
     @Column(name = "username", nullable = false, length = 50)
     private String username; // 사용자 이름

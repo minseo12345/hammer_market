@@ -1,6 +1,6 @@
 package com.hammer.hammer.bid.service;
 
-import com.hammer.hammer.bid.Repository.BidRepository;
+import com.hammer.hammer.bid.repository.BidRepository;
 import com.hammer.hammer.bid.entity.Bid;
 import com.hammer.hammer.bid.dto.RequestBidDto;
 import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
@@ -64,7 +64,7 @@ public class BidService {
      *  사용자 별 입찰 조회
      */
     @Transactional(readOnly = true)
-    public Page<ResponseBidByUserDto> getBidsByUser(String userId, Pageable pageable) {
+    public Page<ResponseBidByUserDto> getBidsByUser(Long userId, Pageable pageable) {
 
        Page<Bid> bids = bidRepository.findByUser_UserIdOrderByBidAmountDesc(userId,pageable).orElseThrow(
                 () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")

@@ -1,6 +1,6 @@
 package com.hammer.hammer.bid;
 
-import com.hammer.hammer.bid.Repository.BidRepository;
+import com.hammer.hammer.bid.repository.BidRepository;
 import com.hammer.hammer.bid.dto.ResponseBidByUserDto;
 import com.hammer.hammer.bid.entity.Bid;
 import com.hammer.hammer.bid.service.BidService;
@@ -51,7 +51,7 @@ public class SelectBidByUserTest {
 
             // Given
             User user = new User();
-            user.setUserId("1");
+            user.setUserId(1L);
 
             Item item = new Item();
             item.setItemId(1L);
@@ -69,7 +69,7 @@ public class SelectBidByUserTest {
             Page<Bid> mockBids = new PageImpl<>(List.of(bid));
             Pageable pageable = PageRequest.of(0, 10, Sort.by("bidAmount").descending());
 
-            when(bidRepository.findByUser_UserIdOrderByBidAmountDesc("1", pageable)).thenReturn(Optional.of(mockBids));
+            when(bidRepository.findByUser_UserIdOrderByBidAmountDesc(1L, pageable)).thenReturn(Optional.of(mockBids));
             when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(BigDecimal.valueOf(200000)));
 
             // When
@@ -95,7 +95,7 @@ public class SelectBidByUserTest {
 
         // When & Then
         assertThrows(IllegalStateException.class, () -> {
-            bidService.getBidsByUser("invalidUserId", pageable);
+            bidService.getBidsByUser(999L, pageable);
         });
     }
 

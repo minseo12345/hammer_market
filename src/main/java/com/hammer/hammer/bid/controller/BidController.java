@@ -51,7 +51,7 @@ public class BidController {
      * 사용자 별 입찰 내역 조회
      */
     @GetMapping("/user/{userId}")
-    public String getBidsByUser(@PathVariable String userId,
+    public String getBidsByUser(@PathVariable Long userId,
                                 Model model,
                                 @PageableDefault(page = 0, size = 10) Pageable pageable) {
         if (userId == null) {

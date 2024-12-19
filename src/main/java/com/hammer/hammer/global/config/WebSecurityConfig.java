@@ -1,5 +1,8 @@
 package com.hammer.hammer.global.config;
 
+import com.hammer.hammer.global.exception.AccessDeniedHandlerImpl;
+import com.hammer.hammer.global.exception.AuthenticationEntryPointImpl;
+import com.hammer.hammer.global.jwt.filter.JwtFilter;
 import com.hammer.hammer.user.entity.Role;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
@@ -95,16 +98,16 @@ public class WebSecurityConfig {
             User adminUser = User.builder()
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("123"))
-                    .userName("관리자")
-                    .phoneNumber("01012341234")
+                    .username("관리자")
+                    .phonenumber("01012341234")
                     .role(Role.ADMIN)
                     .build();
             // 테스트용 일반 사용자 계정
             User normalUser = User.builder()
                     .email("user@test.com")
                     .password(passwordEncoder.encode("123"))
-                    .userName("테스트유저")
-                    .phoneNumber("01012341233")
+                    .username("테스트유저")
+                    .phonenumber("01012341233")
                     .role(Role.USER)
                     .build();
 
