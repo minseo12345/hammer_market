@@ -1,11 +1,9 @@
 package com.hammer.hammer.global.config;
 
-import com.hammer.hammer.global.exception.AccessDeniedHandlerImpl;
-import com.hammer.hammer.global.exception.AuthenticationEntryPointImpl;
-import com.hammer.hammer.global.jwt.filter.JwtFilter;
 import com.hammer.hammer.user.entity.Role;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
+import com.hammer.hammer.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
