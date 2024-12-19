@@ -17,7 +17,7 @@ public class MongoIndexConfig {
         IndexOperations chatRoomIndexOps = mongoTemplate.indexOps("chatRoom");
         chatRoomIndexOps.ensureIndex(
                 new Index().on("updatedAt", org.springframework.data.domain.Sort.Direction.ASC)
-                        .expire(7776000L) // 30일
+                        .expire(7776000L) // 90일
         );
     }
 }
