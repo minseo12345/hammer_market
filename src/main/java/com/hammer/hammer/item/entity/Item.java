@@ -1,6 +1,6 @@
 package com.hammer.hammer.item.entity;
 
-import com.hammer.hammer.transaction.entity.Transaction;
+//import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,11 +18,11 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT 대응
     @Column(name = "item_id")
-    private Integer itemId;
+    private Long itemId;
 
 
     @Column(name = "category_id", nullable = false)
-    private Integer categoryId;
+    private Long categoryId;
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;
@@ -61,6 +61,6 @@ public class Item {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
-    private Transaction transaction;
+//    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+//    private Transaction transaction;
 }

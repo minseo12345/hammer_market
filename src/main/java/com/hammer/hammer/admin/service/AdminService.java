@@ -1,7 +1,9 @@
 package com.hammer.hammer.admin.service;
 
-import com.hammer.hammer.transaction.repository.TransactionRepository;
+//import com.hammer.hammer.transaction.repository.TransactionRepository;
+//import com.hammer.hammer.transaction.dto.TransactionStatusDto;
 import com.hammer.hammer.transaction.dto.TransactionStatusDto;
+import com.hammer.hammer.transaction.repository.TransactionRepository;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +24,7 @@ public class AdminService {
         return userRepository.findAll();
     }
 
-    public List<TransactionStatusDto> getTransactionStatuses() {
-        return transactionRepository.findAllTransactionStatus();
-    }
-
-
+//    public List<TransactionStatusDto> getTransactionStatuses() {
+//        return transactionRepository.findAllTransactionStatus();
+//    }
 }
