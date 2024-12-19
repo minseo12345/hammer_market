@@ -1,11 +1,12 @@
 package com.hammer.hammer.bid.service;
 
-import com.hammer.hammer.bid.repository.BidRepository;
+
 import com.hammer.hammer.bid.entity.Bid;
 import com.hammer.hammer.bid.dto.RequestBidDto;
 import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
 import com.hammer.hammer.bid.dto.ResponseBidByUserDto;
 import com.hammer.hammer.bid.exception.BidAmountTooLowException;
+import com.hammer.hammer.bid.repository.BidRepository;
 import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.repository.ItemRepository;
 import com.hammer.hammer.user.entity.User;
@@ -13,7 +14,9 @@ import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,19 +67,20 @@ public class BidService {
      *  사용자 별 입찰 조회
      */
     @Transactional(readOnly = true)
-    public Page<ResponseBidByUserDto> getBidsByUser(Long userId, Pageable pageable) {
+    public Page<ResponseBidByUserDto> getBidsByUser(Long userId, Pageable pageable, String sort) {
 
-       Page<Bid> bids = bidRepository.findByUser_UserIdOrderByBidAmountDesc(userId,pageable).orElseThrow(
-                () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
-        );
+        Sort sortOrder = getSortOrder(sort);
+
+        Pageable sortedPageable = getSortedPageable(pageable, sortOrder);
+
+        Page<Bid> bids = bidRepository.findByUser_UserId(userId, sortedPageable)
+                .orElseThrow(() -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다."));
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
         return bids.map(bid -> {
-
             BigDecimal currentPrice = bidRepository.findHighestBidByItemId(bid.getItem().getItemId())
                     .orElse(BigDecimal.ZERO);
-
 
             String formattedMyPrice = decimalFormat.format(bid.getBidAmount()) + "원";
             String formattedCurrentPrice = decimalFormat.format(currentPrice) + " 원";
@@ -110,6 +114,26 @@ public class BidService {
                     .bidAmount(formattedBidAmount)
                     .build();
         });
+    }
+
+    /**
+     * 정렬 조건 반환 메서드
+     */
+    private Sort getSortOrder(String sort) {
+        if ("price_asc".equals(sort)) {
+            return Sort.by(Sort.Order.asc("bidAmount"));
+        } else if ("price_desc".equals(sort)) {
+            return Sort.by(Sort.Order.desc("bidAmount"));
+        }
+        return Sort.by(Sort.Order.desc("bidAmount"));
+    }
+
+
+    /**
+     * 페이지네이션 처리 메서드
+     */
+    private Pageable getSortedPageable(Pageable pageable, Sort sortOrder) {
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
     }
 
 
