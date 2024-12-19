@@ -78,7 +78,7 @@ public class BidService {
                     .orElse(BigDecimal.ZERO);
 
 
-            String formattedMyPrice = decimalFormat.format(bid.getBidAmount()) + " 원";
+            String formattedMyPrice = decimalFormat.format(bid.getBidAmount()) + "원";
             String formattedCurrentPrice = decimalFormat.format(currentPrice) + " 원";
 
             return ResponseBidByUserDto.builder()
@@ -101,10 +101,16 @@ public class BidService {
                 () -> new IllegalStateException("상품 데이터를 찾을 수 없습니다.")
         );
 
-        return bids.map(bid -> ResponseBidByItemDto.builder()
-                .userId(bid.getUser().getUserId())
-                .bidAmount(bid.getBidAmount())
-                .build());
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+
+        return bids.map(bid -> {
+            String formattedBidAmount = decimalFormat.format(bid.getBidAmount()) + "원";
+            return ResponseBidByItemDto.builder()
+                    .userId(bid.getUser().getUserId())
+                    .bidAmount(formattedBidAmount)
+                    .build();
+        });
     }
+
 
 }

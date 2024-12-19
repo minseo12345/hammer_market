@@ -60,7 +60,6 @@ public class CreateBidTest {
         // 최고 입찰가
         BigDecimal highestBid = new BigDecimal("50");
 
-        // Mocking 레포지토리
         when(userRepository.findById("1L")).thenReturn(Optional.of(user));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(highestBid));
