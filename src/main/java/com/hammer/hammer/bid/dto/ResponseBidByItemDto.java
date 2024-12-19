@@ -13,5 +13,5 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ResponseBidByItemDto {
     private String userId;
-    private BigDecimal bidAmount;
+    private String bidAmount;
 }
