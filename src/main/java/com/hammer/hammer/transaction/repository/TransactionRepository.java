@@ -1,12 +1,12 @@
-package com.hammer.hammer.transaction;
+package com.hammer.hammer.transaction.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.hammer.hammer.domain.Transaction;
-import com.hammer.hammer.dto.TransactionStatusDto;
+import com.hammer.hammer.transaction.entity.Transaction;
+import com.hammer.hammer.transaction.dto.TransactionStatusDto;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Integer>{
 	

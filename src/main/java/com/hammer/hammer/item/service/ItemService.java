@@ -44,12 +44,12 @@ public class ItemService {
         }
 
         item.setStartTime(LocalDateTime.now());
-        item.setStatus(Item.AuctionStatus.ONGOING);
+        item.setStatus(Item.ItemStatus.ONGOING);
 
         return itemRepository.save(item);
     }
 
-    public Item updateAuctionStatus(Long itemId, Item.AuctionStatus newStatus) {
+    public Item updateAuctionStatus(Long itemId, Item.ItemStatus newStatus) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
         item.setStatus(newStatus);

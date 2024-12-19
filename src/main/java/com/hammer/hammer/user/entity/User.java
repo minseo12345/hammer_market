@@ -1,82 +1,73 @@
 package com.hammer.hammer.user.entity;
 
+import com.hammer.hammer.item.entity.Item;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "Users")
+//User는 예약어가 있어서 users라고 해야함
 @Getter
-@ToString
-@Builder
-public class User implements UserDetails {
+@Setter
+public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;  // 유저 ID, 기본키
+    @Column(name = "user_id", nullable = false, length = 50)
+    private String userId; // 로그인 ID (Primary Key)
 
-    @Column(nullable = false)
-    private String password;  // 비밀번호 (암호화된 값)
+    //왜래키 설정 -> 수정해야함 (report)
+    @Column(name = "report_id")
+    private Integer reportId; // 신고 ID
 
-    @Column(nullable = false)
-    private String userName;  // 유저 이름
+    @Column(name = "username", nullable = false, length = 50)
+    private String username; // 사용자 이름
 
-    @Column(nullable = false, unique = true)
-    private String phoneNumber;  // 전화번호 (유일해야 함)
+    @Column(name = "email", nullable = false, length = 100)
+    private String email; // 이메일
 
-    @Column(nullable = false, unique = true)
-    private String email;  // 이메일 (유일해야 함)
+    @Column(name = "password", nullable = false, length = 255)
+    private String password; // 비밀번호
 
-    private Instant createdAt;  // 가입일자
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role; // 사용자 역할 (admin, seller, buyer)
 
-    private Instant updatedAt;  // 수정일자
+    @Column(name = "loginLock")
+    private boolean loginLock = false; // 로그인 잠금 여부
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean loginLock = false;  // 로그인 잠금 여부
+    @Column(name = "loginCnt")
+    private int loginCnt = 0; // 로그인 시도 횟수
 
-    @Column(nullable = false)
-    @Builder.Default
-    private int loginCnt = 0;       // 로그인 시도 횟수
+    @Column(name = "active")
+    private boolean active = true; // 활성화 상태
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean active = true;  // 유저 활성화 상태
+    @Column(name = "lastLogin")
+    private LocalDateTime lastLogin; // 마지막 로그인 시간
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)  // Enum 값을 문자열로 저장
-    @Builder.Default
-    private Role role = Role.USER;  // 권한
+    @Column(name = "created_at", updatable = false, insertable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", insertable = false)
+    private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onCreate() {
-        createdAt = Instant.now();
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    public void onUpdate() {
-        updatedAt = Instant.now();
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
+    // Enum for Role
 
-    @Override // 권한 반환
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getValue()));
-    }
-
-    @Override // 사용자의 패스워드를 반환
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override // 사용자의 id를 반환(고유 값)
-    public String getUsername() {
-        return this.email;
-    }
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Item> items;
 }
