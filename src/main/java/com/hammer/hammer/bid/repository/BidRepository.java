@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-@Repository
 public interface BidRepository extends JpaRepository<Bid, Long> {
     Optional<Page<Bid>> findByUser_UserIdOrderByBidAmountDesc(Long userId, Pageable pageable);
     Optional<Page<Bid>> findByItem_ItemIdOrderByBidAmountDesc(Long itemId, Pageable pageable);
