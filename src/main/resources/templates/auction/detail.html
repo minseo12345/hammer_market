@@ -7,14 +7,21 @@
 </head>
 <body>
     <h1>경매 상세 정보</h1>
-    <h2 th:text="${item.title}">상품 제목</h2>
-    <p><strong>설명:</strong> <span th:text="${item.description}"></span></p>
-    <p><strong>시작가:</strong> <span th:text="${item.startingBid} + ' 원'"></span></p>
-    <p><strong>즉시 구매가:</strong>
-        <span th:text="${item.buyNowPrice != null ? item.buyNowPrice + ' 원' : '없음'}"></span>
-    </p>
-    <p><strong>경매 상태:</strong> <span th:text="${item.status}"></span></p>
-    <img th:src="${item.fileUrl}" alt="상품 이미지" style="max-width: 300px;">
-    <button onclick="window.location.href='/items/list'">목록으로</button>
+    <div class="details">
+        <h2 th:text="${item.title}">상품 제목</h2>
+        <p><strong>설명:</strong> <span th:text="${item.description}">상품 설명</span></p>
+        <p><strong>시작가:</strong> <span th:text="${item.startingBid} + ' 원'">시작가</span></p>
+        <p><strong>즉시 구매가:</strong> 
+            <span th:text="${item.buyNowPrice != null ? item.buyNowPrice + ' 원' : '없음'}">즉시 구매가</span>
+        </p>
+        <p><strong>현재 최고 입찰가:</strong> 
+            <span th:text="${highestBid} + ' 원'">현재 최고 입찰가</span>
+        </p>
+        <p><strong>경매 상태:</strong> <span th:text="${item.status}">경매 상태</span></p>
+        <img th:src="${item.fileUrl}" alt="상품 이미지">
+    </div>
+    <div class="button-group">
+        <button onclick="window.location.href='/items/list'">목록으로</button>
+    </div>
 </body>
 </html>

@@ -54,20 +54,22 @@ public class BidController {
     public String getBidsByUser(@PathVariable Long userId,
                                 Model model,
                                 @PageableDefault(page = 0, size = 10) Pageable pageable,
-                                @RequestParam(defaultValue = "") String sort) {
+                                @RequestParam(defaultValue = "") String sort,
+                                @RequestParam(defaultValue = "") String itemName) {
+
         if (userId == null) {
             model.addAttribute("userError", "사용자가 없습니다.");
         }
 
-        Page<ResponseBidByUserDto> bidsByUser = bidService.getBidsByUser(userId,pageable,sort);
+        Page<ResponseBidByUserDto> bidsByUser = bidService.getBidsByUser(userId,pageable,sort,itemName);
         model.addAttribute("bids",bidsByUser);
         model.addAttribute("currentPage", pageable.getPageNumber());
         model.addAttribute("totalPages", bidsByUser.getTotalPages());
         model.addAttribute("data-user-id",userId);
         model.addAttribute("sortParam", sort);
+        model.addAttribute("itemName", itemName);
 
         return "bid/bidsByUser";
-
     }
 
     /**

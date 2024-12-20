@@ -18,5 +18,5 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     Optional<BigDecimal> findHighestBidByItemId(@Param("itemId") Long itemId);
     Optional<Object> findTopByItem_ItemIdOrderByBidAmountDesc(Long itemId);
     Optional<Page<Bid>> findByUser_UserId(Long userId, Pageable pageable);
-
+    Optional<Page<Bid>> findByItem_TitleContainingIgnoreCase(String itemName, Pageable pageable);
 }
