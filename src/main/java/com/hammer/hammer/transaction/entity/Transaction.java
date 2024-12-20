@@ -22,8 +22,8 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction_id", nullable = false)  // `nullable` 설정을 통해 필드 강제 설정
-    private Long transactionId; // pk
+    @Column(name = "transaction_id", nullable = false)
+    private Long transactionId;
 
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
@@ -35,24 +35,12 @@ public class Transaction {
 
     @OneToOne
     @JoinColumn(name = "item_id", nullable = false)
-    private final Item item; //1:1 관계로 수정
+    private final Item item;  // 1:1 관계
 
-    @Column(name = "final_price", precision = 38, scale = 2, nullable = true)  // 금액 설정
+    @Column(name = "final_price", precision = 38, scale = 2)
     private BigDecimal finalPrice;
 
-    @Column(name = "transaction_date", nullable = true)  // 거래 날짜
+    @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
-
-
-    public void setBuyer(User user) {
-
-    }
-
-    public void setSeller(User user) {
-
-    }
-
-    public void setTransactionDate(LocalDateTime localDateTime) {
-    }
 }
 

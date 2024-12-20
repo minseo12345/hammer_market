@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction List</title>
+</head>
+<body>
+<h1>Transaction List</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Item</th>
+        <th>Buyer</th>
+        <th>Seller</th>
+        <th>Price</th>
+    </tr>
+    <tr th:each="transaction : ${transactions}">
+        <td th:text="${transaction.transactionId}"></td>
+        <td th:text="${transaction.item.title}"></td>
+        <td th:text="${transaction.buyer.username}"></td>
+        <td th:text="${transaction.seller.username}"></td>
+        <td th:text="${transaction.finalPrice}"></td>
+    </tr>
+</table>
+</body>
+</html>
+
