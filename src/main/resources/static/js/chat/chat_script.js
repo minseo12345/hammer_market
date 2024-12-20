@@ -48,8 +48,8 @@ function loadChatRooms() {
 // 채팅방 요소 생성
 function createChatRoomElement(room) {
     const li = document.createElement('li');
-    li.textContent = currentUser.id === room.sellerId ? room.sellerTitle : room.buyerTitle;
-    li.dataset.roomId = room.id;
+    li.textContent = currentUser.userId === room.sellerId ? room.sellerTitle : room.buyerTitle;
+    li.dataset.roomId = room.userId;
 
     // UnreadCount 표시용 요소 추가
     const unreadSpan = document.createElement('span');
@@ -62,14 +62,14 @@ function createChatRoomElement(room) {
     li.onclick = () => enterChatRoom(room);
 
     // 채팅방이 판매자 관련인지 구매자 관련인지 구분
-    if (currentUser.id === room.sellerId) {
+    if (currentUser.userId === room.sellerId) {
         sellerRoomsEl.appendChild(li);
-    } else if (currentUser.id === room.buyerId) {
+    } else if (currentUser.userId === room.buyerId) {
         buyerRoomsEl.appendChild(li);
     }
 
     // 초기 UnreadCount 불러오기
-    fetch(`/chat/chatrooms/${room.id}/unreadCount?userId=${currentUser.id}`)
+    fetch(`/chat/chatrooms/${room.id}/unreadCount?userId=${currentUser.userId}`)
         .then((res) => res.json())
         .then((unreadCount) => {
             updateUnreadUI(li, unreadCount);
@@ -85,7 +85,7 @@ function updateUnreadUI(roomElement, unreadCount) {
 function updateUnreadCount(chatRoomId) {
     const roomElement = document.querySelector(`[data-room-id="${chatRoomId}"]`);
     if (roomElement) {
-        fetch(`/chat/chatrooms/${chatRoomId}/unreadCount?userId=${currentUser.id}`)
+        fetch(`/chat/chatrooms/${chatRoomId}/unreadCount?userId=${currentUseruser}`)
             .then((res) => res.json())
             .then((unreadCount) => {
                 updateUnreadUI(roomElement, unreadCount);
@@ -111,13 +111,13 @@ function fetchUsers() {
 // 채팅방 입장
 function enterChatRoom(room) {
     currentChatRoomId = room.id;
-    chatRoomTitleEl.textContent = currentUser.id === room.sellerId
+    chatRoomTitleEl.textContent = currentUser.userId === room.sellerId
         ? `Title: ${room.sellerTitle}`
         : `Title: ${room.buyerTitle}`;
     messagesEl.innerHTML = ''; // 기존 메시지 초기화
 
     // 읽지 않은 메시지를 읽은 상태로 표시
-    fetch(`/chat/${room.id}/read?userId=${currentUser.id}`, { method: 'POST' })
+    fetch(`/chat/${room.id}/read?userId=${currentUser.userId}`, { method: 'POST' })
         .then(() => updateUnreadCount(room.id)); // UnreadCount 초기화
 
     fetch(`/chat/${room.id}`)
@@ -129,7 +129,7 @@ function enterChatRoom(room) {
 
 // 유저 선택 후 채팅방 생성
 function selectUser(user) {
-    if (user.id === currentUser.id) {
+    if (user.userId === currentUser.userId) {
         alert("You can't chat with yourself!");
         return;
     }
@@ -139,8 +139,8 @@ function selectUser(user) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            buyerId: currentUser.id,
-            sellerId: user.id,
+            buyerId: currentUser.userId,
+            sellerId: user.userId,
         }),
     })
         .then((chatRoom) => {
@@ -154,7 +154,7 @@ function selectUser(user) {
 function addMessage(senderId, content) {
     const div = createMessageElement(senderId, content);
     messagesEl.appendChild(div);
-    fetch(`/chat/${currentChatRoomId}/read?userId=${currentUser.id}`, { method: 'POST' })
+    fetch(`/chat/${currentChatRoomId}/read?userId=${currentUser.userId}`, { method: 'POST' })
         .then(() => console.log("message add"));
     messagesEl.scrollTop = messagesEl.scrollHeight; // 스크롤 하단으로 이동
 }
@@ -164,7 +164,7 @@ function createMessageElement(senderId, content) {
     const div = document.createElement('div');
     div.textContent = content;
     // CSS 클래스 추가
-    if (senderId === currentUser.id) {
+    if (senderId === currentUser.userId) {
         div.classList.add('message', 'message-sent');
     } else {
         div.classList.add('message', 'message-received');
@@ -178,7 +178,7 @@ sendMessageBtn.onclick = () => {
     if (content && currentChatRoomId) {
         const message = {
             chatRoomId: currentChatRoomId,
-            senderId: currentUser.id,
+            senderId: currentUser.userId,
             content: content,
         };
         stompClient.send("/app/chat", {}, JSON.stringify(message));
@@ -188,7 +188,7 @@ sendMessageBtn.onclick = () => {
 
 // 로그인 및 초기화
 function login() {
-    fetch('/api/session-user')
+    fetch('/api/currentUser')
         .then((response) => {
             if (!response.ok) {
                 throw new Error('활성화된 세션이나 로그인된 유저가 없습니다.');

@@ -2,22 +2,20 @@ package com.hammer.hammer.chat.unitTest;
 
 import com.hammer.hammer.chat.entity.ChatRoom;
 import com.hammer.hammer.chat.entity.Message;
-
 import com.hammer.hammer.chat.repository.ChatRoomRepository;
 import com.hammer.hammer.chat.repository.MessageRepository;
-
 import com.hammer.hammer.chat.service.ChatService;
-import com.hammer.hammer.user.entity.User;
-import com.hammer.hammer.user.repository.UserRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+
 
 @SpringBootTest
 public class ChatServiceTest {
@@ -31,32 +29,18 @@ public class ChatServiceTest {
     @Autowired
     private MessageRepository messageRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private User seller;
-    private User buyer;
+    private Long sellerId;
+    private Long buyerId;
 
     @BeforeEach
     void setUp() {
-        seller = User.builder()
-                .username("seller1")
-                .password("1234")
-                .build();
-        buyer = User.builder()
-                .username("buyer1")
-                .password("1234")
-                .build();
-
-        userRepository.save(seller);
-        userRepository.save(buyer);
-
+        sellerId = 1L;
+        buyerId = 2L;
 
     }
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAll();
         chatRoomRepository.deleteAll();
         messageRepository.deleteAll();
     }
@@ -64,8 +48,7 @@ public class ChatServiceTest {
     @Test
     void testFindOrCreateChatRoom() {
         // Given
-        Long sellerId = seller.getUserId();
-        Long buyerId = buyer.getUserId();
+
 
         // When
         ChatRoom createChatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);//만들어진 채팅방
@@ -89,15 +72,15 @@ public class ChatServiceTest {
     @Test
     void testGetMessagesByChatRoom() {
         // Given
-        ChatRoom chatRoom = chatService.findOrCreateChatRoom(seller.getUserId(), buyer.getUserId());
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
         Message message1 = Message.builder()
                 .chatRoomId(chatRoom.getId())
-                .senderId(buyer.getUserId())
+                .senderId(buyerId)
                 .content("hello")
                 .build();
         Message message2 = Message.builder()
                 .chatRoomId(chatRoom.getId())
-                .senderId(seller.getUserId())
+                .senderId(sellerId)
                 .content("nice to meet you")
                 .build();
         messageRepository.save(message1);
@@ -117,13 +100,13 @@ public class ChatServiceTest {
     @Test
     void testSaveMessage() {
         // Given
-        ChatRoom chatRoom = chatService.findOrCreateChatRoom(seller.getUserId(), buyer.getUserId());
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
         String content1 = "New Message1";
         String content2 = "New Message2";
 
         // When
-        Message savedMessage1 = chatService.saveMessage(chatRoom.getId(), seller.getUserId(), content1);
-        Message savedMessage2 = chatService.saveMessage(chatRoom.getId(), buyer.getUserId(), content2);
+        Message savedMessage1 = chatService.saveMessage(chatRoom.getId(), sellerId, content1);
+        Message savedMessage2 = chatService.saveMessage(chatRoom.getId(), buyerId, content2);
 
         // Then
         assertNotNull(savedMessage1);
@@ -144,37 +127,37 @@ public class ChatServiceTest {
     @Test
     void testGetChatRooms() {
         // Given
-        chatService.findOrCreateChatRoom(seller.getUserId(), buyer.getUserId());
-        chatService.findOrCreateChatRoom(buyer.getUserId(), seller.getUserId());
+        chatService.findOrCreateChatRoom(sellerId, buyerId);
+        chatService.findOrCreateChatRoom(buyerId, sellerId);
         // When
-        List<ChatRoom> chatRooms = chatService.getChatRooms(seller.getUserId());
+        List<ChatRoom> chatRooms = chatService.getChatRooms(sellerId);
 
         // Then
         assertNotNull(chatRooms);
         assertFalse(chatRooms.isEmpty());
         assertEquals(2, chatRooms.size());
-        assertEquals(seller.getUserId(), chatRooms.get(0).getSellerId());
-        assertEquals(seller.getUserId(), chatRooms.get(1).getBuyerId());
+        assertEquals(sellerId, chatRooms.get(0).getSellerId());
+        assertEquals(sellerId, chatRooms.get(1).getBuyerId());
     }
 
     @Test
     void testGetUnreadCount() {
         // Given
-        ChatRoom chatRoom = chatService.findOrCreateChatRoom(seller.getUserId(), buyer.getUserId());
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
         Message unreadMessage1 = Message.builder()
                 .chatRoomId(chatRoom.getId())
-                .senderId(seller.getUserId())
+                .senderId(sellerId)
                 .content("hello")
                 .build();
         Message unreadMessage2 = Message.builder()
                 .chatRoomId(chatRoom.getId())
-                .senderId(seller.getUserId())
+                .senderId(sellerId)
                 .content("hello2")
                 .build();
         messageRepository.save(unreadMessage1);
         messageRepository.save(unreadMessage2);
         // When
-        int unreadCount = chatService.getUnreadCount(chatRoom.getId(), buyer.getUserId());
+        int unreadCount = chatService.getUnreadCount(chatRoom.getId(), buyerId);
 
         // Then
         assertEquals(2, unreadCount);
@@ -183,15 +166,15 @@ public class ChatServiceTest {
     @Test
     void testMarkMessagesAsRead() {
         // Given
-        ChatRoom chatRoom = chatService.findOrCreateChatRoom(seller.getUserId(), buyer.getUserId());
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
         Message unreadMessage1 = Message.builder()
                 .chatRoomId(chatRoom.getId())
-                .senderId(buyer.getUserId())
+                .senderId(buyerId)
                 .content("hello")
                 .build();
         Message unreadMessage2 = Message.builder()
                 .chatRoomId(chatRoom.getId())
-                .senderId(buyer.getUserId())
+                .senderId(buyerId)
                 .content("hello2")
                 .build();
 
@@ -199,10 +182,62 @@ public class ChatServiceTest {
         messageRepository.save(unreadMessage2);
 
         // When
-        chatService.markMessagesAsRead(chatRoom.getId(), seller.getUserId());
+        chatService.markMessagesAsRead(chatRoom.getId(), sellerId);
 
         // Then
         List<Message> messages = messageRepository.findByChatRoomId(chatRoom.getId());
         assertTrue(messages.stream().allMatch(Message::isReadStatus));
+    }
+    @Test
+    void testAutoDeletionAfter10Seconds() throws InterruptedException {
+        // Given
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
+        Message message = Message.builder()
+                .chatRoomId(chatRoom.getId())
+                .senderId(sellerId)
+                .content("Test message")
+                .build();
+        messageRepository.save(message);
+
+        // Ensure initial persistence
+        assertNotNull(chatRoomRepository.findById(chatRoom.getId()));
+        assertNotNull(messageRepository.findById(message.getId()));
+
+        try {
+            Thread.sleep(30000); // 30초 동안 멈춤
+        } catch (InterruptedException e) {
+            e.printStackTrace(); // 인터럽트 예외 처리
+        }
+
+        // When
+        ChatRoom deletedChatRoom = chatRoomRepository.findById(chatRoom.getId()).orElse(null);
+        Message deletedMessage = messageRepository.findById(message.getId()).orElse(null);
+
+        // Then
+        assertNull(deletedChatRoom, "ChatRoom should be deleted after 10 seconds");
+        assertNull(deletedMessage, "Message should be deleted after 10 seconds");
+    }
+
+    @Test//test를 위해 10초로 설정 이후에 30일로 변경할 예정
+    void testChatRoomUpdatedAtOnMessageSend() throws InterruptedException {
+        // Given
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
+        assertNotNull(chatRoom);
+        long initialUpdatedAt = chatRoom.getUpdatedAt().getSecond(); // 초기 updatedAt 시간 저장
+
+        // 잠시 대기하여 updatedAt의 시간 차이를 확인할 수 있도록 함
+        Thread.sleep(1000); // 1초 대기
+
+        // When: 새로운 메시지 전송
+        Message message = chatService.saveMessage(chatRoom.getId(), sellerId, "Test Message");
+        assertNotNull(message);
+
+        // Then: ChatRoom의 updatedAt 필드가 최신화되었는지 확인
+        ChatRoom updatedChatRoom = chatRoomRepository.findById(chatRoom.getId()).orElse(null);
+        assertNotNull(updatedChatRoom);
+
+        long updatedAtAfterMessage = updatedChatRoom.getUpdatedAt().getSecond();
+        assertTrue(updatedAtAfterMessage > initialUpdatedAt, "updatedAt이 최신화되지 않았습니다.");
+
     }
 }

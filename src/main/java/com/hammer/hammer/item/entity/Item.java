@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "items")
 @Getter
 @Setter
-public class Item extends com.hammer.hammer.domain.Item {
+public class Item{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT 대응

@@ -49,6 +49,7 @@ public class WebSecurityConfig {
                                 "/", "/login", "/login/**",
                                 "/signup", "/user",
                                 "/jwt-login",
+                                "/chat","/api/**","/chat/**","/topic/messages","/ws/**","/app/chat","/ws",
                                 "/error",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()  // 로그인 API는 인증 없이 접근 가능
@@ -121,4 +122,4 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
 
     }
-    }
+}
