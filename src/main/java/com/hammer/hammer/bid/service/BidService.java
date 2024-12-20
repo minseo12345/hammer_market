@@ -136,5 +136,8 @@ public class BidService {
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
     }
 
-
+    //최고 입찰금액 조회
+    public BigDecimal getHighestBidAmount(Long itemId) {
+        return bidRepository.findHighestBidByItemId(itemId).orElse(BigDecimal.ZERO);
+    } 
 }
