@@ -94,7 +94,7 @@ public class TransactionService {
     @Transactional
     public void createTransactionForAuctionEnd(Long itemId) {
         // item 조회
-        Item item = (Item) itemRepository.findById(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이템을 찾을 수 없습니다. 아이템 ID: " + itemId));
 
         // 경매 종료 시점 검증

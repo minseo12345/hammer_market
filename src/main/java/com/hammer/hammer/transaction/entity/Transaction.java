@@ -37,10 +37,10 @@ public class Transaction {
     @JoinColumn(name = "item_id", nullable = false)
     private final Item item;  // 1:1 관계
 
-    @Column(name = "final_price", precision = 38, scale = 2, nullable = true)
+    @Column(name = "final_price", precision = 38, scale = 2)
     private BigDecimal finalPrice;
 
-    @Column(name = "transaction_date", nullable = true)
+    @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
 }
 
