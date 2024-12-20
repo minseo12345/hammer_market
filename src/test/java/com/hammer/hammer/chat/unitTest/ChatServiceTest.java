@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+
 
 @SpringBootTest
 public class ChatServiceTest {
@@ -28,12 +31,12 @@ public class ChatServiceTest {
 
     private Long sellerId;
     private Long buyerId;
-    private Long buyerId2;
+
     @BeforeEach
     void setUp() {
         sellerId = 1L;
         buyerId = 2L;
-        buyerId2 = 3L;
+
     }
 
     @AfterEach
@@ -184,5 +187,57 @@ public class ChatServiceTest {
         // Then
         List<Message> messages = messageRepository.findByChatRoomId(chatRoom.getId());
         assertTrue(messages.stream().allMatch(Message::isReadStatus));
+    }
+    @Test
+    void testAutoDeletionAfter10Seconds() throws InterruptedException {
+        // Given
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
+        Message message = Message.builder()
+                .chatRoomId(chatRoom.getId())
+                .senderId(sellerId)
+                .content("Test message")
+                .build();
+        messageRepository.save(message);
+
+        // Ensure initial persistence
+        assertNotNull(chatRoomRepository.findById(chatRoom.getId()));
+        assertNotNull(messageRepository.findById(message.getId()));
+
+        try {
+            Thread.sleep(30000); // 30초 동안 멈춤
+        } catch (InterruptedException e) {
+            e.printStackTrace(); // 인터럽트 예외 처리
+        }
+
+        // When
+        ChatRoom deletedChatRoom = chatRoomRepository.findById(chatRoom.getId()).orElse(null);
+        Message deletedMessage = messageRepository.findById(message.getId()).orElse(null);
+
+        // Then
+        assertNull(deletedChatRoom, "ChatRoom should be deleted after 10 seconds");
+        assertNull(deletedMessage, "Message should be deleted after 10 seconds");
+    }
+
+    @Test//test를 위해 10초로 설정 이후에 30일로 변경할 예정
+    void testChatRoomUpdatedAtOnMessageSend() throws InterruptedException {
+        // Given
+        ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
+        assertNotNull(chatRoom);
+        long initialUpdatedAt = chatRoom.getUpdatedAt().getSecond(); // 초기 updatedAt 시간 저장
+
+        // 잠시 대기하여 updatedAt의 시간 차이를 확인할 수 있도록 함
+        Thread.sleep(1000); // 1초 대기
+
+        // When: 새로운 메시지 전송
+        Message message = chatService.saveMessage(chatRoom.getId(), sellerId, "Test Message");
+        assertNotNull(message);
+
+        // Then: ChatRoom의 updatedAt 필드가 최신화되었는지 확인
+        ChatRoom updatedChatRoom = chatRoomRepository.findById(chatRoom.getId()).orElse(null);
+        assertNotNull(updatedChatRoom);
+
+        long updatedAtAfterMessage = updatedChatRoom.getUpdatedAt().getSecond();
+        assertTrue(updatedAtAfterMessage > initialUpdatedAt, "updatedAt이 최신화되지 않았습니다.");
+
     }
 }

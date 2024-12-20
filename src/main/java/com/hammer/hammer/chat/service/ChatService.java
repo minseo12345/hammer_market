@@ -62,7 +62,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new EntityNotFoundException("ChatRoom not found"));
 
-        chatRoom.setUpdatedAt(LocalDateTime.now());
+        chatRoom.setUpdatedAt(message.getCreatedAt());
         chatRoomRepository.save(chatRoom);
 
         return messageRepository.save(message);

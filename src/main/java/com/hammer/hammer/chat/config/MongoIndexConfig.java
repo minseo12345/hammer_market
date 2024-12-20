@@ -12,12 +12,12 @@ public class MongoIndexConfig {
         IndexOperations indexOps = mongoTemplate.indexOps("message"); // 컬렉션 이름
         indexOps.ensureIndex(
                 new Index().on("createdAt", org.springframework.data.domain.Sort.Direction.ASC)
-                        .expire(2592000L) // 30일
+                        .expire(10L) // 2592000L 30일
         );
         IndexOperations chatRoomIndexOps = mongoTemplate.indexOps("chatRoom");
         chatRoomIndexOps.ensureIndex(
                 new Index().on("updatedAt", org.springframework.data.domain.Sort.Direction.ASC)
-                        .expire(7776000L) // 90일
+                        .expire(10L) // 7776000L 90일
         );
     }
 }

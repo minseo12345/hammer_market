@@ -5,6 +5,8 @@ import com.hammer.hammer.chat.entity.Message;
 
 import com.hammer.hammer.chat.service.ChatService;
 import com.hammer.hammer.user.entity.User;
+import com.hammer.hammer.user.repository.UserRepository;
+import com.hammer.hammer.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
 
+    private final UserRepository userRepository;
     private final ChatService chatService;
 
     @MessageMapping("/chat")
@@ -44,9 +47,11 @@ public class ChatController {
     }
 
     @GetMapping("/chat/chatrooms")
-    public ResponseEntity<List<ChatRoom>> getUserChatRooms(HttpSession session) {
+    public ResponseEntity<List<ChatRoom>> getUserChatRooms() {
         // 세션에서 현재 로그인된 사용자 정보 가져오기
-        User currentUser = (User) session.getAttribute("user");
+        User currentUser = userRepository.findByUserId(1L).orElse(null);
+
+
         if (currentUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not logged in");
         }
