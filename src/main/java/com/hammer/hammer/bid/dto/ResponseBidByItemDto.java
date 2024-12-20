@@ -12,6 +12,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseBidByItemDto {
-    private String userId;
-    private BigDecimal bidAmount;
+    private Long userId;
+    private String bidAmount;
 }

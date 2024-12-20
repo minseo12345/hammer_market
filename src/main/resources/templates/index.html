@@ -1,38 +1,97 @@
 <!DOCTYPE html>
-<<html xmlns:th="http://www.thymeleaf.org">>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Index Page</title>
 </head>
 <body>
-<button type="button" class="btn btn-secondary" onclick="location.href='logout'">로그아웃</button>
+<button type="button" class="btn btn-secondary" onclick="logout()">로그아웃</button>
 여기는 index.html 입니다.
 <hr>
-<b>${#authentication}</b>
-<div th:text="${#authentication}"></div>
+
+<!-- JWT 정보 출력 -->
+<h3>JWT 토큰 정보</h3>
+<div>
+    <b>Token:</b> <span id="token"></span>
+</div>
+<div>
+    <b>Username:</b> <span id="username"></span>
+</div>
+<div>
+    <b>Authorities:</b> <span id="authorities"></span>
+</div>
+<div>
+    <b>Expiration:</b> <span id="expiration"></span>
+</div>
+<button type="button" class="signUpBtn" onclick="getTestData()">관리자 페이지</button>
 <hr>
-<b>${#authentication.principal}</b>
-<div th:text="${#authentication.principal}"></div>
-<hr>
-<b>${#authentication.principal.Username}</b>
-<div th:text="${#authentication.principal.Username}"></div>
-<hr>
-<b>${#authentication.principal.Password}</b>
-<div th:text="${#authentication.principal.Password}"></div>
-<hr>
-<b>${#authentication.principal.Enabled}</b>
-<div th:text="${#authentication.principal.Enabled}"></div>
-<hr>
-<b>${#authentication.principal.AccountNonExpired}</b>
-<div th:text="${#authentication.principal.AccountNonExpired}"></div>
-<hr>
-<b>${#authentication.principal.CredentialsNonExpired}</b>
-<div th:text="${#authentication.principal.CredentialsNonExpired}"></div>
-<hr>
-<b>${#authentication.principal.AccountNonLocked}</b>
-<div th:text="${#authentication.principal.AccountNonLocked}"></div>
-<hr>
-<b>${#authentication.principal.Authorities}</b>
-<div th:text="${#authentication.principal.Authorities}"></div>
+
+<!-- JavaScript 코드 -->
+<script>
+    function getTestData() {
+        const accessToken = localStorage.getItem("accessToken");
+        const url = "/admin";
+
+        // Bearer 토큰을 포함한 요청
+        return fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`, // Bearer 토큰 추가
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                // 응답 상태가 OK가 아닐 경우 에러 처리
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // JSON 응답 처리
+        })
+        .then(data => {
+            console.log("Test Data:", data);
+            return data; // 성공적으로 받아온 데이터를 반환
+        })
+        .catch(error => {
+            // 에러 처리
+            console.error("Error fetching test data:", error);
+            throw error; // 필요 시 호출한 쪽에 오류 전달
+        });
+    }
+
+
+    // 로그아웃 함수: localStorage에서 토큰 삭제
+    function logout() {
+        localStorage.removeItem("accessToken");
+        alert("로그아웃 되었습니다.");
+        location.href = "/logout"; // 서버 로그아웃 URL로 이동
+    }
+
+
+
+    // localStorage에서 토큰 읽기 및 디코딩
+    function displayTokenInfo() {
+        const token = localStorage.getItem("accessToken"); // 토큰 가져오기
+
+        if (!token) {
+            document.getElementById("token").textContent = "토큰이 존재하지 않습니다.";
+            return;
+        }
+
+        // JWT 토큰 디코딩: Base64 디코딩
+        const payload = token.split(".")[1]; // 중간 부분(payload) 추출
+        const decoded = JSON.parse(atob(payload)); // Base64 디코딩 후 JSON 파싱
+
+        console.log("디코딩된 토큰 정보:", decoded); // 브라우저 콘솔에 출력
+
+        // HTML에 표시
+        document.getElementById("token").textContent = token;
+        document.getElementById("username").textContent = decoded.username || "없음";
+        document.getElementById("authorities").textContent = decoded.role || "권한 정보 없음";
+        document.getElementById("expiration").textContent = new Date(decoded.exp * 1000).toLocaleString() || "만료 시간 없음";
+    }
+
+    // 페이지 로드 시 토큰 정보 출력
+    window.onload = displayTokenInfo;
+</script>
 </body>
 </html>

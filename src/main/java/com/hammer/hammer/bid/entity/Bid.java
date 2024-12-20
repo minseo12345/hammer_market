@@ -1,6 +1,7 @@
 package com.hammer.hammer.bid.entity;
 
 import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Positive;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Bids")
+@Table(name = "bids")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

@@ -15,15 +15,19 @@ import java.util.List;
 //User는 예약어가 있어서 users라고 해야함
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
-    @Column(name = "user_id", nullable = false, length = 50)
-    private String userId; // 로그인 ID (Primary Key)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", length = 50)
+    private Long userId; // 로그인 ID (Primary Key)
 
     //왜래키 설정 -> 수정해야함 (report)
-    @Column(name = "report_id")
-    private Integer reportId; // 신고 ID
+//    @Column(name = "report_id")
+//    private Long reportId; // 신고 ID
 
     @Column(name = "username", nullable = false, length = 50)
     private String username; // 사용자 이름
@@ -38,17 +42,13 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role; // 사용자 역할 (admin, seller, buyer)
 
-    @Column(name = "loginLock")
-    private boolean loginLock = false; // 로그인 잠금 여부
+    @Column(name = "phone_number")
+    private String phonenumber; // 사용자 전화번호
 
-    @Column(name = "loginCnt")
-    private int loginCnt = 0; // 로그인 시도 횟수
-
+    @Builder.Default
     @Column(name = "active")
     private boolean active = true; // 활성화 상태
 
-    @Column(name = "lastLogin")
-    private LocalDateTime lastLogin; // 마지막 로그인 시간
 
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;

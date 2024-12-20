@@ -22,7 +22,7 @@ public class RequestBidDto {
     private Long itemId;
 
     @NotNull(message = "사용자 ID는 필수입니다.")
-    private String userId;
+    private Long userId;
 
     @Column(precision = 10, scale = 2)
     @NotNull(message = "입찰 금액은 필수입니다.")
