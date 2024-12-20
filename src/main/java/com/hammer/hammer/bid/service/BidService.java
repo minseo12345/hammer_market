@@ -67,23 +67,26 @@ public class BidService {
      *  사용자 별 입찰 조회
      */
     @Transactional(readOnly = true)
-    public Page<ResponseBidByUserDto> getBidsByUser(Long userId, Pageable pageable, String sort) {
+    public Page<ResponseBidByUserDto> getBidsByUser(Long userId,
+                                                    Pageable pageable,
+                                                    String sort,
+                                                    String itemName) {
 
         Sort sortOrder = getSortOrder(sort);
 
         Pageable sortedPageable = getSortedPageable(pageable, sortOrder);
 
-        Page<Bid> bids = bidRepository.findByUser_UserId(userId, sortedPageable)
-                .orElseThrow(() -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다."));
+        Page<Bid> bids = findBidsByUserWithItemSearch(userId, sortedPageable, itemName);
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
+
 
         return bids.map(bid -> {
             BigDecimal currentPrice = bidRepository.findHighestBidByItemId(bid.getItem().getItemId())
                     .orElse(BigDecimal.ZERO);
 
             String formattedMyPrice = decimalFormat.format(bid.getBidAmount()) + "원";
-            String formattedCurrentPrice = decimalFormat.format(currentPrice) + " 원";
+            String formattedCurrentPrice = decimalFormat.format(currentPrice) + "원";
 
             return ResponseBidByUserDto.builder()
                     .itemId(bid.getItem().getItemId())
@@ -94,6 +97,8 @@ public class BidService {
                     .build();
         });
     }
+
+
 
     /**
      *  상품 별 입찰 조회
@@ -139,5 +144,17 @@ public class BidService {
     //최고 입찰금액 조회
     public BigDecimal getHighestBidAmount(Long itemId) {
         return bidRepository.findHighestBidByItemId(itemId).orElse(BigDecimal.ZERO);
-    } 
+    }
+
+    /**
+     * 검색 기능 메서드
+     */
+    private Page<Bid> findBidsByUserWithItemSearch(Long userId, Pageable pageable, String itemName) {
+        if (!itemName.isEmpty()) {
+            return bidRepository.findByItem_TitleContainingIgnoreCase(itemName, pageable)
+                    .orElseThrow(() -> new IllegalStateException("상품을 찾을 수 없습니다."));
+        }
+        return bidRepository.findByUser_UserId(userId, pageable)
+                .orElseThrow(() -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다."));
+    }
 }
