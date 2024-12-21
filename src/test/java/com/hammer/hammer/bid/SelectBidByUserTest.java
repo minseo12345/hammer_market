@@ -73,7 +73,7 @@ public class SelectBidByUserTest {
             when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(BigDecimal.valueOf(200000)));
 
             // When
-            Page<ResponseBidByUserDto> response = bidService.getBidsByUser(user.getUserId(), pageable);
+            Page<ResponseBidByUserDto> response = bidService.getBidsByUser(user.getUserId(), pageable,"","");
 
             // Then
             assertNotNull(response);
@@ -95,7 +95,7 @@ public class SelectBidByUserTest {
 
         // When & Then
         assertThrows(IllegalStateException.class, () -> {
-            bidService.getBidsByUser(999L, pageable);
+            bidService.getBidsByUser(999L, pageable,"","");
         });
     }
 

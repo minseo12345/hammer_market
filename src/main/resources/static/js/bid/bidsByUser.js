@@ -1,44 +1,67 @@
 document.addEventListener("DOMContentLoaded", function() {
     const sortSelect = document.getElementById("sortSelect");
+    const searchInput = document.getElementById("searchInput");
 
+    // 정렬 기준 변경 시 페이지 이동
     sortSelect.addEventListener('change', function() {
         const value = sortSelect.value;
-        console.log("Selected value: ", value); // 여기서 선택된 값 확인
+        console.log("Selected value: ", value); // 선택된 값 확인
+
         if (value) {
-            const [column, order] = value.split('_'); // 'myPrice'와 'asc' 또는 'desc'를 분리
-            console.log("Column: ", column, "Order: ", order); // 여기서 column과 order 확인
-            sortTable(column, order);
+            const sortParam = value;
+            console.log("Sort parameter: ", sortParam); // sortParam 확인
+
+            // 페이지 번호는 URL 파라미터로 유지되고, 정렬 정보도 반영
+            const userId = document.querySelector(".container").getAttribute("data-user-id");
+            const currentPage = 0;  // 기본적으로 첫 페이지로 시작
+
+            // 페이지 이동 시, 정렬 기준을 URL 파라미터에 포함
+            const url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
+
+            // itemName도 반영
+            const itemName = searchInput.value;
+            if (itemName) {
+                params.set('itemName', itemName);  // 검색어를 itemName으로 변경
+            } else {
+                params.delete('itemName');  // itemName이 비어있으면 파라미터에서 삭제
+            }
+
+            // 정렬 기준과 itemName 파라미터 추가
+            params.set('sort', sortParam);
+
+            // 페이지 이동
+            window.location.href = `/bid/user/${userId}?${params.toString()}`;
         }
     });
 
-    // 테이블 정렬 함수
-    function sortTable(column, order) {
-        const table = document.getElementById("bidTable");
-        if (!table) return;
-        const tbody = table.querySelector("tbody");
-        const rows = Array.from(tbody.getElementsByTagName("tr"));
+    // 엔터키로만 검색이 실행되도록 처리
+    searchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            // 기본 동작을 막음 (새로고침을 방지)
+            event.preventDefault();
 
-        let index = -1;
-        if (column === 'myPrice') {
-            index = 3;
-        } else if (column === 'currentPrice') {
-            index = 4;
-        }
+            const itemName = searchInput.value;
+            const userId = document.querySelector(".container").getAttribute("data-user-id");
+            const currentPage = 0; // 기본적으로 첫 페이지로 시작
+            const sortParam = sortSelect.value; // 현재 선택된 정렬 기준
 
-        // 정렬
-        rows.sort((rowA, rowB) => {
-            const cellA = rowA.cells[index].textContent.trim().replace(' 원', '').replace(/,/g, '');
-            const cellB = rowB.cells[index].textContent.trim().replace(' 원', '').replace(/,/g, '');
-            const valueA = parseFloat(cellA);
-            const valueB = parseFloat(cellB);
+            // URL 파라미터 생성
+            const url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
 
-            if (order === 'asc') {
-                return valueA - valueB;
+            if (itemName) {
+                params.set('itemName', itemName);  // itemName으로 파라미터 설정
             } else {
-                return valueB - valueA;
+                params.delete('itemName');  // itemName이 비어있으면 파라미터에서 삭제
             }
-        });
 
-        rows.forEach(row => tbody.appendChild(row));
-    }
+            if (sortParam) {
+                params.set('sort', sortParam);
+            }
+
+            // 페이지 이동 시, 정렬 기준과 itemName도 URL 파라미터에 포함
+            window.location.href = `/bid/user/${userId}?${params.toString()}`;
+        }
+    });
 });

@@ -1,5 +1,6 @@
 package com.hammer.hammer.item.controller;
 
+import com.hammer.hammer.bid.service.BidService;
 import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.service.ItemService;
 
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -20,6 +22,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+    private final BidService bidService;
 
     @PostMapping("/create")
     public String createItem(@ModelAttribute Item item, @RequestParam("image") MultipartFile image, RedirectAttributes redirectAttributes) throws IOException {
@@ -43,8 +46,12 @@ public class ItemController {
     @GetMapping("/detail/{id}")
     public String getAuctionDetailPage(@PathVariable Long id, Model model) {
         Item item = itemService.getItemById(id);
+        BigDecimal highestBid = bidService.getHighestBidAmount(id); 
+
         model.addAttribute("item", item);
-        return "auction-detail";
+        model.addAttribute("highestBid", highestBid);
+
+        return "auction/detail"; 
     }
 
     @PostMapping("/detail/{id}/bid")
