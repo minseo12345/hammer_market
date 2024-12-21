@@ -20,7 +20,6 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 		"com.hammer.hammer.user.entity,com.hammer.hammer.notification.entity"})
 @EnableMongoRepositories(basePackages = {"com.hammer.hammer.chat.repository",
 		"com.hammer.hammer.chat.entity"})
-
 @EnableMongoAuditing
 @EnableCaching
 public class Application {
