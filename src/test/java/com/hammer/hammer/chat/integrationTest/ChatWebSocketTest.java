@@ -1,4 +1,4 @@
-package com.hammer.hammer.chat.integrationTest;//package com.hammer.hammer.chat.integrationTest;
+//package com.hammer.hammer.chat.integrationTest;
 //
 //import org.junit.jupiter.api.Test;
 //import org.springframework.boot.test.context.SpringBootTest;

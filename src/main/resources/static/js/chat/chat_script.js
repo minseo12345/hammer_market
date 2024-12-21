@@ -2,6 +2,9 @@
 let stompClient = null;
 let currentUser = null;
 let currentChatRoomId = null;
+let reconnectAttempts = 0; // 재연결 시도 횟수
+const maxReconnectAttempts = 5; // 최대 재연결 시도 횟수
+const reconnectInterval = 1000; // 초기 재연결 간격 (1초)
 
 // HTML 요소 참조
 const userListEl = document.getElementById("users");
@@ -16,21 +19,51 @@ const chatRoomTitleEl = document.getElementById("chat-room-title");
 function connectWebSocket() {
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, () => {
-        console.log('Connected to WebSocket');
 
-        // 메시지 구독 설정 (메시지 실시간 수신)
-        stompClient.subscribe('/topic/messages', (message) => {
-            const msg = JSON.parse(message.body);
-            if (msg.chatRoomId === currentChatRoomId) {
-                addMessage(msg.senderId, msg.content);
-            } else {
-                // 읽지 않은 메시지 수 실시간 업데이트
-                updateUnreadCount(msg.chatRoomId);
-            }
-        });
-        loadChatRooms(); // 채팅방 목록 불러오기
-    });
+    stompClient.connect(
+        {},
+        () => {
+            console.log('Connected to WebSocket');
+            reconnectAttempts = 0; // 연결 성공 시 재시도 횟수 초기화
+
+            // 메시지 구독 설정 (메시지 실시간 수신)
+            stompClient.subscribe('/topic/messages', (message) => {
+                const msg = JSON.parse(message.body);
+                if (msg.chatRoomId === currentChatRoomId) {
+                    addMessage(msg.senderId, msg.content);
+                } else {
+                    // 읽지 않은 메시지 수 실시간 업데이트
+                    updateUnreadCount(msg.chatRoomId);
+                }
+            });
+            loadChatRooms(); // 채팅방 목록 불러오기
+        },
+        (error) => {
+            console.error('WebSocket connection error:', error);
+            attemptReconnect(); // 연결 실패 시 재연결 시도
+        }
+    );
+
+    // 연결 해제 이벤트 핸들러
+    socket.onclose = () => {
+        console.warn('WebSocket connection closed.');
+        attemptReconnect(); // 연결 해제 시 재연결 시도
+    };
+}
+
+// 재연결 시도 로직
+function attemptReconnect() {
+    if (reconnectAttempts < maxReconnectAttempts) {
+        const delay = reconnectInterval * Math.pow(2, reconnectAttempts); // 지수적 백오프
+        console.log(`Reconnecting in ${delay / 1000} seconds...`);
+        setTimeout(() => {
+            reconnectAttempts++;
+            connectWebSocket(); // 재연결 시도
+        }, delay);
+    } else {
+        console.error('Max reconnect attempts reached. Connection failed.');
+        alert('서버와의 연결이 불안정합니다. 잠시 후 다시 시도해주세요.');
+    }
 }
 // 채팅방 목록 불러오기
 function loadChatRooms() {
@@ -172,8 +205,15 @@ function createMessageElement(senderId, content) {
     return div;
 }
 
-// 메시지 전송
-sendMessageBtn.onclick = () => {
+// Enter 키로 메시지 전송
+messageInputEl.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+// 메시지 전송 기능
+function sendMessage() {
     const content = messageInputEl.value.trim();
     if (content && currentChatRoomId) {
         const message = {
@@ -184,7 +224,9 @@ sendMessageBtn.onclick = () => {
         stompClient.send("/app/chat", {}, JSON.stringify(message));
         messageInputEl.value = '';
     }
-};
+}
+// 전송 버튼 클릭
+sendMessageBtn.onclick = sendMessage;
 
 // 로그인 및 초기화
 function login() {
