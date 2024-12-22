@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("Sort parameter: ", sortParam); // sortParam 확인
 
             // 페이지 번호는 URL 파라미터로 유지되고, 정렬 정보도 반영
-            const userId = document.querySelector(".container").getAttribute("data-user-id");
+            const userId = document.querySelector(".bid-container").getAttribute("data-user-id");
             const currentPage = 0;  // 기본적으로 첫 페이지로 시작
 
             // 페이지 이동 시, 정렬 기준을 URL 파라미터에 포함
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
             event.preventDefault();
 
             const itemName = searchInput.value;
-            const userId = document.querySelector(".container").getAttribute("data-user-id");
+            const userId = document.querySelector(".bid-container").getAttribute("data-user-id");
             const currentPage = 0; // 기본적으로 첫 페이지로 시작
             const sortParam = sortSelect.value; // 현재 선택된 정렬 기준
 

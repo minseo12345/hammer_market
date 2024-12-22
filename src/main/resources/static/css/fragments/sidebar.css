@@ -1,0 +1,28 @@
+/* 사이드바 스타일 */
+.sidebar {
+    width: 200px;
+    height: 480px;
+    background-color: #F3EDF7;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 20px;
+    margin-top: 85px;
+    border-radius: 10px;
+    margin-left: 30px;
+}
+
+.menu-item {
+    margin: 10px 0; /* 위아래 간격 추가 */
+    border-bottom: 1px solid black;
+    padding: 5px;
+    text-align: left;
+}
+
+.menu-item a {
+    color: black;
+    text-decoration: none;
+    display: block;
+}
