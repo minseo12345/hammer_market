@@ -124,7 +124,7 @@ public class BidService {
     /**
      * 정렬 조건 반환 메서드
      */
-    private Sort getSortOrder(String sort) {
+    public Sort getSortOrder(String sort) {
         if ("price_asc".equals(sort)) {
             return Sort.by(Sort.Order.asc("bidAmount"));
         } else if ("price_desc".equals(sort)) {

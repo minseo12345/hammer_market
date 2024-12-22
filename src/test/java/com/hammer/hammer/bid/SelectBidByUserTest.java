@@ -18,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -155,6 +156,42 @@ public class SelectBidByUserTest {
         ResponseBidByUserDto dtoPage2 = responsePage2.getContent().get(0);
         assertEquals(item2.getItemId(), dtoPage2.getItemId());
         assertEquals("150,000원", dtoPage2.getMyPrice());
+    }
+
+    /**
+     * 정렬 조건 테스트
+     */
+    @Test
+    void getSortOrderTest() {
+        // Given: 오름차순 정렬 요청
+        String sortOrder = "price_asc";
+
+        // When: 정렬 메서드 호출
+        Sort sortAsc = bidService.getSortOrder(sortOrder);
+
+        // Then: 오름차순 정렬 검증
+        assertNotNull(sortAsc);
+        assertEquals(Sort.Direction.ASC, sortAsc.getOrderFor("bidAmount").getDirection());
+
+        // Given: 내림차순 정렬 요청
+        sortOrder = "price_desc";
+
+        // When: 정렬 메서드 호출
+        Sort sortDesc = bidService.getSortOrder(sortOrder);
+
+        // Then: 내림차순 정렬 검증
+        assertNotNull(sortDesc);
+        assertEquals(Sort.Direction.DESC, Objects.requireNonNull(sortDesc.getOrderFor("bidAmount")).getDirection());
+
+        // Given: 잘못된 정렬 조건
+        sortOrder = "invalid_sort";
+
+        // When: 정렬 메서드 호출 (기본값)
+        Sort defaultSort = bidService.getSortOrder(sortOrder);
+
+        // Then: 기본값인 내림차순 정렬 검증
+        assertNotNull(defaultSort);
+        assertEquals(Sort.Direction.DESC, Objects.requireNonNull(defaultSort.getOrderFor("bidAmount")).getDirection());
     }
 
 
