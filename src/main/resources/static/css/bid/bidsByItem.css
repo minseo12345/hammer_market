@@ -1,0 +1,37 @@
+.bids-by-item-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.bids-by-item-title {
+    display: flex;
+    flex: 1;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+}
+
+.bids-item-status {
+    position: absolute;
+    top: 350px;
+    left: 350px;
+    width: 100px;
+    height: 500px;
+}
+
+.bids-by-item-title p {
+    font-size: 10px;
+    padding-top: 30px;
+}
+
+.bids-item-status p {
+    font-size: 25px;
+}
+
+.bids-item-status img{
+    width: 100px;
+    height: 500px;
+}
