@@ -1,6 +1,8 @@
 package com.hammer.hammer.user.entity;
 
 import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.transaction.entity.Transaction;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +41,12 @@ public class User implements UserDetails {
 
     @Column(name = "email", nullable = false, length = 100)
     private String email; // 이메일
+
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactionsAsBuyer; // 구매자로 참조된 거래
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactionsAsSeller; // 판매자로 참조된 거래
 
     @Column(name = "password", nullable = false, length = 255)
     private String password; // 비밀번호

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Table(name="transactions")
 @Entity
 @Getter
 @Setter
@@ -26,11 +27,11 @@ public class Transaction {
     private Long transactionId;
 
     @ManyToOne
-    @JoinColumn(name = "buyer_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "buyer_email", referencedColumnName = "email",nullable = false)
     private final User buyer;
 
     @ManyToOne
-    @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "seller_email", referencedColumnName = "email",nullable = false)
     private final User seller;
 
     @OneToOne
