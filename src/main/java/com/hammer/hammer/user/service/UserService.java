@@ -7,6 +7,7 @@ import com.hammer.hammer.global.jwt.dto.JwtTokenLoginRequest;
 import com.hammer.hammer.user.entity.Role;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.dto.UserDto;
+import com.hammer.hammer.user.repository.RoleRepository;
 import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,13 +30,18 @@ public class UserService {
             return 0L;
         }
 
+        Role userRole = Role.builder()
+                .roleName("USER")
+                .build();
+
         // 빌더 패턴을 활용하여 User 객체 생성
         return userRepository.save(User.builder()
                 .email(userDto.getEmail())
                 .password(bCryptPasswordEncoder.encode(userDto.getPassword())) // 패스워드 저장시 시큐리티 설정에 등록한 빈을 사용해서 암호화 한 후 저장
                 .username(userDto.getUsername())
                 .phonenumber(userDto.getPhoneNumber())
-                .role(Role.USER) // 유저 권한 추가 코드
+//                .role(Role.USER) // 유저 권한 추가 코드
+                .role(userRole) // 유저 권한 추가 코드
                 .build()).getUserId();
     }
 
@@ -48,9 +54,8 @@ public class UserService {
         }
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("accountId", user.getUserId());
+        claims.put("userEmail", user.getEmail());
         claims.put("username", user.getUsername());
-        claims.put("role", user.getRole());
 
         AuthTokenImpl accessToken = jwtProvider.createAccessToken(
                 user.getUserId().toString(),

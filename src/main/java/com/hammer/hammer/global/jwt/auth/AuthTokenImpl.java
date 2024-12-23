@@ -41,7 +41,7 @@ public class AuthTokenImpl implements AuthToken<Claims> {
             Map<String, Object> claimsMap,
             Date expiredDate
     ) {
-        claimsMap.put(AUTHORITIES_TOKEN_KEY, role);
+        claimsMap.put(AUTHORITIES_TOKEN_KEY, role.getRoleName());
         DefaultClaims claims = new DefaultClaims(claimsMap);
         //claims.put(AUTHORITIES_TOKEN_KEY, role);
 

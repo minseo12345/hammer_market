@@ -32,19 +32,19 @@ public class ItemController {
     public String getAuctionListPage(Model model) {
         List<Item> items = itemService.getAllItems();
         model.addAttribute("items", items);
-        return "auction-list";
+        return "/auction/list";
     }
 
     @GetMapping("/create")
     public String getAuctionCreatePage() {
-        return "auction-create";
+        return "/auction/create";
     }
 
     @GetMapping("/detail/{id}")
     public String getAuctionDetailPage(@PathVariable Long id, Model model) {
         Item item = itemService.getItemById(id);
         model.addAttribute("item", item);
-        return "auction-detail";
+        return "/auction/detail";
     }
 
     @PostMapping("/detail/{id}/bid")
