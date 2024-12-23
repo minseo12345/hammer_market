@@ -2,6 +2,7 @@ package com.hammer.hammer.item.service;
 
 import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.repository.ItemRepository;
+import com.hammer.hammer.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,33 +22,32 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
 
-    public Item createItem(Item item, MultipartFile image) throws IOException {
+    public Item createItem(Item item, MultipartFile image, User user) throws IOException {
         if (!image.isEmpty()) {
-            // 파일 저장 경로 설정
             String uploadPath = "C:/uploads/";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
-                uploadDir.mkdirs(); // 없으면 디렉토리 생성
+                uploadDir.mkdirs();
             }
 
-            // 파일 이름 처리 (한글 및 특수문자 제거)
             String originalFileName = image.getOriginalFilename();
             String sanitizedFileName = originalFileName.replaceAll("[^a-zA-Z0-9.]", "_");
             String fileName = UUID.randomUUID() + "_" + sanitizedFileName;
-
-            // 파일 저장
             File uploadFile = new File(uploadPath + fileName);
             image.transferTo(uploadFile);
 
-            // 이미지 URL 설정
             item.setFileUrl("/uploads/" + fileName);
         }
 
         item.setStartTime(LocalDateTime.now());
         item.setStatus(Item.ItemStatus.ONGOING);
 
+
+        item.setUser(user);
+
         return itemRepository.save(item);
     }
+
 
     public Item updateAuctionStatus(Long itemId, Item.ItemStatus newStatus) {
         Item item = itemRepository.findById(itemId)
@@ -62,7 +62,7 @@ public class ItemService {
 
     public Item getItemById(Long id) {
         return itemRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 경매 상품을 찾을 수 없습니다. ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다: " + id));
     }
 
     public void deleteItem(Long id) {
