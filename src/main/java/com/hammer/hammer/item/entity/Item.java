@@ -54,7 +54,7 @@ public class Item{
 
     // ENUM 선언
     public enum ItemStatus {
-        ONGOING,BIDDING_END,COMPLETED
+        ONGOING,BIDDING_END,COMPLETED,CANCELLED
     }
 
     @ManyToOne
