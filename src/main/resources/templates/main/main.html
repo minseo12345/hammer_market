@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
+<head>
+    <title>메인페이지</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 메인 콘텐츠가 여기에 추가됩니다 -->
+    <h2>메인 콘텐츠 여기에 추가</h2>
+        <div>
+            <div class="firstColumn">
+                <div>userId: <span th:text="${user.userId}"></span></div>
+                <div>userEmail: <span th:text="${user.email}"></span></div>
+                <div>userPhone: <span th:text="${user.phoneNumber}"></span></div>
+                <div>userRoleId: <span th:text="${user.role.roleId}"></span></div>
+                <div>userRoleName: <span th:text="${user.role.roleName}"></span></div>
+            </div>
+            <div>
+                <!-- 관리자 페이지 -->
+                <td sec:authorize="hasRole('ROLE_ADMIN')">
+                    <button type="button" onclick="AdminPage()">관리자 페이지</button>
+                </td>
+                <td>
+                    <button type="button" onclick="BidPage(' + ${user.userId} + ')">bid 페이지</button>
+                </td>
+                <td>
+                    <button type="button" onclick="ChatPage()">chat 페이지</button>
+                </td>
+                <td>
+                    <button type="button" onclick="ItemPage()">item 페이지</button>
+                </td>
+
+                <!-- 게시판 삭제 -->
+                <td sec:authorize="hasRole('ROLE_ADMIN')">
+                </td>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/main/main.js}"></script>
+</main>
+</body>
+</html>
