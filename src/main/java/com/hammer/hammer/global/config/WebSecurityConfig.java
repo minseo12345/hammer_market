@@ -100,14 +100,6 @@ public class WebSecurityConfig {
                     .roleName("ROLE_ADMIN")
                     .build();
 
-            Role buyerRole = Role.builder()
-                    .roleName("ROLE_BUYER")
-                    .build();
-
-            Role sellerRole = Role.builder()
-                    .roleName("ROLE_SELLER")
-                    .build();
-
             Role userRole = Role.builder()
                     .roleName("ROLE_USER")
                     .build();
@@ -117,7 +109,7 @@ public class WebSecurityConfig {
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("123"))
                     .username("admin")
-                    .phonenumber("01012341234")
+                    .phoneNumber("01012341234")
                     .role(adminRole)
                     .build();
 
@@ -126,8 +118,8 @@ public class WebSecurityConfig {
                     .email("buyer@test.com")
                     .password(passwordEncoder.encode("123"))
                     .username("buyer")
-                    .phonenumber("01012341334")
-                    .role(buyerRole)
+                    .phoneNumber("01012341334")
+                    .role(userRole)
                     .build();
 
             // 테스트용 사용자 계정 seller
@@ -135,8 +127,8 @@ public class WebSecurityConfig {
                     .email("seller@test.com")
                     .password(passwordEncoder.encode("123"))
                     .username("seller")
-                    .phonenumber("0101212341233")
-                    .role(sellerRole)
+                    .phoneNumber("0101212341233")
+                    .role(userRole)
                     .build();
 
 
@@ -145,14 +137,12 @@ public class WebSecurityConfig {
                     .email("user@test.com")
                     .password(passwordEncoder.encode("123"))
                     .username("user")
-                    .phonenumber("01012341233")
+                    .phoneNumber("01012341233")
                     .role(userRole)
                     .build();
 
             // 테스트 Role 생성
             roleRepository.save(adminRole);
-            roleRepository.save(buyerRole);
-            roleRepository.save(sellerRole);
             roleRepository.save(userRole);
             
             // 테스트 user 생성
