@@ -6,14 +6,14 @@ import com.hammer.hammer.chat.entity.Message;
 import com.hammer.hammer.chat.service.ChatService;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
-import com.hammer.hammer.user.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -49,7 +49,9 @@ public class ChatController {
     @GetMapping("/chat/chatrooms")
     public ResponseEntity<List<ChatRoom>> getUserChatRooms() {
         // 세션에서 현재 로그인된 사용자 정보 가져오기
-        User currentUser = userRepository.findByUserId(1L).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = Long.parseLong(authentication.getName());
+        User currentUser = userRepository.findByUserId(currentUserId).orElse(null);
 
 
         if (currentUser == null) {

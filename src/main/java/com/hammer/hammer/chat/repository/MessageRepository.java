@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface MessageRepository extends MongoRepository<Message, String> {
     List<Message> findByChatRoomId(String chatRoomId);
+    void deleteAll();
 
     @Query(value = "{ 'chatRoomId': ?0, 'senderId': ?1, 'readStatus': false }", count = true)
     int countUnreadMessagesByChatRoomIdAndSenderId(String chatRoomId, Long senderId);

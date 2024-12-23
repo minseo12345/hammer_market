@@ -31,10 +31,13 @@ function connectWebSocket() {
                 const msg = JSON.parse(message.body);
                 if (msg.chatRoomId === currentChatRoomId) {
                     addMessage(msg.senderId, msg.content);
+
                 } else {
                     // 읽지 않은 메시지 수 실시간 업데이트
+                    console.log("chatRoomId :",msg.chatRoomId);
                     updateUnreadCount(msg.chatRoomId);
                 }
+
             });
             loadChatRooms(); // 채팅방 목록 불러오기
         },
@@ -82,7 +85,7 @@ function loadChatRooms() {
 function createChatRoomElement(room) {
     const li = document.createElement('li');
     li.textContent = currentUser.userId === room.sellerId ? room.sellerTitle : room.buyerTitle;
-    li.dataset.roomId = room.userId;
+    li.dataset.roomId = room.id;
 
     // UnreadCount 표시용 요소 추가
     const unreadSpan = document.createElement('span');
@@ -118,11 +121,13 @@ function updateUnreadUI(roomElement, unreadCount) {
 function updateUnreadCount(chatRoomId) {
     const roomElement = document.querySelector(`[data-room-id="${chatRoomId}"]`);
     if (roomElement) {
-        fetch(`/chat/chatrooms/${chatRoomId}/unreadCount?userId=${currentUseruser}`)
+        fetch(`/chat/chatrooms/${chatRoomId}/unreadCount?userId=${currentUser.userId}`)
             .then((res) => res.json())
             .then((unreadCount) => {
                 updateUnreadUI(roomElement, unreadCount);
             });
+    }else{
+        loadChatRooms();
     }
 }
 // 유저 목록 불러오기

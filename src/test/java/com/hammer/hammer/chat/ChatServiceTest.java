@@ -1,4 +1,4 @@
-package com.hammer.hammer.chat.unitTest;
+package com.hammer.hammer.chat;
 
 import com.hammer.hammer.chat.entity.ChatRoom;
 import com.hammer.hammer.chat.entity.Message;
