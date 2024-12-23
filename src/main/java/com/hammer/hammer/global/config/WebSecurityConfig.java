@@ -5,8 +5,10 @@ import com.hammer.hammer.global.exception.AuthenticationEntryPointImpl;
 import com.hammer.hammer.global.jwt.filter.JwtFilter;
 import com.hammer.hammer.user.entity.Role;
 import com.hammer.hammer.user.entity.User;
+import com.hammer.hammer.user.repository.RoleRepository;
 import com.hammer.hammer.user.repository.UserRepository;
 import com.hammer.hammer.user.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.HashMap;
+import java.util.Map;
 //import com.hammer.hammer.global.jwt.filter.JwtAuthenticationFilter;
 
 
@@ -46,7 +51,7 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/login", "/login/**",
+                                "/", "/login", "/login/**", "/logout",
                                 "/signup", "/user",
                                 "/jwt-login",
                                 "/chat","/api/**","/chat/**","/topic/messages","/ws/**","/app/chat","/ws",
@@ -56,14 +61,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-//                .formLogin(form -> form // 4. 폼 기반 로그인 설정
-//                        .loginPage("/login") // 커스텀 로그인 페이지
-//                        .defaultSuccessUrl("/") // 로그인 성공시 URL
-//                        .failureUrl("/login?fail")
-//                        .permitAll() // 모든 사용자 - 로그인 페이지 접근 허용
-//                )
                 .logout(logout -> logout // 5. 로그아웃 설정
                         .logoutSuccessUrl("/login")
+                        .deleteCookies(
+                                "JSESSIONID", "refreshToken")
                         .invalidateHttpSession(true)
                         .permitAll()
                 )
@@ -92,27 +93,72 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CommandLineRunner initData(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initData(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            // 테스트용 관리자 계정
+            // 테스트용 Role 생성
+            Role adminRole = Role.builder()
+                    .roleName("ROLE_ADMIN")
+                    .build();
 
+            Role buyerRole = Role.builder()
+                    .roleName("ROLE_BUYER")
+                    .build();
+
+            Role sellerRole = Role.builder()
+                    .roleName("ROLE_SELLER")
+                    .build();
+
+            Role userRole = Role.builder()
+                    .roleName("ROLE_USER")
+                    .build();
+
+            // 테스트용 관리자 계정 admin
             User adminUser = User.builder()
                     .email("admin@test.com")
                     .password(passwordEncoder.encode("123"))
-                    .username("관리자")
+                    .username("admin")
                     .phonenumber("01012341234")
-                    .role(Role.ADMIN)
+                    .role(adminRole)
                     .build();
-            // 테스트용 일반 사용자 계정
+
+            // 테스트용 사용자 계정 buyer
+            User buyerUser = User.builder()
+                    .email("buyer@test.com")
+                    .password(passwordEncoder.encode("123"))
+                    .username("buyer")
+                    .phonenumber("01012341334")
+                    .role(buyerRole)
+                    .build();
+
+            // 테스트용 사용자 계정 seller
+            User sellerUser = User.builder()
+                    .email("seller@test.com")
+                    .password(passwordEncoder.encode("123"))
+                    .username("seller")
+                    .phonenumber("0101212341233")
+                    .role(sellerRole)
+                    .build();
+
+
+            // 테스트용 사용자 계정 user
             User normalUser = User.builder()
                     .email("user@test.com")
                     .password(passwordEncoder.encode("123"))
-                    .username("테스트유저")
+                    .username("user")
                     .phonenumber("01012341233")
-                    .role(Role.USER)
+                    .role(userRole)
                     .build();
 
+            // 테스트 Role 생성
+            roleRepository.save(adminRole);
+            roleRepository.save(buyerRole);
+            roleRepository.save(sellerRole);
+            roleRepository.save(userRole);
+            
+            // 테스트 user 생성
             userRepository.save(adminUser);
+            userRepository.save(buyerUser);
+            userRepository.save(sellerUser);
             userRepository.save(normalUser);
         };
     }

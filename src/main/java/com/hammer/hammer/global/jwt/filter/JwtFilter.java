@@ -4,9 +4,11 @@ import com.hammer.hammer.global.jwt.auth.AuthTokenImpl;
 import com.hammer.hammer.global.jwt.auth.JwtProviderImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -33,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         Optional<String> token = resolveToken(request);
         if (token.isPresent()) {
             AuthTokenImpl jwtToken =
-                tokenProvider.convertAuthToken(token.get().split(" ")[1]);
+                tokenProvider.convertAuthToken(token.get());
 
             if (jwtToken.validate()) {
                 Authentication authentication =
@@ -44,12 +46,22 @@ public class JwtFilter extends OncePerRequestFilter {
                         .setAuthentication(authentication);
             }
         }
-
         filterChain.doFilter(request, response);
     }
 
     private Optional<String> resolveToken(HttpServletRequest request) {
-        String authToken = request.getHeader(AUTHORIZATION_TOKEN_KEY);
+        Cookie[] cookies = request.getCookies();
+        String authToken = null;
+        // 토큰을 꺼내오는 로직
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    authToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
 
         if (StringUtils.hasText(authToken)) {
             return Optional.of(authToken);

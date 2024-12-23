@@ -31,13 +31,9 @@ loginForm.addEventListener("submit", (event) => {
             return response.json()
         })
         .then((data) => {
-            const accessToken = data.accessToken; // 서버 응답의 accessToken
-            console.log("Access Token:", accessToken);
-
             // 성공 시 필요한 추가 로직 (예: 토큰 저장)
             alert("로그인에 성공했습니다!");
-            localStorage.setItem("accessToken", accessToken); // 토큰 저장 예시
-            window.location.href = "/"; // 성공 시 페이지 이동
+            window.location.href = "/main"; // 성공 시 페이지 이동
 
         })
         .catch((error) => {

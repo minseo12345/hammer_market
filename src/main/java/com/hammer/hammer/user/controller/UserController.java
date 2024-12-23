@@ -2,6 +2,7 @@ package com.hammer.hammer.user.controller;
 
 import com.hammer.hammer.user.dto.UserDto;
 import com.hammer.hammer.user.service.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +37,11 @@ public class UserController {
         return "redirect:/login"; // 회원가입이 완료된 이후 로그인 페이지로 이동
     }
 
+
     // 로그아웃
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response){
+
         new SecurityContextLogoutHandler().logout(
                 request,
                 response,
@@ -46,6 +49,7 @@ public class UserController {
                         .getContext()
                         .getAuthentication()
         );
+
         return "redirect:/login";
     }
 

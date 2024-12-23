@@ -1,6 +1,5 @@
 package com.hammer.hammer.user.repository;
 
-import com.hammer.hammer.user.dto.UserDto;
 import com.hammer.hammer.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
