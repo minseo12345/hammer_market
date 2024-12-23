@@ -85,11 +85,11 @@ public class BidController {
         }
 
         Page<ResponseBidByItemDto> bidsByItem = bidService.getBidsByItem(itemId,pageable);
-        model.addAttribute("bids",bidsByItem);
-        model.addAttribute("currentPage", pageable.getPageNumber());
-        model.addAttribute("totalPages", bidsByItem.getTotalPages());
 
-        return "item";
+        model.addAttribute("firstBid", bidsByItem.getContent().get(0));
+        model.addAttribute("bids",bidsByItem);
+
+        return "bid/bidsByItem";
     }
 
 }

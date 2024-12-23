@@ -110,6 +110,8 @@ public class BidService {
                 () -> new IllegalStateException("상품 데이터를 찾을 수 없습니다.")
         );
 
+        Item item = itemRepository.findById(itemId).orElseThrow();
+
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
         return bids.map(bid -> {
@@ -117,6 +119,12 @@ public class BidService {
             return ResponseBidByItemDto.builder()
                     .userId(bid.getUser().getUserId())
                     .bidAmount(formattedBidAmount)
+                    .title(bid.getItem().getTitle())
+                    .description(bid.getItem().getDescription())
+                    .itemName(bid.getItem().getTitle())
+                    .createAt(bid.getItem().getCreatedAt())
+                    .username(item.getUser().getUsername())
+                    .imageUrl(item.getFileUrl())
                     .build();
         });
     }
