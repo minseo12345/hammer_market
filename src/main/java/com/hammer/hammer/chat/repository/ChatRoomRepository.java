@@ -7,4 +7,5 @@ import java.util.List;
 public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
     ChatRoom findBySellerIdAndBuyerId(Long sellerId, Long buyerId);
     List<ChatRoom> findByBuyerIdOrSellerId(Long buyerId, Long sellerId);
+    void deleteAll();
 }
