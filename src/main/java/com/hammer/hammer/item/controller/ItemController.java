@@ -3,6 +3,8 @@ package com.hammer.hammer.item.controller;
 import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.service.ItemService;
 
+import com.hammer.hammer.user.entity.User;
+import com.hammer.hammer.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Controller;
@@ -20,10 +22,12 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+    private final UserService userService;
 
     @PostMapping("/create")
     public String createItem(@ModelAttribute Item item, @RequestParam("image") MultipartFile image, RedirectAttributes redirectAttributes) throws IOException {
-        itemService.createItem(item, image);
+        User user = userService.getUserById(1L);
+        itemService.createItem(item, image, user);
         redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 생성되었습니다!");
         return "redirect:/items/list";
     }

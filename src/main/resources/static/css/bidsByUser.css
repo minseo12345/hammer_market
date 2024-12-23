@@ -1,13 +1,14 @@
-/* 전체 레이아웃 스타일 */
-body {
+.bid-body {
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
 }
-
-.container {
-    margin: 30px auto;
-    width: 90%;
+.bids-by-user-container{
+    display: flex;
+    gap: 50px;
+}
+.bid-container {
+    width: 75%;
     background-color: #ffffff;
     padding: 20px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
@@ -84,11 +85,18 @@ body {
     pointer-events: none;
 }
 
+.search-bar {
+    margin-top: 10px;
+    position: static; /* 위치 고정을 제거 */
+    float: right; /* 오른쪽 정렬 */
+    display: flex;
+    align-items: center;
+}
+
+
 .sort-bar {
-    position: absolute;
-    top: 50px;
-    right: 100px;
-    z-index: 10;
+    position: static; /* 위치 고정을 제거 */
+    float: right; /* 왼쪽 정렬 */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -109,3 +117,10 @@ body {
     background-color: #ddd;
 }
 
+.search-bar input {
+    padding: 5px;
+    font-size: 14px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

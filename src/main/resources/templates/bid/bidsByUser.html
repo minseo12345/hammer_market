@@ -5,18 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>입찰 내역</title>
     <link rel="stylesheet" href="/css/bidsByUser.css">
+    <link rel="stylesheet" href="/css/fragments/topbar.css">
+    <link rel="stylesheet" href="/css/fragments/sidebar.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
 </head>
 <body>
-<div class="container">
-
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+<div th:insert="~{'fragments/header' :: header}"></div>
+<div class="bids-by-user-container">
+<div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
+<div class="bid-container" th:attr="data-user-id=${userId}">
     <div class="sort-bar">
-        <label for="sortSelect"></label><select id="sortSelect">
+        <label for="sortSelect"></label>
+        <select id="sortSelect">
             <option value="" disabled selected>정렬</option>
-            <option value="myPrice_asc">내 입찰가 오름차순</option>
-            <option value="myPrice_desc">내 입찰가 내림차순</option>
-            <option value="currentPrice_asc">현재가 오름차순</option>
-            <option value="currentPrice_desc">현재가 내림차순</option>
+            <option value="price_asc">입찰가 오름차순</option>
+            <option value="price_desc">입찰가 내림차순</option>
         </select>
+    </div>
+
+    <div class="search-bar">
+        <label for="searchInput"></label>
+        <input type="text" id="searchInput" placeholder="상품명을 입력해주세요." th:value="${itemName}">
     </div>
 
     <h2 class="table-title">*입찰 내역</h2>
@@ -48,28 +58,41 @@
 
     <div class="pagination">
         <ul>
-            <!-- 이전 페이지 버튼 -->
+            <!-- 첫 페이지로 이동 -->
+            <li th:classappend="${bids.number == 0} ? 'disabled' : ''">
+                <a th:href="@{/bid/user/{userId}(userId=${userId}, page=0, sort=${sortParam}, itemName=${itemName})}" th:text="'<<'"></a>
+            </li>
+
+            <!-- 이전 페이지로 이동 -->
             <li th:classappend="${bids.hasPrevious()} ? '' : 'disabled'">
-                <a th:href="@{'/bid/user/' + ${userId} + '?page=' + ${bids.number - 1}}"
-                   th:text="'이전'"></a>
+                <a th:href="@{/bid/user/{userId}(userId=${userId}, page=${bids.number - 1}, sort=${sortParam}, itemName=${itemName})}" th:text="'<'"></a>
             </li>
 
             <!-- 페이지 번호 -->
-            <li th:each="i : ${#numbers.sequence(0, bids.totalPages - 1)}"
-                th:classappend="${bids.number == i} ? 'active' : ''">
-                <a th:href="@{'/bid/user/' + ${userId} + '?page=' + ${i}}"
-                   th:text="${i + 1}"></a>
+            <li th:each="i : ${#numbers.sequence(bids.number - 3, bids.number + 3)}"
+                th:classappend="${bids.number == i} ? 'active' : ''"
+                th:if="${i >= 0 && i < bids.totalPages}">
+                <a th:href="@{/bid/user/{userId}(userId=${userId}, page=${i}, sort=${sortParam}, itemName=${itemName})}" th:text="${i + 1}"></a>
             </li>
 
-            <!-- 다음 페이지 버튼 -->
+            <!-- '...' 표시 -->
+            <li th:if="${bids.number > 3 && bids.number + 3 < bids.totalPages}">
+                <a>...</a>
+            </li>
+
+            <!-- 다음 페이지로 이동 -->
             <li th:classappend="${bids.hasNext()} ? '' : 'disabled'">
-                <a th:href="@{'/bid/user/' + ${userId} + '?page=' + ${bids.number + 1}}"
-                   th:text="'다음'"></a>
+                <a th:href="@{/bid/user/{userId}(userId=${userId}, page=${bids.number + 1}, sort=${sortParam}, itemName=${itemName})}" th:text="'>'"></a>
+            </li>
+
+            <!-- 마지막 페이지로 이동 -->
+            <li th:classappend="${bids.number == bids.totalPages - 1} ? 'disabled' : ''">
+                <a th:href="@{/bid/user/{userId}(userId=${userId}, page=${bids.totalPages - 1}, sort=${sortParam}, itemName=${itemName})}" th:text="'>>'"></a>
             </li>
         </ul>
     </div>
 </div>
-
-<script src="/js/bidsByUser.js"></script>
+</div>
+<script src="/js/bid/bidsByUser.js"></script>
 </body>
 </html>
