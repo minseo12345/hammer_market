@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class NotificationController {
 
     // 거래포기 처리
     @PostMapping("/transaction/cancel")
+    @ResponseBody
     public String cancelTransaction(@RequestParam Long transactionId, @RequestParam Long userId) {
         notificationService.handleTransactionCancel(transactionId, userId);
         return "거래가 성공적으로 취소되었습니다.";
@@ -32,6 +34,7 @@ public class NotificationController {
 
     // 거래완료 처리
     @PostMapping("/transaction/complete")
+    @ResponseBody
     public String completeTransaction(@RequestParam Long transactionId, @RequestParam Long userId) {
         notificationService.handleTransactionComplete(transactionId, userId);
         return "거래가 성공적으로 완료되었습니다.";
