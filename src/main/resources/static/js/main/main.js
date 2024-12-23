@@ -3,7 +3,7 @@ function AdminPage() {
 }
 
 function BidPage(userId) {
-    window.location.href = '/user/' + userId;
+    window.location.href = '/bid/user/' + userId;
 }
 
 function ChatPage() {

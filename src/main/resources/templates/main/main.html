@@ -23,7 +23,7 @@
                     <button type="button" onclick="AdminPage()">관리자 페이지</button>
                 </td>
                 <td>
-                    <button type="button" onclick="BidPage(' + ${user.userId} + ')">bid 페이지</button>
+                    <button type="button" th:onclick="'BidPage(' + ${user.userId} + ')'" >bid 페이지</button>
                 </td>
                 <td>
                     <button type="button" onclick="ChatPage()">chat 페이지</button>
