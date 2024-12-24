@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/user/findPw.css">
+    <title>비밀번호 찾기 페이지</title>
+</head>
+<body>
+<div class="findPwContainer">
+    <p class="findPwTitle">비밀 번호 찾기</p>
+    <div class="findPwContent">
+        <form>
+            <label for="userName">이름</label>
+            <input type="text" name="userName" id="userName" required placeholder="이름">
+
+            <label for="email">이메일</label>
+            <input type="email" name="email" id="email" required placeholder="이메일">
+
+            <div class="btnSection">
+                <button type="submit" class="findPwBtn" id="findPwBtn">임시 비밀번호 발급</button>
+                <button type="button" class="cancelBtn" onclick="location.href='/login'">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script th:src="@{/js/user/findPw.js}"></script>
+</body>
+</html>

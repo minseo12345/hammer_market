@@ -15,17 +15,18 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/api")
 @RestController
-public class UserRestController {
+public class UserApiController {
 
     private final UserRepository userRepository;
 
-    @GetMapping("/api/users")
+    @GetMapping("/users")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/api/currentUser")
+    @GetMapping("/currentUser")
     public ResponseEntity<User> getSessionUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long currentUserId = Long.parseLong(authentication.getName());
