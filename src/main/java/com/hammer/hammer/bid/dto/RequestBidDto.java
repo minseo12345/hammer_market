@@ -29,8 +29,4 @@ public class RequestBidDto {
     @Positive(message = "입찰 금액은 양수여야 합니다.")
     private BigDecimal bidAmount;
 
-    @NotNull(message = "입찰 날짜는 필수입니다.")
-    @FutureOrPresent(message = "입찰 날짜는 과거일 수 없습니다.")
-    private LocalDateTime bidDate;
-
 }
