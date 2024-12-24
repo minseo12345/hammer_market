@@ -1,6 +1,7 @@
 package com.hammer.hammer.user.entity;
 
 import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.point.entity.Point;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -72,6 +73,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Item> items;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Point> points;
 
     @Override // 권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {
