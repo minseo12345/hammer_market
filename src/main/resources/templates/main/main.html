@@ -38,6 +38,19 @@
             </div>
         </div>
     </div>
+    <div>
+        <img id="notification-icon" src="/img/아직 안넣음" alt="알림 아이콘(종모양)" />
+    </div>
+    <!-- 알림 모달 -->
+    <div id="notification-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>알림</h2>
+            <div id="notification-list">
+            </div>
+            <button id="mark-read-button">모든 알림 읽음 처리</button>
+            <button id="close-modal-button">닫기</button>
+        </div>
+    </div>
     <script th:src="@{/js/main/main.js}"></script>
 </main>
 </body>

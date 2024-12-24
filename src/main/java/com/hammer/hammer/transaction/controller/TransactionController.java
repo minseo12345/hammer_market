@@ -21,26 +21,29 @@ public class TransactionController {
     public String getAllTransactions(Model model) {
         List<Transaction> transactions = transactionService.findAllTransactions();
         model.addAttribute("transactions", transactions);
-        return "transaction/transaction-list";  // 타임리프 템플릿 이름 반환
+        return "transaction/transaction-list";
     }
 
     // ID로 트랜잭션 조회
-    @GetMapping("/{id}")
-    public String getTransactionById(@PathVariable Long id, Model model) {
-        return transactionService.findTransactionById(id)
-                .map(transaction -> {
-                    model.addAttribute("transaction", transaction);
-                    return "transaction/transaction-detail";  // 타임리프 템플릿 이름 반환
-                })
-                .orElse("error");  // 트랜잭션을 찾을 수 없으면 에러 페이지 반환
+    @GetMapping("/transactions/{transactionId}")
+    public String getTransactionDetail(@PathVariable Long transactionId, Model model) {
+        // Transaction 데이터를 가져옴
+        Transaction transaction = transactionService.findTransactionById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + transactionId));
+
+        // 모델에 데이터 추가
+        model.addAttribute("transaction", transaction);
+
+        // transaction-detail.html 렌더링
+        return "transaction/transaction-detail";
     }
 
-    // 트랜잭션 삭제
+    /*// 트랜잭션 삭제
     @DeleteMapping("/{id}")
     public String deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id);
         return "redirect:/transactions";  // 삭제 후 트랜잭션 목록 페이지로 리디렉션
-    }
+    }*/
 
     // 즉시구매 버튼을 눌러서 경매 종료 처리
     @PostMapping("/immediate-purchase/{itemId}")

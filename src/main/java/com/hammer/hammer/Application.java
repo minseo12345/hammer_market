@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactoryBean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableJpaRepositories(basePackages = {"com.hammer.hammer.bid.repository",
@@ -24,6 +25,7 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 		"com.hammer.hammer.chat.entity"})
 @EnableMongoAuditing
 @EnableCaching
+@EnableScheduling
 public class Application {
 
 	public static void main(String[] args) {

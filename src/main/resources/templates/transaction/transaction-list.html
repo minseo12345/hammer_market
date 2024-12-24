@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Transaction List</title>
+    <title>거래 목록 페이지</title>
 </head>
 <body>
-<h1>Transaction List</h1>
+<h1>거래 목록</h1>
 <table>
     <tr>
-        <th>ID</th>
-        <th>Item</th>
-        <th>Buyer</th>
-        <th>Seller</th>
-        <th>Price</th>
+        <th>거래ID</th>
+        <th>품  명</th>
+        <th>낙찰자</th>
+        <th>판매자</th>
+        <th>낙찰가</th>
     </tr>
     <tr th:each="transaction : ${transactions}">
         <td th:text="${transaction.transactionId}"></td>
