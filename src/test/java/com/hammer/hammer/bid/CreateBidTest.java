@@ -46,14 +46,15 @@ public class CreateBidTest {
         requestBidDto.setUserId(1L);
         requestBidDto.setItemId(1L);
         requestBidDto.setBidAmount(new BigDecimal("100"));
-        requestBidDto.setBidDate(LocalDateTime.now());
     }
 
     @Test
     void saveBid_ShouldSaveBidSuccessfully() {
         // Given
-        User user = new User();
-        user.setUserId(1L);
+        User user = User.builder()
+                .userId(1L)
+                .build();
+
         Item item = new Item();
         item.setItemId(1L);
 
@@ -75,8 +76,10 @@ public class CreateBidTest {
     @Test
     void saveBidWhenBidAmountIsLow() {
         // Given
-        User user = new User();
-        user.setUserId(1L);
+        User user = User.builder()
+                .userId(1L)
+                .build();
+
         Item item = new Item();
         item.setItemId(1L);
 
@@ -102,7 +105,6 @@ public class CreateBidTest {
         invalidRequestBidDto.setUserId(999L); // 존재하지 않는 사용자 ID
         invalidRequestBidDto.setItemId(1L);
         invalidRequestBidDto.setBidAmount(new BigDecimal("100"));
-        invalidRequestBidDto.setBidDate(LocalDateTime.now());
 
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -121,7 +123,6 @@ public class CreateBidTest {
         invalidRequestBidDto.setUserId(1L);
         invalidRequestBidDto.setItemId(999L); // 존재하지 않는 상품 ID
         invalidRequestBidDto.setBidAmount(new BigDecimal("100.00"));
-        invalidRequestBidDto.setBidDate(LocalDateTime.now());
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
         when(itemRepository.findById(999L)).thenReturn(Optional.empty());
