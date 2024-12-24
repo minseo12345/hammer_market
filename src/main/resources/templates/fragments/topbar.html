@@ -2,10 +2,13 @@
     <nav class="topbar">
         <div class="navbar-content">
             <a href="#">
-                <img th:src="@{/img/logo.png}" alt="로고" class="logo">
+                <img th:src="@{img/logo.png}" alt="로고" class="logo">
             </a>
-
-            <div class="navbar-links" sec:authorize="isAuthenticated()">
+            <div class="navbar-links">
+                <!-- 채팅 링크 -->
+                <a href="#" th:href="@{/chat}" class="d-flex align-items-center">
+                    <img th:src="@{img/chat.png}" alt="채팅" class="chat-icon" style="width: 20px; height: 20px;">
+                </a>
                 <a href="#">내정보</a>
                 <a href="#">장바구니</a>
                 <a href="/logout">로그아웃</a>
