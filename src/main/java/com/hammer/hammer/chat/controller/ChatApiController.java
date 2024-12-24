@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -20,18 +18,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Slf4j
+@RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
-public class ChatController {
+public class ChatApiController {
 
     private final UserRepository userRepository;
     private final ChatService chatService;
-
-    @MessageMapping("/chat")
-    @SendTo("/topic/messages")
-    public Message sendMessage(Message message) {
-        return chatService.saveMessage(message.getChatRoomId(), message.getSenderId(), message.getContent());
-    }
 
     @PostMapping("/chat/createChatRoom")//객체로 받기
     public ResponseEntity<ChatRoom> getChatRoom(@RequestBody ChatRoomDto request) {

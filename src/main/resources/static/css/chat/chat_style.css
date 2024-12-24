@@ -1,58 +1,92 @@
-body {
-    font-family: Arial, sans-serif;
+#chat-html {
     margin: 0;
     padding: 0;
-    height: 100vh;
+    height: 100%;
+    overflow: hidden; /* 스크롤 제거 */
+}
+
+#chat-body {
+    font-family: Arial, sans-serif;
+    height: 100%; /* 부모 크기와 일치 */
+    display: flex;
+    flex-direction: column;
 }
 
 #app {
     display: flex;
-    height: 100vh;
+    flex: 1;
+    background-color: #f8f9fa;
+    overflow: hidden; /* 스크롤 방지 */
+}
+
+#seller-room-list, #buyer-room-list {
+    flex: 2; /* 같은 비율로 공간 차지 */
+    max-width: 50%; /* 너비 제한 */
+    height: 100%; /* 전체 높이 사용 */
+    border-right: 1px solid #ddd;
+    overflow-y: auto; /* 세로 스크롤 필요 시만 표시 */
     background-color: #f8f9fa;
 }
 
-#user-list, #room-list {
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
+#seller-room-list {
+    border-right: 1px solid #ddd; /* 오른쪽 경계선 */
 }
 
-#user-list ul, #room-list ul {
+#buyer-room-list {
+    border-left: 1px solid #ddd; /* 왼쪽 경계선 */
+}
+
+#seller-room-list ul, #buyer-room-list ul {
     padding: 0;
+    margin: 0;
 }
 
-#user-list li, #room-list li {
+#seller-room-list li, #buyer-room-list li {
     list-style: none;
     padding: 10px;
     cursor: pointer;
 }
 
-#user-list li:hover, #room-list li:hover {
+#seller-room-list li:hover, #buyer-room-list li:hover {
     background-color: #f1f1f1;
 }
 
 #chat-box {
+    flex: 3; /* 중앙에 더 큰 공간 차지 */
     display: flex;
     flex-direction: column;
-    padding: 10px;
     background-color: #ffffff;
+    overflow: hidden; /* 내부 스크롤 방지 */
+    height: 100%; /* 전체 높이 사용 */
+    padding: 10px;
 }
 
 #messages {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* 세로 스크롤 필요 시만 표시 */
     border: 1px solid #ddd;
     margin-bottom: 10px;
     padding: 10px;
     background-color: #f8f9fa;
 }
 
+#input-box {
+    display: flex;
+    flex-shrink: 0;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f8f9fa;
+}
+
 #input-box input {
     border: 1px solid #ddd;
     border-radius: 0;
+    flex: 1;
 }
 
 #input-box button {
     border-radius: 0;
+    margin-left: 5px;
 }
 
 .message {

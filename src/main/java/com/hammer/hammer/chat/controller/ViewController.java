@@ -14,4 +14,8 @@ public class ViewController {
     public String chat() {
         return "/chat/chat";
     }
+    @GetMapping("/cart")
+    public String cart() {
+        return "/cart/cart";
+    }
 }
