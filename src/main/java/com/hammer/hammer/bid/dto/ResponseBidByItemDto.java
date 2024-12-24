@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -14,4 +15,10 @@ import java.math.BigDecimal;
 public class ResponseBidByItemDto {
     private Long userId;
     private String bidAmount;
+    private String description;
+    private String itemName;
+    private String title;
+    private LocalDateTime createAt;
+    private String username;
+    private String imageUrl;
 }

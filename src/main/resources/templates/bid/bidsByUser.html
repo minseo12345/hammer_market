@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>입찰 내역</title>
-    <link rel="stylesheet" href="/css/bidsByUser.css">
+    <link rel="stylesheet" href="/css/bid/bidsByUser.css">
     <link rel="stylesheet" href="/css/fragments/topbar.css">
     <link rel="stylesheet" href="/css/fragments/sidebar.css">
     <link rel="stylesheet" href="/css/fragments/header.css">
@@ -12,8 +12,10 @@
 <body>
 <div th:insert="~{'fragments/topbar' :: topbar}"></div>
 <div th:insert="~{'fragments/header' :: header}"></div>
+
 <div class="bids-by-user-container">
 <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
+
 <div class="bid-container" th:attr="data-user-id=${userId}">
     <div class="sort-bar">
         <label for="sortSelect"></label>

@@ -1,6 +1,7 @@
 package com.hammer.hammer.transaction.entity;
 
 import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.point.entity.Point;
 import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,6 +34,9 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
     private final User seller;
+
+    @OneToMany(mappedBy = "transaction")
+    private List<Point> points;
 
     @OneToOne
     @JoinColumn(name = "item_id", nullable = false)

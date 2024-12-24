@@ -17,6 +17,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +73,12 @@ public class BidService {
     public Page<ResponseBidByUserDto> getBidsByUser(Long userId,
                                                     Pageable pageable,
                                                     String sort,
-                                                    String itemName) {
+                                                    String itemName,
+                                                    UserDetails userDetails) {
+
+        if (!userId.toString().equals(userDetails.getUsername())) {
+            throw new IllegalStateException("접근 권한이 없습니다.");
+        }
 
         Sort sortOrder = getSortOrder(sort);
 
@@ -107,8 +115,10 @@ public class BidService {
     public Page<ResponseBidByItemDto> getBidsByItem(Long itemId, Pageable pageable) {
 
         Page<Bid> bids = bidRepository.findByItem_ItemIdOrderByBidAmountDesc(itemId, pageable).orElseThrow(
-                () -> new IllegalStateException("상품 데이터를 찾을 수 없습니다.")
+                () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
         );
+
+        Item item = itemRepository.findById(itemId).orElseThrow(()->new IllegalStateException("상품을 찾을 수 없습니다."));
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
@@ -117,6 +127,12 @@ public class BidService {
             return ResponseBidByItemDto.builder()
                     .userId(bid.getUser().getUserId())
                     .bidAmount(formattedBidAmount)
+                    .title(bid.getItem().getTitle())
+                    .description(bid.getItem().getDescription())
+                    .itemName(bid.getItem().getTitle())
+                    .createAt(bid.getItem().getCreatedAt())
+                    .username(item.getUser().getUsername())
+                    .imageUrl(item.getFileUrl())
                     .build();
         });
     }

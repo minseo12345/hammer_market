@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -25,8 +27,10 @@ public class NotificationService {
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + transactionId));
 
-        // 거래포기 처리 (거래 삭제)
-        transactionRepository.delete(transaction);
+        // 아이템 상태를 CANCELLED로 변경
+        Item item = transaction.getItem();
+        item.setStatus(Item.ItemStatus.CANCELLED);
+        itemRepository.save(item);
 
         // 알림 생성
         String cancelMessage = String.format("[%d] 거래가 취소되었습니다.", transactionId);
@@ -56,5 +60,24 @@ public class NotificationService {
             // 알림 객체를 데이터베이스에 저장
             notificationRepository.save(notification);
         }
+    }
+
+    // 특정 사용자의 읽지 않은 알림 여부 확인
+    @Transactional(readOnly = true)
+    public boolean hasUnreadNotifications(Long userId) {
+        return !notificationRepository.findByUserIdAndIsReadFalse(userId).isEmpty();
+    }
+
+    // 알림 읽음 상태 변경
+    public void markNotificationsAsRead(Long userId) {
+        List<Notification> unreadNotifications = notificationRepository.findByUserIdAndIsReadFalse(userId);
+        unreadNotifications.forEach(notification -> notification.setRead(true));
+        notificationRepository.saveAll(unreadNotifications);
+    }
+
+    // 특정 사용자의 알림 목록 조회
+    @Transactional(readOnly = true)
+    public List<Notification> getNotificationsByUserId(Long userId) {
+        return notificationRepository.findByUserId(userId);
     }
 }
