@@ -43,10 +43,10 @@ public class TransactionService {
         return transactionRepository.findById(id);
     }
 
-    // 트랜잭션 삭제
+    /*// 트랜잭션 삭제
     public void deleteTransaction(Long id) {
         transactionRepository.deleteById(id);
-    }
+    }*/
 
     private void createTransaction(Item item) {
         Bid bid = (Bid) bidRepository.findTopByItem_ItemIdOrderByBidAmountDesc(item.getItemId())
@@ -107,16 +107,28 @@ public class TransactionService {
     }
 
     // 1분마다 경매 종료된 아이템을 확인하는 스케줄러
-    @Scheduled(fixedRate = 60000)  // 1분마다 실행  수정@@@@
+    @Scheduled(fixedRate = 60000)  // 1분마다 실행
     public void checkAuctionEndAndUpdateStatus() {
+        System.out.println("스케줄러 실행 시각: " + LocalDateTime.now());
+
         // 경매 진행 중인 아이템을 조회
         List<Item> ongoingItems = itemRepository.findByStatus(Item.ItemStatus.ONGOING);
+        System.out.println("현재 진행 중인 아이템 수: " + ongoingItems.size());
 
         // 각 아이템에 대해 경매 종료 시점을 확인
         for (Item item : ongoingItems) {
+            System.out.println("아이템 ID: " + item.getItemId() + ", 종료 시각: " + item.getEndTime());
+
             if (item.getEndTime().isBefore(LocalDateTime.now())) {
-                // 경매 종료 시점이 지나면 아이템 상태를 '낙찰'로 변경하고 거래 생성
-                createTransactionForAuctionEnd(item.getItemId());
+                System.out.println("아이템 ID: " + item.getItemId() + "는 경매 종료 시각을 초과했습니다. 상태를 변경하고 거래를 생성합니다.");
+                try {
+                    createTransactionForAuctionEnd(item.getItemId());
+                    System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 성공");
+                } catch (Exception e) {
+                    System.err.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 실패: " + e.getMessage());
+                }
+            } else {
+                System.out.println("아이템 ID: " + item.getItemId() + "는 아직 경매 종료 시각이 되지 않았습니다.");
             }
         }
     }

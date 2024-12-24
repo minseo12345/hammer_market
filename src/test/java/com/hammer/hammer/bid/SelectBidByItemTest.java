@@ -43,8 +43,9 @@ public class SelectBidByItemTest {
     @Test
     void selectAllBidByItem() {
         // Given
-        User user = new User();
-        user.setUserId(1L);
+        User user = User.builder()
+                .userId(1L)
+                .build();
 
         Item item = new Item();
         item.setItemId(1L);

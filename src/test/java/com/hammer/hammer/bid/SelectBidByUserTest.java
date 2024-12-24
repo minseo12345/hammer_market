@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
@@ -35,14 +36,18 @@ public class SelectBidByUserTest {
     @MockitoBean
     private BidRepository bidRepository;
 
+    @MockitoBean
+    private UserDetails userDetails;
+
     /**
      * 사용자별 모든 입찰 목록 조회 테스트
      */
     @Test
     void selectAllBidByUser() {
         // Given
-        User user = new User();
-        user.setUserId(1L);
+        User user = User.builder()
+                .userId(1L)
+                .build();
 
         Item item = new Item();
         item.setItemId(1L);
@@ -60,11 +65,13 @@ public class SelectBidByUserTest {
         Page<Bid> mockBids = new PageImpl<>(List.of(bid));
         Pageable pageable = PageRequest.of(0, 10, Sort.by("bidAmount").descending());
 
+        when(userDetails.getUsername()).thenReturn("1");
+
         when(bidRepository.findByUser_UserId(1L, pageable)).thenReturn(Optional.of(mockBids));
         when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(BigDecimal.valueOf(200000)));
 
         // When
-        Page<ResponseBidByUserDto> response = bidService.getBidsByUser(user.getUserId(), pageable, "", "");
+        Page<ResponseBidByUserDto> response = bidService.getBidsByUser(user.getUserId(), pageable, "", "",userDetails);
 
         // Then
         assertNotNull(response);
@@ -86,9 +93,11 @@ public class SelectBidByUserTest {
         // Given
         Pageable pageable = PageRequest.of(0, 10, Sort.by("bidAmount").descending());
 
+        when(userDetails.getUsername()).thenReturn("999");
+
         // When & Then
         assertThrows(IllegalStateException.class, () -> {
-            bidService.getBidsByUser(999L, pageable, "", "");
+            bidService.getBidsByUser(999L, pageable, "", "",userDetails);
         });
     }
 
@@ -98,8 +107,9 @@ public class SelectBidByUserTest {
     @Test
     void selectAllBidByUser_WithPagination() {
         // Given
-        User user = new User();
-        user.setUserId(1L);
+        User user = User.builder()
+                .userId(1L)
+                .build();
 
         Item item1 = new Item();
         item1.setItemId(1L);
@@ -136,13 +146,15 @@ public class SelectBidByUserTest {
         when(bidRepository.findByUser_UserId(1L, PageRequest.of(0, 1, Sort.by("bidAmount").descending()))).thenReturn(Optional.of(page1));
         when(bidRepository.findByUser_UserId(1L, PageRequest.of(1, 1, Sort.by("bidAmount").descending()))).thenReturn(Optional.of(page2));
 
+        when(userDetails.getUsername()).thenReturn("1");
+
         // When
         when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(BigDecimal.valueOf(200000)));
         when(bidRepository.findHighestBidByItemId(2L)).thenReturn(Optional.of(BigDecimal.valueOf(150000)));
 
         // Then
         // 페이지1 테스트
-        Page<ResponseBidByUserDto> responsePage1 = bidService.getBidsByUser(user.getUserId(), PageRequest.of(0, 1, Sort.by("bidAmount").descending()), "", "");
+        Page<ResponseBidByUserDto> responsePage1 = bidService.getBidsByUser(user.getUserId(), PageRequest.of(0, 1, Sort.by("bidAmount").descending()), "", "",userDetails);
         assertNotNull(responsePage1);
         assertEquals(1, responsePage1.getTotalElements());
         ResponseBidByUserDto dtoPage1 = responsePage1.getContent().get(0);
@@ -150,7 +162,7 @@ public class SelectBidByUserTest {
         assertEquals("200,000원", dtoPage1.getMyPrice());
 
         // 페이지2 테스트
-        Page<ResponseBidByUserDto> responsePage2 = bidService.getBidsByUser(user.getUserId(), PageRequest.of(1, 1, Sort.by("bidAmount").descending()), "", "");
+        Page<ResponseBidByUserDto> responsePage2 = bidService.getBidsByUser(user.getUserId(), PageRequest.of(1, 1, Sort.by("bidAmount").descending()), "", "",userDetails);
         assertNotNull(responsePage2);
         assertEquals(1, responsePage2.getTotalElements());
         ResponseBidByUserDto dtoPage2 = responsePage2.getContent().get(0);
@@ -201,8 +213,9 @@ public class SelectBidByUserTest {
     @Test
     void getBidsByUser_WithSearchCondition() {
         // Given
-        User user = new User();
-        user.setUserId(1L);
+        User user = User.builder()
+                .userId(1L)
+                .build();
 
         Item item = new Item();
         item.setItemId(1L);
@@ -223,8 +236,9 @@ public class SelectBidByUserTest {
         when(bidRepository.findByItem_TitleContainingIgnoreCase("신발", pageable)).thenReturn(Optional.of(mockBids));
         when(bidRepository.findHighestBidByItemId(1L)).thenReturn(Optional.of(BigDecimal.valueOf(300000)));
 
+        when(userDetails.getUsername()).thenReturn("1");
         // When
-        Page<ResponseBidByUserDto> response = bidService.getBidsByUser(user.getUserId(), pageable, "bidAmount", "신발");
+        Page<ResponseBidByUserDto> response = bidService.getBidsByUser(user.getUserId(), pageable, "bidAmount", "신발",userDetails);
 
         // Then
         assertNotNull(response);
