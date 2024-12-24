@@ -19,21 +19,19 @@
 
     <div class="bids-by-item-title">
         <h2 th:text="'제목 : ' + ${firstBid.title}"></h2>
-        <p th:text="'게시 날짜 : ' + ${firstBid.createAt} + ' | 판매자 : ' + ${firstBid.username}"></p>
         <div class="bids-item-status">
+            <p class="bids-by-item-createAt" th:text="'게시 날짜 : ' + ${firstBid.createAt} + ' | 판매자 : ' + ${firstBid.username}"></p>
             <img th:src="@{${firstBid.imageUrl}}" alt="상품 이미지" class="product-image">
-            <p th:text="${firstBid.description}"></p>
+            <p class="bids-by-item-description" th:text="${firstBid.description}"></p>
         </div>
     </div>
 
     <div class="bids-list">
         <h3>입찰 내역</h3>
-        <ul>
-            <li th:each="bid : ${bids}">
-                <span th:text="'입찰자: ' + ${bid.username}"></span> |
-                <span th:text="'금액: ' + ${bid.bidAmount}"></span>
-            </li>
-        </ul>
+        <div th:each="bid : ${bids}" class="bid-entry">
+            <span class="bid-username" th:text="${bid.username}"></span>
+            <span class="bid-amount" th:text="${bid.bidAmount}"></span>
+        </div>
     </div>
 
 </div>
