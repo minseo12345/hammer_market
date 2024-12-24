@@ -51,7 +51,7 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/login", "/login/**", "/logout",
+                                 "/login", "/login/**", "/logout",
                                 "/signup", "/user",
                                 "/jwt-login",
                                 "/chat","/api/**","/chat/**","/topic/messages","/ws/**","/app/chat","/ws",
@@ -93,7 +93,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CommandLineRunner initData(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initData(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
             // 테스트용 Role 생성
             Role adminRole = Role.builder()
@@ -107,7 +107,7 @@ public class WebSecurityConfig {
             // 테스트용 관리자 계정 admin
             User adminUser = User.builder()
                     .email("admin@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("admin")
                     .phoneNumber("01012341234")
                     .role(adminRole)
@@ -116,7 +116,7 @@ public class WebSecurityConfig {
             // 테스트용 사용자 계정 buyer
             User buyerUser = User.builder()
                     .email("buyer@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("buyer")
                     .phoneNumber("01012341334")
                     .role(userRole)
@@ -125,7 +125,7 @@ public class WebSecurityConfig {
             // 테스트용 사용자 계정 seller
             User sellerUser = User.builder()
                     .email("seller@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("seller")
                     .phoneNumber("0101212341233")
                     .role(userRole)
@@ -135,7 +135,7 @@ public class WebSecurityConfig {
             // 테스트용 사용자 계정 user
             User normalUser = User.builder()
                     .email("user@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("user")
                     .phoneNumber("01012341233")
                     .role(userRole)

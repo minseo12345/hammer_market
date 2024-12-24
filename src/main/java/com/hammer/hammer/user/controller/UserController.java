@@ -54,8 +54,14 @@ public class UserController {
     }
 
     // 아이디 찾기
-    @GetMapping("/find-id")
+    @GetMapping("/login/find-id")
     public String findId() {
         return "/user/findId";
+    }
+
+    // 비밀번호 찾기
+    @GetMapping("/login/find-pw")
+    public String findPw() {
+        return "/user/findPw";
     }
 }

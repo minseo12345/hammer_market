@@ -1,11 +1,9 @@
 package com.hammer.hammer.global.jwt.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
+@Setter
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
