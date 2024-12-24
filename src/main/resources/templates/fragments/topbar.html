@@ -1,13 +1,18 @@
-<th:block th:fragment="topbar">
+<th:block th:fragment="topbar" xmlns:sec="http://www.w3.org/1999/xhtml">
     <nav class="topbar">
         <div class="navbar-content">
             <a href="#">
                 <img th:src="@{/img/logo.png}" alt="로고" class="logo">
             </a>
-            <div class="navbar-links">
+
+            <div class="navbar-links" sec:authorize="isAuthenticated()">
                 <a href="#">내정보</a>
                 <a href="#">장바구니</a>
-                <a href="#">로그아웃</a>
+                <a href="/logout">로그아웃</a>
+            </div>
+
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/login">로그인</a>
             </div>
         </div>
     </nav>
