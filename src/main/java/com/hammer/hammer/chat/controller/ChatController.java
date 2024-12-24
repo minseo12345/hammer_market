@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @Controller
 @RequestMapping("/chat")
-public class ViewController {
+public class ChatController {
 
     @GetMapping
     public String chat() {
