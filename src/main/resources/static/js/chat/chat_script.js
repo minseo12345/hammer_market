@@ -30,8 +30,8 @@ function connectWebSocket() {
             stompClient.subscribe('/topic/messages', (message) => {
                 const msg = JSON.parse(message.body);
                 if (msg.chatRoomId === currentChatRoomId) {
+                    console.log("message arrived")
                     addMessage(msg.senderId, msg.content);
-
                 } else {
                     // 읽지 않은 메시지 수 실시간 업데이트
                     console.log("chatRoomId :",msg.chatRoomId);
@@ -228,6 +228,7 @@ function sendMessage() {
         };
         stompClient.send("/app/chat", {}, JSON.stringify(message));
         messageInputEl.value = '';
+        console.log("message send")
     }
 }
 // 전송 버튼 클릭
