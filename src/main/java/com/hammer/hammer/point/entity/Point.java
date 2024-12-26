@@ -26,7 +26,7 @@ public class Point {
 
     @Column(precision = 10, scale = 2, nullable = false)
     @Positive(message = "입찰 금액은 양수여야 합니다.")
-    private BigDecimal bidAmount;
+    private BigDecimal pointAmount;
 
     private LocalDateTime createDate;
 
