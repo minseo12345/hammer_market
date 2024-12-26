@@ -88,4 +88,10 @@ public class ChatService {
     public void markMessagesAsRead(String roomId, Long userId) {
         customMessageRepository.markMessagesAsRead(roomId, userId);
     }
+
+    @Transactional
+    public void deleteEveryThings(){
+        messageRepository.deleteAll();
+        chatRoomRepository.deleteAll();
+    }
 }

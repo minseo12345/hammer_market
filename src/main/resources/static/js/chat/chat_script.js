@@ -31,10 +31,13 @@ function connectWebSocket() {
                 const msg = JSON.parse(message.body);
                 if (msg.chatRoomId === currentChatRoomId) {
                     addMessage(msg.senderId, msg.content);
+
                 } else {
                     // 읽지 않은 메시지 수 실시간 업데이트
+                    console.log("chatRoomId :",msg.chatRoomId);
                     updateUnreadCount(msg.chatRoomId);
                 }
+
             });
             loadChatRooms(); // 채팅방 목록 불러오기
         },
@@ -67,7 +70,7 @@ function attemptReconnect() {
 }
 // 채팅방 목록 불러오기
 function loadChatRooms() {
-    fetch('/chat/chatrooms')
+    fetch('/api/chat/chatrooms')
         .then((response) => response.json())
         .then((chatRooms) => {
             // 기존 목록 초기화
@@ -82,7 +85,7 @@ function loadChatRooms() {
 function createChatRoomElement(room) {
     const li = document.createElement('li');
     li.textContent = currentUser.userId === room.sellerId ? room.sellerTitle : room.buyerTitle;
-    li.dataset.roomId = room.userId;
+    li.dataset.roomId = room.id;
 
     // UnreadCount 표시용 요소 추가
     const unreadSpan = document.createElement('span');
@@ -102,7 +105,7 @@ function createChatRoomElement(room) {
     }
 
     // 초기 UnreadCount 불러오기
-    fetch(`/chat/chatrooms/${room.id}/unreadCount?userId=${currentUser.userId}`)
+    fetch(`/api/chat/chatrooms/${room.id}/unreadCount?userId=${currentUser.userId}`)
         .then((res) => res.json())
         .then((unreadCount) => {
             updateUnreadUI(li, unreadCount);
@@ -118,11 +121,13 @@ function updateUnreadUI(roomElement, unreadCount) {
 function updateUnreadCount(chatRoomId) {
     const roomElement = document.querySelector(`[data-room-id="${chatRoomId}"]`);
     if (roomElement) {
-        fetch(`/chat/chatrooms/${chatRoomId}/unreadCount?userId=${currentUseruser}`)
+        fetch(`/api/chat/chatrooms/${chatRoomId}/unreadCount?userId=${currentUser.userId}`)
             .then((res) => res.json())
             .then((unreadCount) => {
                 updateUnreadUI(roomElement, unreadCount);
             });
+    }else{
+        loadChatRooms();
     }
 }
 // 유저 목록 불러오기
@@ -150,10 +155,10 @@ function enterChatRoom(room) {
     messagesEl.innerHTML = ''; // 기존 메시지 초기화
 
     // 읽지 않은 메시지를 읽은 상태로 표시
-    fetch(`/chat/${room.id}/read?userId=${currentUser.userId}`, { method: 'POST' })
+    fetch(`/api/chat/${room.id}/read?userId=${currentUser.userId}`, { method: 'POST' })
         .then(() => updateUnreadCount(room.id)); // UnreadCount 초기화
 
-    fetch(`/chat/${room.id}`)
+    fetch(`/api/chat/${room.id}`)
         .then((response) => response.json())
         .then((messages) => {
             messages.forEach((msg) => addMessage(msg.senderId, msg.content));
@@ -166,7 +171,7 @@ function selectUser(user) {
         alert("You can't chat with yourself!");
         return;
     }
-    fetch('/chat/createChatRoom', {
+    fetch('/api/chat/createChatRoom', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -187,7 +192,7 @@ function selectUser(user) {
 function addMessage(senderId, content) {
     const div = createMessageElement(senderId, content);
     messagesEl.appendChild(div);
-    fetch(`/chat/${currentChatRoomId}/read?userId=${currentUser.userId}`, { method: 'POST' })
+    fetch(`/api/chat/${currentChatRoomId}/read?userId=${currentUser.userId}`, { method: 'POST' })
         .then(() => console.log("message add"));
     messagesEl.scrollTop = messagesEl.scrollHeight; // 스크롤 하단으로 이동
 }

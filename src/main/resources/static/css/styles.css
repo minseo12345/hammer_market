@@ -1,0 +1,26 @@
+.notification-icon img {
+    width: 30px;
+    cursor: pointer;
+}
+
+.modal {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 10px;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content button {
+    margin-top: 10px;
+    padding: 5px 10px;
+}

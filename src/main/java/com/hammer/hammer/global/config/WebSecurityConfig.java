@@ -51,12 +51,12 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/login", "/login/**", "/logout",
+                                 "/login", "/login/**", "/logout",
                                 "/signup", "/user",
                                 "/jwt-login",
                                 "/chat","/api/**","/chat/**","/topic/messages","/ws/**","/app/chat","/ws",
                                 "/error",
-                                "/css/**", "/js/**", "/images/**"
+                                "/css/**", "/js/**", "/img/**"
                         ).permitAll()  // 로그인 API는 인증 없이 접근 가능
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -93,19 +93,11 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CommandLineRunner initData(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initData(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
             // 테스트용 Role 생성
             Role adminRole = Role.builder()
                     .roleName("ROLE_ADMIN")
-                    .build();
-
-            Role buyerRole = Role.builder()
-                    .roleName("ROLE_BUYER")
-                    .build();
-
-            Role sellerRole = Role.builder()
-                    .roleName("ROLE_SELLER")
                     .build();
 
             Role userRole = Role.builder()
@@ -115,44 +107,42 @@ public class WebSecurityConfig {
             // 테스트용 관리자 계정 admin
             User adminUser = User.builder()
                     .email("admin@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("admin")
-                    .phonenumber("01012341234")
+                    .phoneNumber("01012341234")
                     .role(adminRole)
                     .build();
 
             // 테스트용 사용자 계정 buyer
             User buyerUser = User.builder()
                     .email("buyer@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("buyer")
-                    .phonenumber("01012341334")
-                    .role(buyerRole)
+                    .phoneNumber("01012341334")
+                    .role(userRole)
                     .build();
 
             // 테스트용 사용자 계정 seller
             User sellerUser = User.builder()
                     .email("seller@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("seller")
-                    .phonenumber("0101212341233")
-                    .role(sellerRole)
+                    .phoneNumber("0101212341233")
+                    .role(userRole)
                     .build();
 
 
             // 테스트용 사용자 계정 user
             User normalUser = User.builder()
                     .email("user@test.com")
-                    .password(passwordEncoder.encode("123"))
+                    .password(bCryptPasswordEncoder().encode("123"))
                     .username("user")
-                    .phonenumber("01012341233")
+                    .phoneNumber("01012341233")
                     .role(userRole)
                     .build();
 
             // 테스트 Role 생성
             roleRepository.save(adminRole);
-            roleRepository.save(buyerRole);
-            roleRepository.save(sellerRole);
             roleRepository.save(userRole);
             
             // 테스트 user 생성

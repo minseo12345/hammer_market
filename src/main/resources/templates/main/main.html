@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
+<head>
+    <title>메인페이지</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <!-- 메인 콘텐츠가 여기에 추가됩니다 -->
+    <h2>메인 콘텐츠 여기에 추가</h2>
+        <div>
+            <div class="firstColumn">
+                <div>userId: <span th:text="${user.userId}"></span></div>
+                <div>userEmail: <span th:text="${user.email}"></span></div>
+                <div>userPhone: <span th:text="${user.phoneNumber}"></span></div>
+                <div>userRoleId: <span th:text="${user.role.roleId}"></span></div>
+                <div>userRoleName: <span th:text="${user.role.roleName}"></span></div>
+            </div>
+            <div>
+                <!-- 관리자 페이지 -->
+                <td sec:authorize="hasRole('ROLE_ADMIN')">
+                    <button type="button" onclick="AdminPage()">관리자 페이지</button>
+                </td>
+                <td>
+                    <button type="button" th:onclick="'BidPage(' + ${user.userId} + ')'" >bid 페이지</button>
+                </td>
+                <td>
+                    <button type="button" onclick="ChatPage()">chat 페이지</button>
+                </td>
+                <td>
+                    <button type="button" onclick="ItemPage()">item 페이지</button>
+                </td>
+
+                <!-- 게시판 삭제 -->
+                <td sec:authorize="hasRole('ROLE_ADMIN')">
+                </td>
+            </div>
+        </div>
+    </div>
+    <div>
+        <img id="notification-icon" src="/img/아직 안넣음" alt="알림 아이콘(종모양)" />
+    </div>
+    <!-- 알림 모달 -->
+    <div id="notification-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>알림</h2>
+            <div id="notification-list">
+            </div>
+            <button id="mark-read-button">모든 알림 읽음 처리</button>
+            <button id="close-modal-button">닫기</button>
+        </div>
+    </div>
+    <script th:src="@{/js/main/main.js}"></script>
+</main>
+</body>
+</html>

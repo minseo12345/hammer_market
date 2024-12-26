@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>판매 완료</title>
+</head>
+<body>
+<h1>SOLD OUT</h1>
+<img src="{{ item.fileUrl }}" alt="판매 이미지">
+<h2>{{ item.title }}</h2>
+<p>낙찰가: {{ highestBid }}원</p>
+<p>종료일: {{ item.endTime }}</p>
+<p>설명: {{ item.description }}</p>
+</body>
+</html>

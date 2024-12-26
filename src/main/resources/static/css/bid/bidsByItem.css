@@ -1,0 +1,81 @@
+.bids-by-item-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.bids-by-item-title {
+    display: flex;
+    flex: 3;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    align-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+.bids-by-item-title h2 {
+    position: absolute;
+    right: 45%;
+    margin-left: 100px;
+}
+
+.bids-item-status {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 150px;
+}
+
+.bids-by-item-createAt {
+    font-size: 10px;
+    position: absolute; /* 절대 위치로 설정 */
+    color: #777;
+    top: 100px; /* 제목 아래로 위치시킵니다 */
+    right: 0; /* 오른쪽에 위치시킵니다 */
+    margin: 10px; /* 약간의 여백을 추가 */
+}
+
+.bids-by-item-description {
+    font-size: 25px;
+}
+
+.bids-item-status img {
+    width: 100px;
+    height: 500px;
+}
+
+.bids-list {
+    flex: 1;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 350px;
+    overflow-y: auto;
+    max-height: 350px;
+}
+
+.bid-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.bid-username {
+    font-weight: bold;
+    margin-right: 50px;
+    color: #333;
+}
+
+.bid-amount {
+    color: #007BFF;
+    font-weight: bold;
+}

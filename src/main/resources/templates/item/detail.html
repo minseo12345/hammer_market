@@ -16,7 +16,6 @@
     </div>
 </header>
 <main>
-    <!-- 데이터를 data-* 속성으로 전달 -->
     <div id="item-details"
          th:attr="data-item-id=${item.itemId}, data-highest-bid=${highestBid}">
 
@@ -41,7 +40,6 @@
                 <button type="submit" class="bid-button">입찰하기</button>
             </form>
 
-            <!-- 즉시구매하기 버튼 -->
             <button id="buy-now" class="buy-button">즉시구매하기</button>
         </div>
     </div>

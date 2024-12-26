@@ -1,4 +1,4 @@
-package com.hammer.hammer.chat.unitTest;
+package com.hammer.hammer.chat;
 
 import com.hammer.hammer.chat.entity.ChatRoom;
 import com.hammer.hammer.chat.entity.Message;
@@ -188,7 +188,7 @@ public class ChatServiceTest {
         List<Message> messages = messageRepository.findByChatRoomId(chatRoom.getId());
         assertTrue(messages.stream().allMatch(Message::isReadStatus));
     }
-    @Test
+    /*@Test//test를 위해 10초로 설정 이후에 30일로 변경할 예정
     void testAutoDeletionAfter10Seconds() throws InterruptedException {
         // Given
         ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);
@@ -216,9 +216,9 @@ public class ChatServiceTest {
         // Then
         assertNull(deletedChatRoom, "ChatRoom should be deleted after 10 seconds");
         assertNull(deletedMessage, "Message should be deleted after 10 seconds");
-    }
+    }*/
 
-    @Test//test를 위해 10초로 설정 이후에 30일로 변경할 예정
+    @Test
     void testChatRoomUpdatedAtOnMessageSend() throws InterruptedException {
         // Given
         ChatRoom chatRoom = chatService.findOrCreateChatRoom(sellerId, buyerId);

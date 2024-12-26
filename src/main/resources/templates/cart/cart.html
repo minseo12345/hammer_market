@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #ddd; }
+        .cart-item div { flex: 1; text-align: center; }
+        .cart-item div:first-child { text-align: left; flex: 2; }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Shopping Cart</h1>
+    <div id="shopping-cart">
+        <h2>Welcome, <span id="currentUserId"></span>!</h2>
+        <div>
+            <h4>Products</h4>
+            <!-- Item List - 버튼 클릭 시 장바구니에 추가되는 항목들 -->
+            <button class="btn btn-success" onclick="addToCart('Product A', 100)">Add Product A ($100)</button> <!--더미 데이터-->
+            <button class="btn btn-success" onclick="addToCart('Product B', 200)">Add Product B ($200)</button>
+            <button class="btn btn-success" onclick="addToCart('Product C', 300)">Add Product C ($300)</button>
+        </div>
+        <hr>
+        <h4>Your Cart</h4>
+        <div id="cartItems"></div>
+        <h5>Total: $<span id="totalPrice">0</span></h5>
+    </div>
+</div>
+
+<script>
+    // 현재 로그인된 사용자 ID (외부에서 받아옴)
+    let currentUserId = "user123";  // 예시: 현재 사용자 ID를 외부에서 받아오는 값으로 대체
+
+    // 장바구니 저장
+    function saveCart(cart) {
+        if (!currentUserId) return;
+        localStorage.setItem(`cart_${currentUserId}`, JSON.stringify(cart));
+    }
+
+    // 장바구니 불러오기
+    function getCart() {
+        if (!currentUserId) return [];
+        const cart = localStorage.getItem(`cart_${currentUserId}`);
+        return cart ? JSON.parse(cart) : [];
+    }
+
+    // 장바구니에 아이템 추가
+    function addToCart(productName, price) {
+        let cart = getCart();
+        const existingItem = cart.find(item => item.name === productName);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name: productName, price: price, quantity: 1 });
+        }
+
+        saveCart(cart);
+        renderCart();
+    }
+
+    // 장바구니 아이템 삭제
+    function removeFromCart(productName) {
+        let cart = getCart();
+        cart = cart.filter(item => item.name !== productName);
+        saveCart(cart);
+        renderCart();
+    }
+
+
+    // 장바구니 렌더링
+    function renderCart() {
+        const cartItemsEl = document.getElementById("cartItems");
+        const totalPriceEl = document.getElementById("totalPrice");
+        const cart = getCart();
+
+        cartItemsEl.innerHTML = "";
+        let totalPrice = 0;
+
+        cart.forEach(item => {
+            totalPrice += item.price * item.quantity;
+
+            const cartItemEl = document.createElement("div");
+            cartItemEl.classList.add("cart-item");
+
+            cartItemEl.innerHTML = `
+                    <div>${item.name}</div>
+                    <div>$${item.price}</div>
+                    <div>
+                        <button class="btn btn-danger btn-sm" onclick="removeFromCart('${item.name}')">Remove</button>
+                    </div>
+                `;
+
+            cartItemsEl.appendChild(cartItemEl);
+        });
+
+        totalPriceEl.textContent = totalPrice;
+    }
+
+    // 초기 렌더링 (장바구니 내용이 있으면 로드)
+    renderCart();
+</script>
+</body>
+</html>

@@ -22,7 +22,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
 
-    public Item createItem(Item item, MultipartFile image, User user) throws IOException {
+    public Item createItem(Item item, MultipartFile image, User user, String itemPeriod) throws IOException {
         if (!image.isEmpty()) {
             String uploadPath = "C:/uploads/";
             File uploadDir = new File(uploadPath);
@@ -40,13 +40,30 @@ public class ItemService {
         }
 
         item.setStartTime(LocalDateTime.now());
+        item.setEndTime(calculateEndTime(item.getStartTime(), itemPeriod)); // 종료 시간 계산
         item.setStatus(Item.ItemStatus.ONGOING);
-
-
         item.setUser(user);
+
 
         return itemRepository.save(item);
     }
+    private LocalDateTime calculateEndTime(LocalDateTime startTime, String itemPeriod) {
+        switch (itemPeriod) {
+            case "3일":
+                return startTime.plusDays(3);
+            case "7일":
+                return startTime.plusDays(7);
+            case "1달":
+                return startTime.plusMonths(1);
+            case "2달":
+                return startTime.plusMonths(2);
+            case "3달":
+                return startTime.plusMonths(3);
+            default:
+                throw new IllegalArgumentException("유효하지 않은 경매 기간입니다.");
+        }
+    }
+
 
 
     public Item updateAuctionStatus(Long itemId, Item.ItemStatus newStatus) {
@@ -61,8 +78,20 @@ public class ItemService {
     }
 
     public Item getItemById(Long id) {
-        return itemRepository.findById(id)
+        Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다: " + id));
+
+        // 상태 확인
+        updateItemStatus(item);
+
+        return item;
+    }
+    //상태확인
+    private void updateItemStatus(Item item) {
+        if (item.getEndTime().isBefore(LocalDateTime.now())) {
+            item.setStatus(Item.ItemStatus.COMPLETED);
+            itemRepository.save(item);
+        }
     }
 
     public void deleteItem(Long id) {

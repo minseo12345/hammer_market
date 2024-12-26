@@ -21,7 +21,6 @@ import java.util.Set;
 @Table(name = "Users")
 //User는 예약어가 있어서 users라고 해야함
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,7 +38,7 @@ public class User implements UserDetails {
     @Column(name = "username", nullable = false, length = 50)
     private String username; // 사용자 이름
 
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email; // 이메일
 
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -52,7 +51,7 @@ public class User implements UserDetails {
     private String password; // 비밀번호
 
     @Column(name = "phone_number")
-    private String phonenumber; // 사용자 전화번호
+    private String phoneNumber; // 사용자 전화번호
 
     @Builder.Default
     @Column(name = "active")
@@ -81,6 +80,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Item> items;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Point> points;
 
     @Override // 권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {

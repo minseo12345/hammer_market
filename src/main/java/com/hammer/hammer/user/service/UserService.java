@@ -21,6 +21,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtProviderImpl jwtProvider; // JwtProviderImpl 추가
 
@@ -30,17 +31,15 @@ public class UserService {
             return 0L;
         }
 
-        Role userRole = Role.builder()
-                .roleName("USER")
-                .build();
+        Role userRole = roleRepository.findById(2L).
+                orElseThrow(() -> new IllegalArgumentException("Role not found for 2"));;
 
         // 빌더 패턴을 활용하여 User 객체 생성
         return userRepository.save(User.builder()
                 .email(userDto.getEmail())
                 .password(bCryptPasswordEncoder.encode(userDto.getPassword())) // 패스워드 저장시 시큐리티 설정에 등록한 빈을 사용해서 암호화 한 후 저장
                 .username(userDto.getUsername())
-                .phonenumber(userDto.getPhoneNumber())
-//                .role(Role.USER) // 유저 권한 추가 코드
+                .phoneNumber(userDto.getPhoneNumber())
                 .role(userRole) // 유저 권한 추가 코드
                 .build()).getUserId();
     }
