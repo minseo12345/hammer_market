@@ -1,6 +1,7 @@
 package com.hammer.hammer.user.entity;
 
 import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.point.entity.Point;
 import com.hammer.hammer.transaction.entity.Transaction;
 
 import jakarta.persistence.*;
@@ -20,6 +21,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Users")
 //User는 예약어가 있어서 users라고 해야함
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor

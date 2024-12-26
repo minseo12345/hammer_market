@@ -59,7 +59,7 @@ class AdminServiceTest {
             .username("JohnDoe")
             .email("john.doe@example.com")
             .password("securepassword")
-            .phonenumber("1234567890")
+            .phoneNumber("1234567890")
             .role(role)
             .active(true)
             .build();
