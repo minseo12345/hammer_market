@@ -75,7 +75,7 @@ class AdminServiceTest {
 
         User actualUser = result.get(0);
         assertEquals(1L, actualUser.getUserId(), "User ID should match");
-        assertEquals("JohnDoe", actualUser.getUsername(), "Username should match");
+        assertEquals("JohnDoe", actualUser.getName(), "Username should match");
         assertEquals("john.doe@example.com", actualUser.getUsername(), "getUsername() should return email");
         assertEquals("john.doe@example.com", actualUser.getEmail(), "Email should match");
         assertEquals("Admin", actualUser.getRole().getRoleName(), "Role name should match");

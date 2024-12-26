@@ -31,37 +31,41 @@
             <thead>
                 <tr>
                 <th>판매자 ID</th>
-                <th>판매자 이름</th>
+                <th>판매자 이메일</th>
                 <th>상품 이름</th>
                 <th>낙찰가</th>
                 <th>낙찰일</th>
-                <th>낙찰자 ID</th>
+                <th>낙찰자 이메일</th>
                 <th>상태</th>
                 </tr>
             </thead>
             <tbody id="transactionTable">
-                  <tr th:each="transaction : ${transactions}" 
+              <!--      <tr th:each="transaction : ${transactions}" 
                   th:data-status="${transaction.status}"
                   th:data-finalprice="${transaction.finalPrice}" 
-                  th:data-transactiondate="${transaction.transactionDate}">
-                
+                  th:data-transactiondate="${transaction.transactionDate}">-->
+                   <tr th:if="${#lists.isEmpty(transactions)}">
+       				 <td colspan="7">거래 데이터가 없습니다.</td>
+    				</tr>
+    				  <tr th:each="transaction : ${transactions}">
                 <td th:text="${transaction.sellerId}"></td>
-                <td th:text="${transaction.sellerUsername}"></td>
+                 <td th:text="${transaction.sellerEmail}"></td>
                 <td th:text="${transaction.itemTitle}"></td>
                 <td th:text="${transaction.finalPrice}"></td>
                 <td th:text="${transaction.transactionDate}"></td>
-                <td th:text="${transaction.buyerId}"></td>
+                <td th:text="${transaction.buyerEmail}"></td> 
                 <td>
                 	<span th:if="${transaction.status == 'BIDDING_END'}">경매 완료</span>
                 	<span th:if="${transaction.status == 'COMPLETED'}">거래 완료</span>
                 	<span th:if="${transaction.status == 'ONGOING'}">경매 진행중</span>
+                	<span th:if="${transaction.status == 'CANCELLED'}">경매 취소</span>
                 	</td>
                 </tr>
             </tbody>
         </table>
     </div>
     
-    <script src="/transaction_filter.js"></script>
+    <script src="/js/admin/transaction_filter.js"></script>
 </body>
 </html>
 

@@ -14,10 +14,10 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableJpaRepositories(basePackages = {"com.hammer.hammer.bid.repository",
 		"com.hammer.hammer.item.repository","com.hammer.hammer.transaction.repository",
-		"com.hammer.hammer.user.repository","com.hammer.hammer.notification.repository"})
+		"com.hammer.hammer.user.repository","com.hammer.hammer.notification.repository","com.hammer.hammer.category.repository"})
 @EntityScan(basePackages = {"com.hammer.hammer.bid.entity",
 		"com.hammer.hammer.item.entity","com.hammer.hammer.transaction.entity",
-		"com.hammer.hammer.user.entity,com.hammer.hammer.notification.entity"})
+		"com.hammer.hammer.user.entity,com.hammer.hammer.notification.entity","com.hammer.hammer.category.entity"})
 @EnableMongoRepositories(basePackages = {"com.hammer.hammer.chat.repository",
 		"com.hammer.hammer.chat.entity"})
 @EnableMongoAuditing

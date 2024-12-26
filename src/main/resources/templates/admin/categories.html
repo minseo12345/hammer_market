@@ -10,8 +10,8 @@
     <thead>
     <tr>
         <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
+        <th>이름</th>
+        <th>설명</th>
         <th>Actions</th>
     </tr>
     </thead>
@@ -23,7 +23,7 @@
         <td>
             <a th:href="@{/admin/categories/{id}/edit(id=${category.categoryId})}">Edit</a>
             <form th:action="@{/admin/categories/{id}/delete(id=${category.categoryId})}" method="post" style="display:inline;">
-                <button type="submit">Delete</button>
+                <button type="submit">삭제</button>
             </form>
         </td>
     </tr>

@@ -17,7 +17,7 @@ import java.util.Optional;
 public class AdminService {
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
-    //private final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
     
  
 
@@ -29,7 +29,7 @@ public class AdminService {
     public List<TransactionStatusDto> getTransactionStatuses() {
         return transactionRepository.findAllTransactionStatus();
     }
-    /*
+    
     //카테고리 crud
     public List<Category> findAll() {
         return categoryRepository.findAll();
@@ -45,5 +45,5 @@ public class AdminService {
 
     public void deleteById(Long categoryId) {
         categoryRepository.deleteById(categoryId);
-    }*/
+    }
 }

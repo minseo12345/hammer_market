@@ -99,6 +99,10 @@ public class User implements UserDetails {
     public String getPassword() {
         return this.password;
     }
+    
+    public String getName() { // 만약 다른 이름이 필요하다면 추가 가능
+        return username;
+    }
 
     @Override // 사용자의 id를 반환(고유 값)
     public String getUsername() {

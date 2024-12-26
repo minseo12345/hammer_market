@@ -8,10 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -20,63 +23,61 @@ public class AdminController {
 
     private final AdminService adminService;
 
-
-    //관리자페이지 이동
+    // 관리자 대시보드
     @GetMapping
     public String adminPage(Model model) {
-        model.addAttribute("welcomeMessage","welcome admin page!");
+        model.addAttribute("welcomeMessage", "Welcome to the admin page!");
         return "/admin/dashboard";
     }
-
-    //사용자 조회
+    
+    // 사용자 조회 화면
     @GetMapping("/users")
-    public String getAllUsers(Model model){
+    public String getAllUsers(Model model) {
         List<User> userList = adminService.getAllUsers();
-        model.addAttribute("users",userList);
+        model.addAttribute("users", userList);
         return "/admin/users";
     }
 
-    //경매현황 조회
-    @GetMapping("/transcations")
+    // 경매 현황 조회 화면
+    @GetMapping("/transactions")
     public String getAllTransactions(Model model) {
         List<TransactionStatusDto> transactions = adminService.getTransactionStatuses();
         model.addAttribute("transactions", transactions);
-        return "/admin/transactions"; 
+        return "admin/transactions";
     }
-    /*
-    //카테고리 관리
-	@GetMapping("/categories")
-	public String getCategory(Model model) {
-	List<Category> categories = adminService.findAll();
-	model.addAttribute("categories", categories);
-	return "/admin/categories";
-}
-	//특정 카테고리 선택
+
+    // 카테고리 관리 화면
+    @GetMapping("/categories")
+    public String getCategory(Model model) {
+        List<Category> categories = adminService.findAll();
+        model.addAttribute("categories", categories);
+        return "/admin/categories";
+    }
+
+    // 카테고리 추가 폼
+    @GetMapping("/categories/new")
+    public String createCategoryForm(Model model) {
+        model.addAttribute("category", new Category());
+        return "/admin/categories.new";
+    }
+
+    // 카테고리 수정 폼
+    @GetMapping("/categories/edit/{id}")
+    public String editCategoryForm(@PathVariable Long id, Model model) {
+        Optional<Category> optionalCategory = adminService.findById(id);
+        if (optionalCategory.isPresent()) {
+            model.addAttribute("category", optionalCategory.get());
+        }
+        return "/admin/categories.form";
+    }
+
+    // 카테고리 상세 보기 화면
     @GetMapping("/categories/{id}")
     public String getCategoryById(@PathVariable Long id, Model model) {
-    	if(adminService.findById(id).isPresent()) {
-    		model.addAttribute("category", adminService.findById(id).get());
-    	}
-        return "categories/detail"; // categories/detail.html 반환
+        Optional<Category> optionalCategory = adminService.findById(id);
+        if (optionalCategory.isPresent()) {
+            model.addAttribute("category", optionalCategory.get());
+        }
+        return "/admin/categories.detail";
     }
-    
-    // 카테고리 추가 페이지
-   @GetMapping("/categories/new")
-   public String createCategoryForm(Model model) {
-	   model.addAttribute("category",new Category());
-	   return "/admin/categories/new";
-   }
-    // 카테고리 생성
-    //@PostMapping("/categories")
-    
-    // 카테고리 수정 페이지
-   // @GetMapping("/categories/{id}/edit")
-    
- // 카테고리 수정
-    //@PostMapping("/categories/{id}")
-    
-    
-    // 카테고리 삭제
-    //@PostMapping("/categories/{id}/delete")
-*/
 }

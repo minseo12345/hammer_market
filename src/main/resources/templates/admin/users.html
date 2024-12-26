@@ -13,7 +13,7 @@
                     <th>아이디</th>
                     <th>이름</th>
                     <th>제제 횟수</th>
-                    <th>잠금 상태</th>
+                  <!--   <th>잠금 상태</th> -->
                     <th>회원 추방</th>
                 </tr>
             </thead>
@@ -22,7 +22,7 @@
                     <td th:text="${user.userId}">ID</td>
                       <td th:text="${user.username}">Name</td>
                    <td th:text="${user.email}">Email</td>
-                    <td th:text="${user.loginLock ? '잠금' : '열림'}">Lock Status</td>
+                    <!-- <td th:text="${user.loginLock != null && user.loginLock ? '잠금' : '열림'}}">Lock Status</td> -->
                     <td th:text="${user.active ? '활성' : '비활성'}">Active Status</td> 
                 </tr>
             </tbody>

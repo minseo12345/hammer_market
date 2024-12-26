@@ -1,5 +1,6 @@
 package com.hammer.hammer.item.entity;
 
+import com.hammer.hammer.transaction.entity.Transaction;
 //import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
@@ -54,13 +55,13 @@ public class Item{
 
     // ENUM 선언
     public enum ItemStatus {
-        ONGOING,BIDDING_END,COMPLETED
+        ONGOING,BIDDING_END,COMPLETED,CANCELLED
     }
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
-//    private Transaction transaction;
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+    private Transaction transaction;
 }
