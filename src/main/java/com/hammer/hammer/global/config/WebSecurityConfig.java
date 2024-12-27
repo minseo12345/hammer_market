@@ -58,18 +58,18 @@ public class WebSecurityConfig {
                                 "/error",
                                 "/css/**", "/js/**", "/img/**"
                         ).permitAll()  // 로그인 API는 인증 없이 접근 가능
-                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout // 5. 로그아웃 설정
                         .logoutSuccessUrl("/login")
                         .deleteCookies(
-                                "JSESSIONID", "refreshToken")
+                                "JSESSIONID", "refreshToken", "remember-me")
                         .invalidateHttpSession(true)
                         .permitAll()
                 )
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPointImpl) // 인증 실패 처리
+//                        .authenticationEntryPoint(authenticationEntryPointImpl) // 인증 실패 처리
                         .accessDeniedHandler(accessDeniedHandlerImpl) // 권한 부족 처리
                 )
                 .csrf(csrf -> csrf.disable())
@@ -144,7 +144,7 @@ public class WebSecurityConfig {
             // 테스트 Role 생성
             roleRepository.save(adminRole);
             roleRepository.save(userRole);
-            
+
             // 테스트 user 생성
             userRepository.save(adminUser);
             userRepository.save(buyerUser);

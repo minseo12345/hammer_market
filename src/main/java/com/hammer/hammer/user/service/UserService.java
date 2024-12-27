@@ -26,9 +26,8 @@ public class UserService {
     private final JwtProviderImpl jwtProvider; // JwtProviderImpl 추가
 
     public Long save(UserDto userDto) {
-        Optional<User> userCheck = userRepository.findByEmail(userDto.getEmail());
-        if (userCheck.isPresent()) {
-            return 0L;
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new IllegalArgumentException("이미 사용중인 Email 입니다.");
         }
 
         Role userRole = roleRepository.findById(2L).
@@ -79,4 +78,21 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다. ID: " + userId));
     }
 
+    public Optional<String> findByUsernameAndPhoneNumber(UserDto userDto) {
+        return userRepository
+                .findByUsernameAndPhoneNumber(userDto.getUsername(), userDto.getPhoneNumber())
+                .map(User::getEmail);
+    }
+
+    public Optional<User> findByNameAndEmail(String userName, String email) {
+        return userRepository.findByUsernameAndEmail(userName, email);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+//    public void updatePassword(User user, String tempPassword) {
+//        user.setPassword(encodePassword(tempPassword)); // 비밀번호 암호화
+//        userRepository.save(user);
+//    }
 }

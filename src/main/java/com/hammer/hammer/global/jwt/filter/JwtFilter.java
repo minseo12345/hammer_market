@@ -2,6 +2,7 @@ package com.hammer.hammer.global.jwt.filter;
 
 import com.hammer.hammer.global.jwt.auth.AuthTokenImpl;
 import com.hammer.hammer.global.jwt.auth.JwtProviderImpl;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -33,18 +34,24 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         Optional<String> token = resolveToken(request);
-        if (token.isPresent()) {
-            AuthTokenImpl jwtToken =
-                tokenProvider.convertAuthToken(token.get());
+        try {
+            if (token.isPresent()) {
+                AuthTokenImpl jwtToken =
+                    tokenProvider.convertAuthToken(token.get());
 
-            if (jwtToken.validate()) {
-                Authentication authentication =
-                    tokenProvider.getAuthentication(jwtToken);
+                if (jwtToken.validate()) {
+                    Authentication authentication =
+                        tokenProvider.getAuthentication(jwtToken);
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authentication);
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authentication);
+                }
             }
+        } catch (JwtException ex) {
+            SecurityContextHolder.clearContext(); // 유효하지 않은 토큰 시 보안 컨텍스트 초기화
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않거나 만료된 토큰");
+            return;
         }
         filterChain.doFilter(request, response);
     }

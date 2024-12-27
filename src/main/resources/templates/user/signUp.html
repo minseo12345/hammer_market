@@ -8,28 +8,33 @@
 <div class="signUpContainer">
     <p class="signUpTitle">회원가입</p>
     <div class="signUpContent">
-        <form th:action="@{/user}" method="POST">
+        <form id="signUpForm">
             <!-- 토큰을 추가하여 CSRF 공격 방지 -->
             <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
             <div>
                 <label for="email">이메일</label>
                 <input type="email" name="email" id="email" maxlength="50" required placeholder="이메일">
+                <span id="emailError" class="error-message"></span>
             </div>
             <div>
                 <label for="password">비밀번호</label>
                 <input type="password" name="password" id="password" maxlength="20" required placeholder="비밀번호">
+                <span id="passwordError" class="error-message"></span>
             </div>
             <div>
                 <label for="confirmPw">비밀번호 확인</label>
                 <input type="password" id="confirmPw" maxlength="20" required placeholder="비밀번호 확인">
+                <span id="confirmPwError" class="error-message"></span>
             </div>
             <div>
                 <label for="username">이름</label>
                 <input type="text" name="username" id="username" maxlength="10" required placeholder="이름">
+                <span id="usernameError" class="error-message"></span>
             </div>
             <div>
                 <label for="phoneNumber">전화번호</label>
-                <input type="number" name="phoneNumber" id="phoneNumber" maxlength="12" required placeholder="전화번호를 입력해주세요">
+                <input type="tel" name="phoneNumber" id="phoneNumber" maxlength="12" required placeholder="전화번호를 입력해주세요">
+                <span id="phoneNumberError" class="error-message"></span>
             </div>
             <div class="btnSection">
                 <button type="submit" class="signUpBtn">회원가입</button>
@@ -38,5 +43,6 @@
         </form>
     </div>
 </div>
+<script th:src="@{/js/user/signUp.js}"></script>
 </body>
 </html>
