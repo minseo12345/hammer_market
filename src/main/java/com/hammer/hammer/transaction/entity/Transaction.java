@@ -35,9 +35,6 @@ public class Transaction {
     @JoinColumn(name = "seller_id", referencedColumnName = "user_id")
     private final User seller;
 
-    @OneToMany(mappedBy = "transaction")
-    private List<Point> points;
-
     @OneToOne
     @JoinColumn(name = "item_id", nullable = false)
     private final Item item;  // 1:1 관계
