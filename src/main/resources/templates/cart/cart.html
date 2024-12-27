@@ -3,164 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>Cart</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/fragments/topbar.css">
     <link rel="stylesheet" href="/css/fragments/sidebar.css">
     <link rel="stylesheet" href="/css/fragments/header.css">
-    <style>
-        /* 스타일 조정 */
-        #app {
-            display: flex;
-            flex-direction: row;
-        }
-
-        #shopping-cart {
-            border-left: 1px solid #ddd;
-            padding-left: 20px;
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .cart-item div {
-            flex: 1;
-            text-align: center;
-        }
-
-        .cart-item div:first-child {
-            text-align: left;
-            flex: 2;
-        }
-    </style>
 </head>
+
 <body>
 <div th:insert="~{'fragments/topbar' :: topbar}"></div>
 <div th:insert="~{'fragments/header' :: header}"></div>
-<div id="app" class="container-fluid p-0">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3">
-            <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
-        </div>
+<div id="app" class="container-fluid p-0 d-flex">
+    <!-- Sidebar -->
+    <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
 
-        <!-- Shopping Cart -->
-        <div class="col-md-9">
-            <div class="container mt-5">
-                <div id="shopping-cart">
-                    <h2>Welcome, <span id="currentUserId"></span>!</h2>
-                    <div>
-                        <h4>Products</h4>
-                        <!-- Item List - 버튼 클릭 시 장바구니에 추가되는 항목들 -->
-                        <button class="btn btn-success" onclick="addToCart('Product A', 100)">Add Product A ($100)</button>
-                        <button class="btn btn-success" onclick="addToCart('Product B', 200)">Add Product B ($200)</button>
-                        <button class="btn btn-success" onclick="addToCart('Product C', 300)">Add Product C ($300)</button>
-                    </div>
-                    <hr>
-                    <h4>Your Cart</h4>
-                    <div id="cartItems"></div>
-                    <h5>Total: $<span id="totalPrice">0</span></h5>
-                </div>
-            </div>
-        </div>
+    <!-- Your Cart Section -->
+    <div class="content-container flex-grow-1 p-4">
+        <h2>Your Cart</h2>
+        <div id="cartItems"></div>
     </div>
+    <button onclick="clearCart()">Clear Cart</button>
 </div>
 
-
 <script>
-    // 현재 로그인된 사용자 ID (외부에서 받아옴)
-    let currentUserId;  // 예시: 현재 사용자 ID를 외부에서 받아오는 값으로 대체
+    document.addEventListener("DOMContentLoaded", () => {
+        // Initialize the database and sync with server on page load
+        const request = indexedDB.open("shoppingDB", 1);
 
-    // 장바구니 저장
-    function saveCart(cart) {
-        if (!currentUserId) return;
-        localStorage.setItem(`cart_${currentUserId}`, JSON.stringify(cart));
-    }
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("cart")) {
+                db.createObjectStore("cart", { keyPath: "itemId" });
+            }
+        };
 
-    // 장바구니 불러오기
-    function getCart() {
-        if (!currentUserId) return [];
-        const cart = localStorage.getItem(`cart_${currentUserId}`);
-        return cart ? JSON.parse(cart) : [];
-    }
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            syncWithServer(db).then(() => loadCart(db));
+        };
 
-    // 장바구니에 아이템 추가
-    function addToCart(productName, price) {
-        let cart = getCart();
-        const existingItem = cart.find(item => item.name === productName);
+        request.onerror = function(event) {
+            console.error("Failed to open IndexedDB:", event.target.error);
+        };
+    });
 
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push({ name: productName, price: price, quantity: 1 });
-        }
+    function loadCart(db) {
+        const transaction = db.transaction("cart", "readonly");
+        const store = transaction.objectStore("cart");
+        const request = store.getAll();
 
-        saveCart(cart);
-        renderCart();
-    }
+        request.onsuccess = function(event) {
+            const cartItems = event.target.result;
+            const ul = document.getElementById("cartItems");
+            ul.innerHTML = ""; // Clear the list before adding items
 
-    // 장바구니 아이템 삭제
-    function removeFromCart(productName) {
-        let cart = getCart();
-        cart = cart.filter(item => item.name !== productName);
-        saveCart(cart);
-        renderCart();
-    }
-
-
-    // 장바구니 렌더링
-    function renderCart() {
-        const cartItemsEl = document.getElementById("cartItems");
-        const totalPriceEl = document.getElementById("totalPrice");
-        const cart = getCart();
-
-        cartItemsEl.innerHTML = "";
-        let totalPrice = 0;
-
-        cart.forEach(item => {
-            totalPrice += item.price * item.quantity;
-
-            const cartItemEl = document.createElement("div");
-            cartItemEl.classList.add("cart-item");
-
-            cartItemEl.innerHTML = `
-                    <div>${item.name}</div>
-                    <div>$${item.price}</div>
-                    <div>
-                        <button class="btn btn-danger btn-sm" onclick="removeFromCart('${item.name}')">Remove</button>
-                    </div>
-                `;
-
-            cartItemsEl.appendChild(cartItemEl);
-        });
-
-        totalPriceEl.textContent = totalPrice;
-    }
-
-    function login() {
-        fetch('/api/currentUser')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('활성화된 세션이나 로그인된 유저가 없습니다.');
-                }
-                return response.json();
-            })
-            .then((user) => {
-                currentUserId = user.userId;
-            })
-            .catch((err) => {
-                console.error('세션 정보 에러:', err);
-                alert('로그인 필요');
-                window.location.href = '/login';
+            cartItems.forEach((item) => {
+                const li = document.createElement("li");
+                li.textContent = `${item.name} - $${item.price}`;
+                ul.appendChild(li);
             });
+        };
+
+        request.onerror = function(e) {
+            console.error("Error loading cart:", e.target.error);
+        };
     }
-    login();
-    renderCart();
+
+    function clearCart() {
+        const request = indexedDB.open("shoppingDB", 1);
+
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction("cart", "readwrite");
+            const store = transaction.objectStore("cart");
+
+            store.clear().onsuccess = () => {
+                alert("Cart cleared!");
+                document.getElementById("cartItems").innerHTML = "";
+            };
+        };
+    }
+
+    async function syncWithServer(db) {
+        try {
+            // Fetch item list from the server
+            const response = await fetch("/api/item-list"); // Replace with the actual API URL
+            if (!response.ok) throw new Error("Failed to fetch item list from server.");
+            const serverItems = await response.json();
+
+            const transaction = db.transaction("cart", "readwrite");
+            const store = transaction.objectStore("cart");
+
+            const promises = serverItems.map((serverItem) =>
+                new Promise((resolve, reject) => {
+                    const getRequest = store.get(serverItem.itemId);
+
+                    getRequest.onsuccess = function(e) {
+                        const existingItem = e.target.result;
+                        if (existingItem) {
+                            // Update only if the item exists
+                            const updatedItem = { ...existingItem, ...serverItem };
+                            store.put(updatedItem).onsuccess = () => resolve();
+                        } else {
+                            resolve(); // Skip items that don't exist in IndexedDB
+                        }
+                    };
+
+                    getRequest.onerror = (e) => reject(e.target.error);
+                })
+            );
+
+            await Promise.all(promises); // Wait for all updates to complete
+            console.log("Cart synced successfully with server.");
+        } catch (error) {
+            console.error("Error syncing with server:", error);
+        }
+    }
 </script>
 </body>
 </html>
