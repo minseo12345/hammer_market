@@ -29,6 +29,6 @@ public class PointController {
 
         model.addAttribute("points",pointService.getAllPoints(userId));
 
-        return "point/select";
+        return "point/selectPoints";
     }
 }
