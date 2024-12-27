@@ -26,14 +26,18 @@ public class Point {
 
     @Column(precision = 10, scale = 2, nullable = false)
     @Positive(message = "입찰 금액은 양수여야 합니다.")
-    private BigDecimal bidAmount;
+    private BigDecimal pointAmount;
 
+    @Column
     private LocalDateTime createDate;
 
     private String description;
 
     @Enumerated(EnumType.STRING)
     private PointStatus pointType;
+
+    @Column(precision = 10, scale = 2, nullable = false)
+    private BigDecimal balanceAmount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

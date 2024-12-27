@@ -142,14 +142,14 @@ public class WebSecurityConfig {
                     .build();
 
             // 테스트 Role 생성
-            roleRepository.save(adminRole);
-            roleRepository.save(userRole);
-            
-            // 테스트 user 생성
-            userRepository.save(adminUser);
-            userRepository.save(buyerUser);
-            userRepository.save(sellerUser);
-            userRepository.save(normalUser);
+//            roleRepository.save(adminRole);
+//            roleRepository.save(userRole);
+//
+//            // 테스트 user 생성
+//            userRepository.save(adminUser);
+//            userRepository.save(buyerUser);
+//            userRepository.save(sellerUser);
+//            userRepository.save(normalUser);
         };
     }
 

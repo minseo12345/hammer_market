@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포인트 관리</title>
+    <link rel="stylesheet" href="/css/fragments/topbar.css">
+    <link rel="stylesheet" href="/css/fragments/sidebar.css">
+    <link rel="stylesheet" href="/css/point/selectPoints.css">
+</head>
+<body>
+
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+
+<div class="points-container">
+
+    <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
+
+    <div class="points-content">
+        <h1>포인트 관리</h1>
+
+        <div class="points-section">
+
+            <div class="points-summary">
+                <div class="points-info">
+                    <h2>포인트</h2>
+                    <p class="points-total" th:text="${#numbers.formatInteger(points[0].currentPoint, 0, 'COMMA')} + ' P'"></p>
+                    <div class="points-buttons">
+                        <button class="points-settings">충전</button>
+                        <button class="points-settings">환전</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 입출금 내역 테이블 -->
+            <div class="points-history">
+                <div class="points-tabs">
+                    <button class="active">전체</button>
+                    <button>적립</button>
+                    <button>출금</button>
+                    <button>차감</button>
+                </div>
+
+                <table class="points-table">
+                    <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>내용</th>
+                        <th>날짜</th>
+                        <th>금액</th>
+                        <th>잔액</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="point : ${points}">
+                        <td th:text="${point.pointType}"></td>
+                        <td th:text="${point.description}"></td>
+                        <td th:text="${point.createAt}"></td>
+                        <td th:text="${#numbers.formatInteger(point.pointAmount, 0, 'COMMA')}"></td>
+                        <td th:text="${#numbers.formatInteger(point.balanceAmount, 0, 'COMMA')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
