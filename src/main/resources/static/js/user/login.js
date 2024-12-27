@@ -5,6 +5,7 @@ loginForm.addEventListener("submit", (event) => {
     // 입력된 데이터를 가져옴
     const email = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
+    const rememberMe = document.getElementById('remember-me').checked ? 'true' : 'false';
 
     // 입력값 검증
     if (!email || !password) {
@@ -12,9 +13,16 @@ loginForm.addEventListener("submit", (event) => {
         return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("올바른 이메일 형식을 입력해주세요.");
+            return;
+        }
+
     const loginData = {
         email: email,
         password: password,
+        rememberMe: rememberMe
     };
     // fetch 함수로 POST 요청 보내기
     fetch("/jwt-login", {
