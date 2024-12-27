@@ -42,9 +42,4 @@ public class Point {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "transaction_id")
-    private Transaction transaction;
-
 }
