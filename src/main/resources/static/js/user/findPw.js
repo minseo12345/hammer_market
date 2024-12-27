@@ -77,9 +77,7 @@ document.getElementById('comCtfNoBtn').addEventListener('click', function (event
 });
 
 function startCountdown(seconds) {
-    const countdownDisplay = document.createElement('div');
-    countdownDisplay.id = 'countdownTimer';
-    document.body.appendChild(countdownDisplay);
+    const countdownDisplay = document.getElementById('countdownTimer');
 
     let timeLeft = seconds;
     const countdownInterval = setInterval(function () {
@@ -91,6 +89,11 @@ function startCountdown(seconds) {
             clearInterval(countdownInterval);
             countdownDisplay.textContent = '시간 초과';
             document.getElementById('comCtfNo').disabled = true; // 시간 초과 시 인증번호 입력 비활성화
+            // 인증번호 발송 버튼 활성화
+            document.getElementById('sendCtfNoBtn').disabled = false;
+            document.getElementById('sendCtfNoBtn').textContent = '재전송';
+            // 인증번호 확인 버튼 비활성화
+            document.getElementById('comCtfNoBtn').disabled = true;
         } else {
             timeLeft--;
         }
