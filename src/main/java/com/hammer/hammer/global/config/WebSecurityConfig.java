@@ -144,7 +144,7 @@ public class WebSecurityConfig {
             // 테스트 Role 생성
             roleRepository.save(adminRole);
             roleRepository.save(userRole);
-            
+
             // 테스트 user 생성
             userRepository.save(adminUser);
             userRepository.save(buyerUser);
