@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -42,6 +43,9 @@ public class User implements UserDetails {
 
     @Column(name = "password", nullable = false, length = 255)
     private String password; // 비밀번호
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal currentPoint;
 
     @Column(name = "phone_number")
     private String phoneNumber; // 사용자 전화번호

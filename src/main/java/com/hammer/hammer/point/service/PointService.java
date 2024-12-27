@@ -24,12 +24,15 @@ public class PointService {
                 ()->new IllegalStateException("입출금 내역을 찾을 수 없습니다.")
         );
 
+
         return selectPoint.stream()
                 .map(point -> ResponseSelectPointDto.builder()
                         .pointType(point.getPointType())
                         .pointAmount(point.getPointAmount())
+                        .currentPoint(selectPoint.get(0).getUser().getCurrentPoint())
                         .description(point.getDescription())
                         .createAt(point.getCreateDate())
+                        .balanceAmount(point.getPointAmount())
                         .build())
                         .collect(Collectors.toList());
 
