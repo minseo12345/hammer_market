@@ -8,27 +8,23 @@
 <div class="findIdContainer">
     <p class="findIdTitle">아이디 찾기</p>
     <div class="findIdContent">
-        <form>
+        <form id="findIdForm" method="POST">
             <div>
                 <label for="userName">이름</label>
                 <input type="text" name="userName" id="userName" required placeholder="이름">
             </div>
             <div>
                 <label for="phoneNumber">연락처</label>
-                <input type="number" id="phoneNumber" maxlength="12" required placeholder="연락처를 입력해주세요">
+                <input type="number" id="phoneNumber" name="phoneNumber" maxlength="12" required placeholder="연락처를 입력해주세요">
             </div>
-            <div>
-                <label for="certification">인증번호</label>
-                <input type="number" id="certification" maxlength="6" required placeholder="인증번호를 입력해주세요" disabled>
-            </div>
-            <input type="hidden" name="contact" id="contact">
-            <div id="userIdDisplay" class="blank"></div>
             <div class="btnSection">
-                <button type="submit" class="ctfBtn" id="ctfBtn">인증번호 요청</button>
-                <button type="submit" class="findIdBtn" id="findIdBtn" disabled>인증번호 확인</button>
+                <button type="submit" class="ctfBtn" id="ctfBtn">아이디 찾기</button>
                 <button type="button" class="cancelBtn" onclick="location.href='/login'">취소</button>
             </div>
         </form>
+        <div id="resultContainer" style="display:none; margin-top:20px;">
+            <p>찾은 아이디: <span id="userId"></span></p>
+        </div>
     </div>
 </div>
 <script th:src="@{/js/user/findId.js}"></script>

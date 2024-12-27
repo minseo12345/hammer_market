@@ -24,7 +24,7 @@ import java.util.Set;
 //User는 예약어가 있어서 users라고 해야함
 @Setter
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -107,7 +107,7 @@ public class User implements UserDetails {
     public String getPassword() {
         return this.password;
     }
-    
+
     public String getName() { // 만약 다른 이름이 필요하다면 추가 가능
         return username;
     }

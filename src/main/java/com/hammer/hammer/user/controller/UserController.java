@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -29,14 +30,6 @@ public class UserController {
     public String signup() {
         return "/user/signUp";
     }
-
-    // 회원가입
-    @PostMapping("/user")
-    public String signup(UserDto userDto){
-        userService.save(userDto); // 회원가입 메서드 호출
-        return "redirect:/login"; // 회원가입이 완료된 이후 로그인 페이지로 이동
-    }
-
 
     // 로그아웃
     @GetMapping("/logout")
@@ -63,5 +56,12 @@ public class UserController {
     @GetMapping("/login/find-pw")
     public String findPw() {
         return "/user/findPw";
+    }
+
+    @GetMapping("/login/changePw")
+    public String changePw(@RequestParam String email, Model model) {
+        model.addAttribute("userEmail", email);
+        return "/user/changePw";
+
     }
 }
