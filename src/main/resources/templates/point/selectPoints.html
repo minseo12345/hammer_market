@@ -14,7 +14,7 @@
 
 <div class="points-container">
 
-    <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
+    <div th:insert="~{'fragments/userSidebar' :: sidebar(userId=${userId})}"></div>
 
     <div class="points-content">
         <h1>포인트 관리</h1>
@@ -32,7 +32,6 @@
                 </div>
             </div>
 
-            <!-- 입출금 내역 테이블 -->
             <div class="points-history">
                 <div class="points-tabs">
                     <button class="active">전체</button>
