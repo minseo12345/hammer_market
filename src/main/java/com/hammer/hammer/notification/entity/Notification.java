@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "notifications")
 @Data
@@ -28,10 +30,14 @@ public class Notification {
     @Column(nullable = false)
     private boolean isRead = false;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     public Notification(Long userId, Long itemId, String message) {
         this.userId = userId;
         this.itemId = itemId;
         this.message = message;
         this.isRead = false;
+        this.createdAt = LocalDateTime.now(); // 현재 시간 자동 설정
     }
 }
