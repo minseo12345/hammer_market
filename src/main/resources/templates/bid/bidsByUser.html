@@ -14,7 +14,7 @@
 <div th:insert="~{'fragments/header' :: header}"></div>
 
 <div class="bids-by-user-container">
-<div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
+<div th:insert="~{'fragments/userSidebar' :: sidebar(userId=${userId})}"></div>
 
 <div class="bid-container" th:attr="data-user-id=${userId}">
     <div class="sort-bar">
