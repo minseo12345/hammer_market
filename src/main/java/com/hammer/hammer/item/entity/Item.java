@@ -4,6 +4,7 @@ import com.hammer.hammer.transaction.entity.Transaction;
 //import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -64,4 +65,20 @@ public class Item{
 
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
     private Transaction transaction;
+
+    public ItemResponseDto toItemResponseDto() {
+        return ItemResponseDto.builder()
+                .itemId(itemId)
+                .categoryId(categoryId)
+                .title(title)
+                .description(description)
+                .startingBid(startingBid)
+                .buyNowPrice(buyNowPrice)
+                .status(status)
+                .fileUrl(fileUrl)
+                .startTime(startTime)
+                .endTime(endTime)
+                .createdAt(createdAt)
+                .build();
+    }
 }

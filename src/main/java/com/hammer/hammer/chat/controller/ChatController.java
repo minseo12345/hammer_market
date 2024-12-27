@@ -18,4 +18,6 @@ public class ChatController {
     public String cart() {
         return "/cart/cart";
     }
+    @GetMapping("/list")
+    public String list() { return "/cart/list"; }
 }
