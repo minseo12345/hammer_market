@@ -9,7 +9,7 @@
 <main layout:fragment="content">
     <!-- 메인 콘텐츠가 여기에 추가됩니다 -->
     <h2>메인 콘텐츠 여기에 추가</h2>
-    <div>
+    <div><!-- 동적으로 처리해야함 -->
         <img id="notification-icon" src="/img/bell1.png" alt="알림 아이콘(다 읽음)" style="cursor: pointer;" />
     </div>
 
@@ -19,7 +19,7 @@
             <h2>알림</h2>
             <div th:replace="~{fragments/notifications :: #notification-list}"></div>
             <button id="close-modal-button">닫기</button>
-            <button id="mark-Read-Button">닫기</button>
+            <button id="mark-Read-Button">전부읽음으로처리</button>
 
         </div>
     </div>
@@ -54,13 +54,13 @@
                 </td>
             </div>
         </div>
-    </div>
-
     <script th:src="@{/js/main/main.js}"></script>
     <script th:src="@{/js/fragments/notifications.js}"></script>
     <link th:href="@{/css/fragments/notifications.css}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </main>
 </body>
 </html>

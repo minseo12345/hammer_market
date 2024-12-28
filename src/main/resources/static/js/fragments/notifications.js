@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 알림 목록 가져오기
     async function fetchNotifications() {
+
+
         const userIdElement = document.getElementById("userId");
         if (!userIdElement) {
             console.error("User ID element not found!");
@@ -40,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
             userId: userIdElement.textContent.trim(),
         };
 
-        console.log(params);
         try {
             const response = await fetch("/notifications/list", {
                 method: "POST",
@@ -58,11 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 data.forEach(notification => {
                     const li = document.createElement("li");
+                    console.log('알림아이콘 클릭 이벤트')
                     li.innerHTML = `
                         <p>${notification.message}</p>
                         <button onclick="completeTransaction(${notification.itemId})">거래완료</button>
                         <button onclick="cancelTransaction(${notification.itemId})">거래포기</button>
                     `;
+
                     notificationList.appendChild(li);
                 });
             } else {
@@ -111,11 +114,45 @@ function initializeWebSocket() {
 
         try {
             stompClient.subscribe('/topic/notifications', (message) => {
-                try {
-                    const notificationIcon = document.getElementById("notification-icon");
-                    const notifications = JSON.parse(message.body);
 
-                    if (Array.isArray(notifications)) {
+                console.log('웹소켓 stomp')
+                const notificationIcon = document.getElementById("notification-icon");
+                const notifications = JSON.parse(message.body);
+
+                try {
+
+                    const userIdElement = document.getElementById("userId");
+                    if (!userIdElement) {
+                        console.error("User ID element not found!");
+                        return;
+                    }
+
+                    const currentUserId = userIdElement.textContent.trim();
+
+                    if (notifications.userId === parseInt(currentUserId)) {
+                        Toastify({
+                            text: notifications.message,
+                            duration: -1,
+                            // destination: "https://github.com/apvarun/toastify-js",
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "center",
+                            // stopOnFocus: true, // Prevents dismissing of toast on hover
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                            onClick: function () {
+                                // 알림 클릭 시 모달 열기
+                                const notificationModal = document.getElementById("notification-modal");
+                                notificationModal.style.display = "block"; // 모달 열기
+                                fetchNotifications(); // 알림 목록 가져오기
+                                // 알림창 제거
+                            },
+                        }).showToast();
+                    }
+
+                    /*if (Array.isArray(notifications)) {
                         const hasUnread = notifications.some(notification => !notification.isRead);
                         if (hasUnread) {
                             notificationIcon.src = "/img/bell2.png";
@@ -134,10 +171,10 @@ function initializeWebSocket() {
                             notificationIcon.alt = "알림 아이콘(다 읽음)";
                         }
                     } else {
-                        console.error("WebSocket 메시지 형식이 올바르지 않습니다:", notifications);
-                    }
+                        console.log("WebSocket 메시지 형식이 올바르지 않습니다:", notifications.message);
+                    }*/
                 } catch (error) {
-                    console.error("WebSocket 메시지 처리 중 오류 발생:", error, "수신된 메시지:", message.body);
+                    console.log("WebSocket 메시지 처리 중 오류 발생:", error, "수신된 메시지:", notifications.message);
                 }
             });
 
