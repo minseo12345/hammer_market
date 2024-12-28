@@ -1,0 +1,15 @@
+#notification-list {
+    list-style: none !important; /* 점 없애기 강제 적용 */
+    padding: 0;
+    margin: 0;
+}
+
+#notification-list li {
+    margin-bottom: 10px; /* 각 항목 간격 추가 */
+}
+
+#notification-icon {
+    width: 24px; /* 원하는 너비 */
+    height: 24px; /* 원하는 높이 */
+    object-fit: contain; /* 이미지 비율 유지 */
+}

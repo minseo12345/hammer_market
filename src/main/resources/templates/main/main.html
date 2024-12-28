@@ -9,9 +9,23 @@
 <main layout:fragment="content">
     <!-- 메인 콘텐츠가 여기에 추가됩니다 -->
     <h2>메인 콘텐츠 여기에 추가</h2>
+    <div><!-- 동적으로 처리해야함 -->
+        <img id="notification-icon" src="/img/bell1.png" alt="알림 아이콘(다 읽음)" style="cursor: pointer;" />
+    </div>
+
+    <!-- 알림 모달 -->
+    <div id="notification-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="padding: 20px; background: white; border: 1px solid #ccc;">
+            <h2>알림</h2>
+            <div th:replace="~{fragments/notifications :: #notification-list}"></div>
+            <button id="close-modal-button">닫기</button>
+            <button id="mark-Read-Button">전부읽음으로처리</button>
+
+        </div>
+    </div>
         <div>
             <div class="firstColumn">
-                <div>userId: <span th:text="${user.userId}"></span></div>
+                <div>userId: <span id="userId" th:text="${user.userId}"></span></div>
                 <div>userEmail: <span th:text="${user.email}"></span></div>
                 <div>userPhone: <span th:text="${user.phoneNumber}"></span></div>
                 <div>userRoleId: <span th:text="${user.role.roleId}"></span></div>
@@ -31,27 +45,22 @@
                 <td>
                     <button type="button" onclick="ItemPage()">item 페이지</button>
                 </td>
+                <td>
+                    <button type="button" onclick="TransactionPage()">transaction 페이지</button>
+                </td>
 
                 <!-- 게시판 삭제 -->
                 <td sec:authorize="hasRole('ROLE_ADMIN')">
                 </td>
             </div>
         </div>
-    </div>
-    <div>
-        <img id="notification-icon" src="/img/아직 안넣음" alt="알림 아이콘(종모양)" />
-    </div>
-    <!-- 알림 모달 -->
-    <div id="notification-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>알림</h2>
-            <div id="notification-list">
-            </div>
-            <button id="mark-read-button">모든 알림 읽음 처리</button>
-            <button id="close-modal-button">닫기</button>
-        </div>
-    </div>
     <script th:src="@{/js/main/main.js}"></script>
+    <script th:src="@{/js/fragments/notifications.js}"></script>
+    <link th:href="@{/css/fragments/notifications.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </main>
 </body>
 </html>

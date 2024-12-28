@@ -7,6 +7,7 @@ import com.hammer.hammer.notification.repository.NotificationRepository;
 import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class NotificationService {
     private final TransactionRepository transactionRepository;
     private final NotificationRepository notificationRepository;
     private final ItemRepository itemRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // 거래포기 이벤트 처리
     public void handleTransactionCancel(Long transactionId, Long userId) {
@@ -36,6 +38,9 @@ public class NotificationService {
         String cancelMessage = String.format("[%d] 거래가 취소되었습니다.", transactionId);
         Notification notification = new Notification(userId, transaction.getItem().getItemId(), cancelMessage);
         notificationRepository.save(notification);
+
+        // WebSocket으로 실시간 알림 전송
+        messagingTemplate.convertAndSend("/topic/notifications", notification);
     }
 
     // 거래완료 이벤트 처리
@@ -53,6 +58,9 @@ public class NotificationService {
         String completeMessage = String.format("[%d] 거래가 완료되었습니다.", transactionId);
         Notification notification = new Notification(userId, item.getItemId(), completeMessage);
         notificationRepository.save(notification);
+
+        // WebSocket으로 실시간 알림 전송
+        messagingTemplate.convertAndSend("/topic/notifications", notification);
     }
 
     public void saveNotification(Notification notification) {
@@ -69,14 +77,15 @@ public class NotificationService {
     }
 
     // 알림 읽음 상태 변경
+    @Transactional
     public void markNotificationsAsRead(Long userId) {
         List<Notification> unreadNotifications = notificationRepository.findByUserIdAndIsReadFalse(userId);
-        unreadNotifications.forEach(notification -> notification.setRead(true));
-        notificationRepository.saveAll(unreadNotifications);
+
+        unreadNotifications.forEach(notification -> notification.setRead(true)); // 읽음 처리
+        notificationRepository.saveAll(unreadNotifications); // DB에 반영
     }
 
-    // 특정 사용자의 알림 목록 조회
-    @Transactional(readOnly = true)
+    // 현재 사용자의 알림 목록 조회
     public List<Notification> getNotificationsByUserId(Long userId) {
         return notificationRepository.findByUserId(userId);
     }

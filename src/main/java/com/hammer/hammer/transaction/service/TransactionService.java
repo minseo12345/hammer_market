@@ -6,6 +6,7 @@ import com.hammer.hammer.notification.repository.NotificationRepository;
 import com.hammer.hammer.transaction.repository.TransactionRepository;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.notification.entity.Notification;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class TransactionService {
     private final BidRepository bidRepository;
     private final ItemRepository itemRepository;
     private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // 모든 트랜잭션 조회
     @Transactional(readOnly = true)
@@ -69,16 +71,23 @@ public class TransactionService {
         itemRepository.save(item);
 
         // 판매자 알림 생성
-        String sellerMessage = String.format("[%d] 상품이 [%s] 원으로 낙찰되었습니다!\n구매자: [%s]",
+        String sellerMessage = String.format("등록하신 %d상품이 %s원으로 판매되었습니다! 구매자ID : %s",
                 item.getItemId(), transaction.getFinalPrice(), transaction.getBuyer().getUsername());
         Notification sellerNotification = new Notification(transaction.getSeller().getUserId(), item.getItemId(), sellerMessage);
         notificationRepository.save(sellerNotification);
 
+        // WebSocket을 통해 판매자에게 알림 전송
+        messagingTemplate.convertAndSend("/topic/notifications", sellerNotification);
+
         // 구매자 알림 생성
-        String buyerMessage = String.format("[%d] 상품이 [%s] 원으로 낙찰되었습니다!\n판매자: [%s]",
+        String buyerMessage = String.format("입찰하신 %d상품이 %s원으로 낙찰되었습니다! 판매자ID: %s",
                 item.getItemId(), transaction.getFinalPrice(), transaction.getSeller().getUsername());
         Notification buyerNotification = new Notification(transaction.getBuyer().getUserId(), item.getItemId(), buyerMessage);
         notificationRepository.save(buyerNotification);
+
+        // WebSocket을 통해 구매자에게 알림 전송
+        messagingTemplate.convertAndSend("/topic/notifications", buyerNotification);
+
     }
 
     // 즉시구매에 의한 낙찰
