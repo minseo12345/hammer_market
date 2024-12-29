@@ -1,3 +1,45 @@
+// 알림 목록 가져오기
+async function fetchNotifications() {
+    const notificationList = document.getElementById("notification-list");
+    const userIdElement = document.getElementById("userId");
+    if (!userIdElement || !notificationList) {
+        console.error("Required elements not found!");
+        return;
+    }
+
+    const params = {
+        userId: userIdElement.textContent.trim(),
+    };
+
+    try {
+        const response = await fetch("/notifications/list", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            notificationList.innerHTML = ""; // 기존 내용 제거
+            data.forEach(notification => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <p>${notification.message}</p>
+                    <button onclick="completeTransaction(${notification.itemId})">거래완료</button>
+                    <button onclick="cancelTransaction(${notification.itemId})">거래포기</button>
+                `;
+                notificationList.appendChild(li);
+            });
+        } else {
+            console.error("Failed to fetch notifications:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error fetching notifications:", error);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const notificationModal = document.getElementById("notification-modal");
     const notificationIcon = document.getElementById("notification-icon");
@@ -29,54 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 알림 목록 가져오기
-    async function fetchNotifications() {
 
-
-        const userIdElement = document.getElementById("userId");
-        if (!userIdElement) {
-            console.error("User ID element not found!");
-            return;
-        }
-
-        const params = {
-            userId: userIdElement.textContent.trim(),
-        };
-
-        try {
-            const response = await fetch("/notifications/list", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(params),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-
-                // 기존 내용 제거
-                notificationList.innerHTML = "";
-
-                data.forEach(notification => {
-                    const li = document.createElement("li");
-                    console.log('알림아이콘 클릭 이벤트')
-                    li.innerHTML = `
-                        <p>${notification.message}</p>
-                        <button onclick="completeTransaction(${notification.itemId})">거래완료</button>
-                        <button onclick="cancelTransaction(${notification.itemId})">거래포기</button>
-                    `;
-
-                    notificationList.appendChild(li);
-                });
-            } else {
-                console.error("Failed to fetch notifications:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error fetching notifications:", error);
-        }
-    }
-
-    // 모든 알림 읽음 처리
+    /*// 모든 알림 읽음 처리
     markReadButton.addEventListener("click", async () => {
         const userIdElement = document.getElementById("userId");
         if (!userIdElement) {
@@ -102,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error marking notifications as read:", error);
         }
-    });
+    });*/
 });
 
 function initializeWebSocket() {
@@ -116,20 +112,23 @@ function initializeWebSocket() {
             stompClient.subscribe('/topic/notifications', (message) => {
 
                 console.log('웹소켓 stomp')
-                const notificationIcon = document.getElementById("notification-icon");
+                // const notificationIcon = document.getElementById("notification-icon");
                 const notifications = JSON.parse(message.body);
 
                 try {
 
                     const userIdElement = document.getElementById("userId");
                     if (!userIdElement) {
-                        console.error("User ID element not found!");
+                        console.error("아이디 조회에 실패했습니다.");
                         return;
                     }
+
+                    fetchNotifications(); // 알림 목록 가져오기
 
                     const currentUserId = userIdElement.textContent.trim();
 
                     if (notifications.userId === parseInt(currentUserId)) {
+                        //toast 알림
                         Toastify({
                             text: notifications.message,
                             duration: -1,
@@ -146,8 +145,12 @@ function initializeWebSocket() {
                                 // 알림 클릭 시 모달 열기
                                 const notificationModal = document.getElementById("notification-modal");
                                 notificationModal.style.display = "block"; // 모달 열기
+
                                 fetchNotifications(); // 알림 목록 가져오기
                                 // 알림창 제거
+                                if (toastElement && toastElement.parentNode) {
+                                    toastElement.parentNode.removeChild(toastElement);
+                                }
                             },
                         }).showToast();
                     }
