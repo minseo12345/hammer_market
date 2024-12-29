@@ -1,6 +1,7 @@
 package com.hammer.hammer.point.controller;
 
 import com.hammer.hammer.point.dto.RequestChargePointDto;
+import com.hammer.hammer.point.dto.ResponseCurrentPointDto;
 import com.hammer.hammer.point.service.PointService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,14 +48,17 @@ public class PointController {
             return "/global/error";
         }
 
+        ResponseCurrentPointDto responseCurrentPointDto = pointService.currentPointByUser(userId,userDetails);
+
         model.addAttribute("userId", userId);
+        model.addAttribute("currentPoint", responseCurrentPointDto.getCurrentPoint());
         return "/point/chargePoint";
     }
 
 
     @PostMapping("/charge/{userId}")
     public String chargePoint(@PathVariable Long userId,
-                              @Valid RequestChargePointDto requestChargePointDto,
+                              @Valid @ModelAttribute RequestChargePointDto requestChargePointDto,
                               Model model,
                               BindingResult bindingResult,
                               @AuthenticationPrincipal UserDetails userDetails) {
@@ -82,6 +83,6 @@ public class PointController {
             return "/global/error";
         }
 
-        return "redirect:/point/selectPoints/"+userId;
+        return "redirect:/points/select/"+userId;
     }
 }

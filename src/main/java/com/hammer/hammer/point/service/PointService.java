@@ -1,6 +1,7 @@
 package com.hammer.hammer.point.service;
 
 import com.hammer.hammer.point.dto.RequestChargePointDto;
+import com.hammer.hammer.point.dto.ResponseCurrentPointDto;
 import com.hammer.hammer.point.dto.ResponseSelectPointDto;
 import com.hammer.hammer.point.entity.Point;
 import com.hammer.hammer.point.entity.PointStatus;
@@ -77,5 +78,22 @@ public class PointService {
                 .build();
 
         pointRepository.save(point);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseCurrentPointDto currentPointByUser(Long userId, UserDetails userDetails){
+
+        if (!userId.toString().equals(userDetails.getUsername())) {
+            throw new IllegalStateException("접근 권한이 없습니다.");
+        }
+
+        User findCurrentPointByUser = userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalStateException("사용자를 찾을 수 없습니다.")
+        );
+
+        return ResponseCurrentPointDto
+                .builder()
+                .currentPoint(findCurrentPointByUser.getCurrentPoint())
+                .build();
     }
 }
