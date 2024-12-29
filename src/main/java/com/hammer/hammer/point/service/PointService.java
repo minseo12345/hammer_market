@@ -26,6 +26,9 @@ public class PointService {
     private final PointRepository pointRepository;
     private final UserRepository userRepository;
 
+    /**
+     *  포인트 조회
+     */
     @Transactional(readOnly = true)
     public List<ResponseSelectPointDto> getAllPoints(Long userId, UserDetails userDetails) {
 
@@ -51,6 +54,9 @@ public class PointService {
 
     }
 
+    /**
+     *  point 충전
+     */
     @Transactional
     public void chargePoint(Long userId, RequestChargePointDto requestChargePointDto, UserDetails userDetails){
 
@@ -80,6 +86,9 @@ public class PointService {
         pointRepository.save(point);
     }
 
+    /**
+     *  currentPoint 조회
+     */
     @Transactional(readOnly = true)
     public ResponseCurrentPointDto currentPointByUser(Long userId, UserDetails userDetails){
 
@@ -95,5 +104,38 @@ public class PointService {
                 .builder()
                 .currentPoint(findCurrentPointByUser.getCurrentPoint())
                 .build();
+    }
+
+    @Transactional
+    public void currencyPoint(Long userId, RequestChargePointDto requestChargePointDto, UserDetails userDetails){
+
+        if (!userId.toString().equals(userDetails.getUsername())) {
+            throw new IllegalStateException("접근 권한이 없습니다.");
+        }
+
+        User currencyUser = userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalStateException("사용자를 찾을 수 없습니다.")
+        );
+
+        BigDecimal currentPoint = currencyUser.getCurrentPoint();
+        BigDecimal updatePoint = currentPoint.subtract(requestChargePointDto.getPointAmount());
+
+        if (updatePoint.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalStateException("포인트가 부족합니다.");
+        }
+
+        currencyUser.chargePoint(updatePoint);
+        userRepository.save(currencyUser);
+
+        Point currencyPoint = Point.builder()
+                .pointType(PointStatus.C)
+                .createDate(LocalDateTime.now())
+                .pointAmount(requestChargePointDto.getPointAmount())
+                .balanceAmount(updatePoint)
+                .description(requestChargePointDto.getDescription())
+                .user(currencyUser)
+                .build();
+
+        pointRepository.save(currencyPoint);
     }
 }
