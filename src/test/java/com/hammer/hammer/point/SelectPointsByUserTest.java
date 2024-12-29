@@ -66,7 +66,7 @@ public class SelectPointsByUserTest {
         when(userDetails.getUsername()).thenReturn("1");
 
         //When
-        List<ResponseSelectPointDto> pointLisByUser = pointService.getAllPoints(selectedUser.getUserId());
+        List<ResponseSelectPointDto> pointLisByUser = pointService.getAllPoints(selectedUser.getUserId(),null);
 
         //Then
         assertEquals(1, pointLisByUser.size());
