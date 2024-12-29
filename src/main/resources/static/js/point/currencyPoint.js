@@ -1,4 +1,4 @@
-let currentBalance = 0;
+let currentBalance = parseInt(document.querySelector('.balance-info').dataset.currentPoint, 10) || 0;
 
 const pointButtons = document.querySelectorAll('.charge-points button');
 const nextButton = document.querySelector('.charge-footer .next');
@@ -14,13 +14,10 @@ pointButtons.forEach(button => {
     });
 });
 
-
 cancelButton.addEventListener('click', () => {
-    alert('충전을 취소했습니다.');
+    alert('환전을 취소했습니다.');
     pointButtons.forEach(btn => btn.classList.remove('selected'));
     nextButton.disabled = true;
-    currentBalance = 0;
-    balanceDisplay.textContent = currentBalance.toLocaleString();
     descriptionInput.value = '';
 });
 
@@ -39,13 +36,17 @@ nextButton.addEventListener('click', () => {
         return;
     }
 
-    currentBalance += selectedValue;
+    if (selectedValue > currentBalance) {
+        alert('현재 보유 포인트보다 많은 금액을 환전할 수 없습니다!');
+        return;
+    }
 
+    currentBalance -= selectedValue;
     balanceDisplay.textContent = currentBalance.toLocaleString();
 
-    alert(`${selectedValue.toLocaleString()}P가 충전되었습니다! 현재 보유 포인트: ${currentBalance.toLocaleString()}P`);
+    alert(`${selectedValue.toLocaleString()}P를 환전 하시겠습니까?`);
 
-    const description = descriptionInput.value.trim() || '충전';
+    const description = descriptionInput.value.trim() || '환전';
 
     const userId = window.location.pathname.split("/")[3];
 
@@ -53,7 +54,7 @@ nextButton.addEventListener('click', () => {
     formData.append('pointAmount', selectedValue);
     formData.append('description', description);
 
-    fetch(`/points/charge/${userId}`, {
+    fetch(`/points/currency/${userId}`, {
         method: 'POST',
         body: formData,
     })
@@ -67,13 +68,12 @@ nextButton.addEventListener('click', () => {
         })
         .then(html => {
             document.write(html);
-            alert('포인트 충전이 완료되었습니다!');
+            alert('포인트 환전이 완료되었습니다!');
         })
         .catch(error => {
-            console.error('포인트 충전 중 오류 발생:', error);
-            alert('포인트 충전 중 오류가 발생했습니다.');
+            console.error('포인트 환전 중 오류 발생:', error);
+            alert('포인트 환전 중 오류가 발생했습니다.');
         });
-
 
     pointButtons.forEach(btn => btn.classList.remove('selected'));
     nextButton.disabled = true;
