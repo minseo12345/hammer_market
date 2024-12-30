@@ -25,7 +25,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 //import com.hammer.hammer.global.jwt.filter.JwtAuthenticationFilter;
@@ -61,6 +64,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/")
+                        .permitAll()
+                )
                 .logout(logout -> logout // 5. 로그아웃 설정
                         .logoutSuccessUrl("/login")
                         .deleteCookies(
@@ -77,6 +85,11 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // 8. JWT 필터 추가
+                .rememberMe(rememberMe -> rememberMe
+                        .key("hammer")
+                        .userDetailsService(userDetailsService)
+                        .tokenValiditySeconds(604800)
+                )
                 .build();
     }
 
@@ -142,14 +155,14 @@ public class WebSecurityConfig {
                     .build();
 
 
-            roleRepository.save(adminRole);
-            roleRepository.save(userRole);
-
-            // 테스트 user 생성
-            userRepository.save(adminUser);
-            userRepository.save(buyerUser);
-            userRepository.save(sellerUser);
-            userRepository.save(normalUser);
+//            roleRepository.save(adminRole);
+//            roleRepository.save(userRole);
+//
+//            // 테스트 user 생성
+//            userRepository.save(adminUser);
+//            userRepository.save(buyerUser);
+//            userRepository.save(sellerUser);
+//            userRepository.save(normalUser);
         };
     }
 

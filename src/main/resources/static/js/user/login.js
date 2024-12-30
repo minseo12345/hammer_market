@@ -32,20 +32,20 @@ loginForm.addEventListener("submit", (event) => {
         },
         body: JSON.stringify(loginData) // 객체를 JSON 문자열로 변환
     })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json()
-        })
-        .then((data) => {
-            // 성공 시 필요한 추가 로직 (예: 토큰 저장)
-            alert("로그인에 성공했습니다!");
-            window.location.href = "/items/list"; // 성공 시 페이지 이동
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json()
+    })
+    .then((data) => {
+        // 성공 시 필요한 추가 로직 (예: 토큰 저장)
+        alert("로그인에 성공했습니다!");
+        window.location.href = "/items/list"; // 성공 시 페이지 이동
 
-        })
-        .catch((error) => {
-            console.error("로그인 실패:", error);
-            alert(`로그인 실패: ${error.message}`);
-        });
+    })
+    .catch((error) => {
+        console.error("로그인 실패:", error);
+        alert(`로그인 실패: ${error.message}`);
+    });
 });
