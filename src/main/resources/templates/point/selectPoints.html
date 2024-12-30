@@ -24,7 +24,8 @@
             <div class="points-summary">
                 <div class="points-info">
                     <h2>포인트</h2>
-                    <p class="points-total" th:text="${#numbers.formatInteger(points[0].currentPoint, 0, 'COMMA')} + ' P'"></p>
+                    <p th:text="${#numbers.formatInteger(currentPoint, 0, 'COMMA')}"></p>
+
                     <div class="points-buttons">
                         <button class="points-settings">충전</button>
                         <button class="points-settings">환전</button>
@@ -54,9 +55,9 @@
                     <tr th:each="point : ${points}">
                         <td th:text="${point.pointType}"></td>
                         <td th:text="${point.description}"></td>
-                        <td th:text="${point.createAt}"></td>
-                        <td th:text="${#numbers.formatInteger(point.pointAmount, 0, 'COMMA')}"></td>
-                        <td th:text="${#numbers.formatInteger(point.balanceAmount, 0, 'COMMA')}"></td>
+                        <td th:text="${#dates.format(point.createAt, 'yyyy-MM-dd HH:mm')}"></td> <!-- 날짜 포맷 수정 -->
+                        <td th:text="${#numbers.formatNumber(point.pointAmount, 0, 'COMMA')}"></td> <!-- 포맷 수정 -->
+                        <td th:text="${#numbers.formatNumber(point.balanceAmount, 0, 'COMMA')}"></td> <!-- 포맷 수정 -->
                     </tr>
                     </tbody>
                 </table>
