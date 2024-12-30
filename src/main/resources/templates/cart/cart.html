@@ -26,94 +26,75 @@
 </div>
 
 <script>
+    let currentUserId;
+
     document.addEventListener("DOMContentLoaded", () => {
-        // Initialize the database and sync with server on page load
-        const request = indexedDB.open("shoppingDB", 1);
-
-        request.onupgradeneeded = function(event) {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains("cart")) {
-                db.createObjectStore("cart", { keyPath: "itemId" });
-            }
-        };
-
-        request.onsuccess = function(event) {
-            const db = event.target.result;
-            syncWithServer(db).then(() => loadCart(db));
-        };
-
-        request.onerror = function(event) {
-            console.error("Failed to open IndexedDB:", event.target.error);
-        };
+        const userId = getCurrentUserId();
+        syncWithServer(userId).then(() => loadCart(userId));
     });
 
-    function loadCart(db) {
-        const transaction = db.transaction("cart", "readonly");
-        const store = transaction.objectStore("cart");
-        const request = store.getAll();
-
-        request.onsuccess = function(event) {
-            const cartItems = event.target.result;
-            const ul = document.getElementById("cartItems");
-            ul.innerHTML = ""; // Clear the list before adding items
-
-            cartItems.forEach((item) => {
-                const li = document.createElement("li");
-                li.textContent = `${item.name} - $${item.price}`;
-                ul.appendChild(li);
+    function getCurrentUserId() {
+        fetch('/api/currentUser')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('활성화된 세션이나 로그인된 유저가 없습니다.');
+                }
+                return response.json();
+            })
+            .then((user) => {
+                currentUserId=user.userId;
+            })
+            .catch((err) => {
+                console.error('세션 정보 에러:', err);
+                alert('로그인 필요');
+                window.location.href = '/login';
             });
-        };
+        return currentUserId;
+    }
 
-        request.onerror = function(e) {
-            console.error("Error loading cart:", e.target.error);
-        };
+    function loadCart(userId) {
+        const cartItems = JSON.parse(localStorage.getItem(userId)) || [];
+        const ul = document.getElementById("cartItems");
+        ul.innerHTML = ""; // Clear the list before adding items
+
+        cartItems.forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = `${item.name} - $${item.price}`;
+            ul.appendChild(li);
+        });
     }
 
     function clearCart() {
-        const request = indexedDB.open("shoppingDB", 1);
-
-        request.onsuccess = function(event) {
-            const db = event.target.result;
-            const transaction = db.transaction("cart", "readwrite");
-            const store = transaction.objectStore("cart");
-
-            store.clear().onsuccess = () => {
-                alert("Cart cleared!");
-                document.getElementById("cartItems").innerHTML = "";
-            };
-        };
+        const userId = getCurrentUserId();
+        localStorage.removeItem(userId);
+        alert("Cart cleared!");
+        document.getElementById("cartItems").innerHTML = "";
     }
 
-    async function syncWithServer(db) {
+    async function syncWithServer(userId) {
         try {
             // Fetch item list from the server
             const response = await fetch("/api/item-list"); // Replace with the actual API URL
             if (!response.ok) throw new Error("Failed to fetch item list from server.");
             const serverItems = await response.json();
 
-            const transaction = db.transaction("cart", "readwrite");
-            const store = transaction.objectStore("cart");
+            const localCart = JSON.parse(localStorage.getItem(userId)) || [];
+            const localCartMap = new Map(localCart.map(item => [item.itemId, item]));
 
-            const promises = serverItems.map((serverItem) =>
-                new Promise((resolve, reject) => {
-                    const getRequest = store.get(serverItem.itemId);
+            serverItems.forEach((serverItem) => {
+                if (localCartMap.has(serverItem.itemId)) {
+                    // Update the existing item
+                    localCartMap.set(serverItem.itemId, {
+                        ...localCartMap.get(serverItem.itemId),
+                        ...serverItem
+                    });
+                }
+            });
 
-                    getRequest.onsuccess = function(e) {
-                        const existingItem = e.target.result;
-                        if (existingItem) {
-                            // Update only if the item exists
-                            const updatedItem = { ...existingItem, ...serverItem };
-                            store.put(updatedItem).onsuccess = () => resolve();
-                        } else {
-                            resolve(); // Skip items that don't exist in IndexedDB
-                        }
-                    };
+            // Save updated cart back to localStorage
+            const updatedCart = Array.from(localCartMap.values());
+            localStorage.setItem(userId, JSON.stringify(updatedCart));
 
-                    getRequest.onerror = (e) => reject(e.target.error);
-                })
-            );
-
-            await Promise.all(promises); // Wait for all updates to complete
             console.log("Cart synced successfully with server.");
         } catch (error) {
             console.error("Error syncing with server:", error);
