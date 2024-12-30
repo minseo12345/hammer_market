@@ -2,6 +2,7 @@ package com.hammer.hammer.point.controller;
 
 import com.hammer.hammer.point.dto.RequestChargePointDto;
 import com.hammer.hammer.point.dto.ResponseCurrentPointDto;
+import com.hammer.hammer.point.dto.ResponseSelectPointDto;
 import com.hammer.hammer.point.service.PointService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,7 +36,11 @@ public class PointController {
             model.addAttribute("error", "로그인이 필요합니다.");
             return "/global/error";
         }
-        model.addAttribute("points",pointService.getAllPoints(userId,userDetails));
+        List<ResponseSelectPointDto> responseSelectPointDtoList = pointService.getAllPoints(userId,userDetails);
+
+        ResponseCurrentPointDto responseCurrentPointDto = pointService.currentPointByUser(userId,userDetails);
+        model.addAttribute("currentPoint",responseCurrentPointDto.getCurrentPoint());
+        model.addAttribute("points",responseSelectPointDtoList);
         model.addAttribute("userId", userId);
 
         return "point/selectPoints";

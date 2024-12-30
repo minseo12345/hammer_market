@@ -19,6 +19,5 @@ public class ResponseSelectPointDto {
     private LocalDateTime createAt;
     private PointStatus pointType;
     private String description;
-    private BigDecimal currentPoint;
     private BigDecimal balanceAmount;
 }
