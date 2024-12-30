@@ -15,32 +15,27 @@
 <div th:insert="~{'fragments/header' :: header}"></div>
 <div id="app" class="container-fluid p-0">
     <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
-    <!-- User List -->
-    <!--<div id="user-list" class="col-md-3 bg-white p-3">
-        <h5 class="mb-3 text-primary">유저 목록</h5>
-        <ul id="users" class="list-group"></ul>
-    </div>-->
 
     <div class="row">
         <!-- Seller Chat Rooms -->
-        <div id="seller-room-list" class="col-md-3 bg-light p-3">
-            <h5 class="mb-3 text-warning">판매 채팅방</h5>
+        <div id="seller-room-list" class="col-md-3 chat-room-list">
+            <h5 class="chat-room-title text-warning">판매 채팅방</h5>
             <ul id="seller-rooms" class="list-group"></ul>
         </div>
         <!-- Buyer Chat Rooms -->
-        <div id="buyer-room-list" class="col-md-3 bg-light p-3">
-            <h5 class="mb-3 text-info">구매 채팅방</h5>
+        <div id="buyer-room-list" class="col-md-3 chat-room-list">
+            <h5 class="chat-room-title text-info">구매 채팅방</h5>
             <ul id="buyer-rooms" class="list-group"></ul>
         </div>
     </div>
 
     <!-- Chat Box -->
     <div id="chat-box" class="col-md-6 d-flex flex-column p-3">
-        <h5 id="chat-room-title" class="mb-3 text-success">Select a user to chat</h5>
+        <h5 id="chat-room-title" class="mb-3 text-success">경매링크</h5>
         <div id="messages" class="rounded border mb-3"></div>
         <div id="input-box" class="input-group">
-            <input type="text" id="message-input" class="form-control" placeholder="message..."/>
-            <button id="send-message" class="btn btn-primary">Send</button>
+            <input type="text" id="message-input" class="form-control" placeholder="전송할 메세지"/>
+            <button id="send-message" class="btn btn-primary">전송</button>
         </div>
     </div>
 </div>
