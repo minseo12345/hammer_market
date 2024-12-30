@@ -23,12 +23,12 @@
     <div class="charge-body">
       <h3>환전 포인트 선택</h3>
       <div class="charge-points">
-        <button data-value="10000">10,000P</button>
-        <button data-value="30000">30,000P</button>
-        <button data-value="50000">50,000P</button>
-        <button data-value="100000">100,000P</button>
-        <button data-value="300000">300,000P</button>
-        <button data-value="500000">500,000P</button>
+        <button id="point-10000" data-value="10000">10,000P</button>
+        <button id="point-30000" data-value="30000">30,000P</button>
+        <button id="point-50000" data-value="50000">50,000P</button>
+        <button id="point-100000" data-value="100000">100,000P</button>
+        <button id="point-300000" data-value="300000">300,000P</button>
+        <button id="point-500000" data-value="500000">500,000P</button>
       </div>
 
       <div class="description-section">
@@ -38,11 +38,13 @@
     </div>
 
     <div class="charge-footer">
-      <button class="cancel">취소</button>
-      <button class="next" disabled>환전하기</button>
+      <button id="cancel" class="cancel">취소</button>
+      <button id="next" class="next" disabled>환전하기</button>
     </div>
 
-    <p class="balance-info">현재 보유 포인트: <span id="balance" th:text="${#numbers.formatInteger(currentPoint, 0, 'COMMA')}">0</span>P</p>
+    <p class="balance-info" data-currentPoint="${currentPoint}">현재 보유 포인트:
+      <span id="balance" th:text="${#numbers.formatInteger(currentPoint, 0, 'COMMA')}">0</span>P
+    </p>
   </div>
 </div>
 
