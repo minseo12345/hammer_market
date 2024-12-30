@@ -6,10 +6,69 @@
 
 #notification-list li {
     margin-bottom: 10px; /* 각 항목 간격 추가 */
+    border: 1px solid #ccc; /* 테두리 추가 */
+    padding: 10px; /* 내부 여백 */
+    border-radius: 5px; /* 둥근 모서리 */
+    background-color: #f9f9f9; /* 배경색 */
 }
 
 #notification-icon {
     width: 24px; /* 원하는 너비 */
     height: 24px; /* 원하는 높이 */
     object-fit: contain; /* 이미지 비율 유지 */
+}
+
+.notification-item {
+    border: 1px solid #ccc; /* 기본 테두리 */
+    padding: 10px; /* 내부 여백 */
+    margin-bottom: 10px; /* 항목 간 간격 */
+    border-radius: 5px; /* 둥근 모서리 */
+    background-color: #f9f9f9; /* 배경색 */
+}
+
+.notification-item[data-category="BIDDING_END"] {
+    background-color: #e0f7fa; /* 낙찰 상태 배경 */
+}
+
+.notification-item[data-category="PARTIALLY_COMPLETED"] {
+    background-color: #e8f5e9; /* 상대방 거래완료 상태 배경 */
+}
+
+.notification-item[data-category="COMPLETED"] {
+    background-color: #f1f8e9; /* 거래완료 상태 배경 */
+}
+
+.notification-item[data-category="CANCELLED"] {
+    background-color: #ffebee; /* 취소된 거래 상태 배경 */
+}
+
+.notification-item p {
+    margin: 0 0 10px; /* 문단 간격 */
+}
+
+.btn-complete {
+    background-color: #4caf50; /* 완료 버튼 배경 */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #f44336; /* 취소 버튼 배경 */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn-complete:hover {
+    background-color: #45a049; /* 완료 버튼 hover 효과 */
+}
+
+.btn-cancel:hover {
+    background-color: #e53935; /* 취소 버튼 hover 효과 */
 }

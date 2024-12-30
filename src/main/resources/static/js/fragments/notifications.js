@@ -7,30 +7,85 @@ async function fetchNotifications() {
         return;
     }
 
-    const params = {
-        userId: userIdElement.textContent.trim(),
-    };
+    const params = { userId: userIdElement.textContent.trim() };
 
     try {
         const response = await fetch("/notifications/list", {
             method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params),
         });
 
         if (response.ok) {
             const data = await response.json();
-            notificationList.innerHTML = ""; // 기존 내용 제거
+
+            // 기존 내용 제거
+            notificationList.innerHTML = "";
+
+            // 카테고리별 리스트 초기화
+            const categories = {
+                BIDDING_END: [],
+                WAITING_FOR_MY_APPROVAL: [],
+                WAITING_FOR_OTHER_APPROVAL: [],
+                COMPLETED: [],
+                CANCELLED: [],
+                OTHER: []
+            };
+
+            // 알림 분류
             data.forEach(notification => {
-                const li = document.createElement("li");
-                li.innerHTML = `
-                    <p>${notification.message}</p>
-                    <button onclick="completeTransaction(${notification.itemId})">거래완료</button>
-                    <button onclick="cancelTransaction(${notification.itemId})">거래포기</button>
-                `;
-                notificationList.appendChild(li);
+                let status = notification.itemStatus?.trim() || "OTHER";
+
+                if (status === "PARTIALLY_COMPLETED") {
+                    status = notification.modifiedBy.includes(userId)
+                        ? "WAITING_FOR_OTHER_APPROVAL"
+                        : "WAITING_FOR_MY_APPROVAL";
+                }
+
+                if (categories[status]) {
+                    categories[status].push(notification);
+                } else {
+                    categories.OTHER.push(notification);
+                }
+            });
+
+            // 카테고리별 UI 생성
+            Object.keys(categories).forEach(category => {
+                const categoryTitle = {
+                    BIDDING_END: "<낙찰>",
+                    WAITING_FOR_MY_APPROVAL: "<내 수락 대기 중>",
+                    WAITING_FOR_OTHER_APPROVAL: "<상대방 수락 대기 중>",
+                    COMPLETED: "<거래완료>",
+                    CANCELLED: "<취소된거래>",
+                    OTHER: "<기타 알림>"
+                }[category] || "<기타 알림>";
+
+                const categoryElement = document.createElement("div");
+                categoryElement.innerHTML = `<h3>${categoryTitle}</h3>`;
+                notificationList.appendChild(categoryElement);
+
+                if (categories[category].length > 0) {
+                    categories[category].forEach(notification => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `
+                <p>${notification.message}</p>
+                ${
+                            category === "BIDDING_END" || category === "WAITING_FOR_MY_APPROVAL"
+                                ? `<button onclick="completeTransaction(${notification.itemId}, ${notification.userId})">거래수락</button>
+                                    <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
+                                : category === "WAITING_FOR_OTHER_APPROVAL" 
+                                    ? `<button disabled>거래수락</button>
+                                        <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
+                                    : ""
+                        }
+            `;
+                        notificationList.appendChild(li);
+                    });
+                } else {
+                    const emptyMessage = document.createElement("p");
+                    emptyMessage.textContent = "알림이 없습니다.";
+                    categoryElement.appendChild(emptyMessage);
+                }
             });
         } else {
             console.error("Failed to fetch notifications:", response.statusText);
@@ -111,7 +166,7 @@ function initializeWebSocket() {
         try {
             stompClient.subscribe('/topic/notifications', (message) => {
 
-                console.log('웹소켓 stomp')
+                console.log('웹소켓 구독!')
                 // const notificationIcon = document.getElementById("notification-icon");
                 const notifications = JSON.parse(message.body);
 
@@ -147,10 +202,10 @@ function initializeWebSocket() {
                                 notificationModal.style.display = "block"; // 모달 열기
 
                                 fetchNotifications(); // 알림 목록 가져오기
-                                // 알림창 제거
+                                /*// 알림창 제거
                                 if (toastElement && toastElement.parentNode) {
                                     toastElement.parentNode.removeChild(toastElement);
-                                }
+                                }*/
                             },
                         }).showToast();
                     }
@@ -190,31 +245,111 @@ function initializeWebSocket() {
 }
 
 
-function completeTransaction(itemId) {
-    fetch(`/transaction/complete/${itemId}`, { method: "POST" })
-        .then(response => {
-            if (response.ok) {
-                alert("거래가 완료되었습니다.");
-                location.reload();
-            } else {
-                alert("거래 완료 처리 중 오류가 발생했습니다.");
-            }
-        })
-        .catch(error => console.error("Error completing transaction:", error));
+async function completeTransaction(itemId, userId) {
+    // URL-encoded 형식으로 데이터 생성
+    const params = new URLSearchParams();
+    params.append("transactionId", itemId);
+    params.append("userId", userId);
+    /*console.log("Transaction ID:", itemId);
+    console.log("User ID:", userId);*/
+
+    try {
+        const response = await fetch("/transaction/complete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: params.toString(),
+        });
+
+        fetchNotifications();
+
+        if (response.ok) {
+            alert("거래 완료 요청이 접수되었습니다.");
+            // location.reload();
+        } else {
+            console.error("거래 완료 처리 중 오류 발생:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error completing transaction:", error);
+    }
 }
 
-function cancelTransaction(itemId) {
-    fetch(`/transaction/cancel/${itemId}`, { method: "POST" })
-        .then(response => {
-            if (response.ok) {
-                alert("거래를 포기했습니다.");
-                location.reload();
-            } else {
-                alert("거래 포기 처리 중 오류가 발생했습니다.");
-            }
-        })
-        .catch(error => console.error("Error canceling transaction:", error));
+async function cancelTransaction(itemId, userId) {
+    try {
+        const response = await fetch(`/transaction/cancel?transactionId=${itemId}&userId=${userId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        });
+
+        if (response.ok) {
+            alert("거래 포기 요청이 접수되었습니다.");
+            location.reload();
+        } else {
+            console.error("거래 포기 처리 중 오류 발생:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error canceling transaction:", error);
+    }
+}
+
+/*
+// 1. 읽지 않은 알림 가져오기
+async function fetchUnreadNotificationsForToast(userId) {
+    try {
+        const response = await fetch(`/notifications/unread?userId=${userId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (response.ok) {
+            const unreadNotifications = await response.json();
+            displayUnreadNotificationsAsToast(unreadNotifications);
+        } else {
+            console.error("Failed to fetch unread notifications:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error fetching unread notifications:", error);
+    }
+}
+
+// 읽지 않은 알림을 Toast로 표시
+function displayUnreadNotificationsAsToast(notifications) {
+    notifications.forEach(notification => {
+        Toastify({
+            text: notification.message,
+            duration: -1, // 알림 유지
+            close: true,
+            gravity: "top",
+            position: "center",
+            style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+            },
+            onClick: function () {
+                const notificationModal = document.getElementById("notification-modal");
+                if (notificationModal) {
+                    notificationModal.style.display = "block"; // 알림 클릭 시 모달 열기
+                }
+            },
+        }).showToast();
+    });
 }
 
 
+// 3. 로그인 후 초기화
+function initializeNotifications(userId) {
+    initializeWebSocket(); // WebSocket 초기화
+    fetchUnreadNotificationsForToast(userId); // 로그인 시 읽지 않은 알림 표시
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const userIdElement = document.getElementById("userId");
+    if (userIdElement) {
+        const userId = userIdElement.textContent.trim();
+        initializeNotifications(userId); // 알림 초기화
+    }
+});
+*/
 

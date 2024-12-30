@@ -23,7 +23,57 @@ public class NotificationService {
     private final ItemRepository itemRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    // 거래포기 이벤트 처리
+    // 거래 확인 이벤트 처리
+    public void handleTransactionComplete(Long transactionId, Long userId) {
+        // 거래 확인
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + transactionId));
+
+        Item item = transaction.getItem();
+
+        // 현재 상태 확인
+        if (item.getStatus() == Item.ItemStatus.CANCELLED) {
+            throw new IllegalStateException("취소된 거래는 완료할 수 없습니다.");
+        }
+
+        if (item.getStatus() == Item.ItemStatus.COMPLETED) {
+            throw new IllegalStateException("이미 완료된 거래입니다.");
+        }
+
+        // 거래 완료 상태 변경
+        if (transaction.getModifiedBy().contains(userId)) {
+            throw new IllegalStateException("이미 거래 완료 요청을 한 사용자입니다.");
+        }
+
+        // 1명만 거래확인 선택시
+        if (item.getStatus() == Item.ItemStatus.BIDDING_END) {
+            item.setStatus(Item.ItemStatus.WAITING_FOR_OTHER_APPROVAL);
+            transaction.addModifiedBy(userId); // 변경한 사용자 추가
+
+        } else if (item.getStatus() == Item.ItemStatus.WAITING_FOR_OTHER_APPROVAL ||
+                item.getStatus() == Item.ItemStatus.WAITING_FOR_MY_APPROVAL) {
+            // 상대방의 상태 확인
+            if (item.getStatus() == Item.ItemStatus.WAITING_FOR_OTHER_APPROVAL && !transaction.getModifiedBy().contains(userId)) {
+                item.setStatus(Item.ItemStatus.COMPLETED);
+            } else if (item.getStatus() == Item.ItemStatus.WAITING_FOR_MY_APPROVAL && !transaction.getModifiedBy().contains(userId)) {
+                item.setStatus(Item.ItemStatus.COMPLETED);
+            } else {
+                throw new IllegalStateException("이미 거래 완료 요청을 한 사용자입니다.");
+            }
+            transaction.addModifiedBy(userId); // 변경한 사용자 추가
+
+            // 최종 거래 완료 알림 생성
+            String completeMessage = String.format("%d상품의 거래가 완료되었습니다.", transactionId);
+            Notification notification = new Notification(userId, item, completeMessage);
+            notificationRepository.save(notification);
+
+            // WebSocket으로 실시간 알림 전송 ( 거래 완료 )
+            messagingTemplate.convertAndSend("/topic/notifications", notification);
+        }
+        itemRepository.save(item);
+    }
+
+    // 거래 포기 이벤트 처리
     public void handleTransactionCancel(Long transactionId, Long userId) {
         // 거래 확인
         Transaction transaction = transactionRepository.findById(transactionId)
@@ -34,55 +84,26 @@ public class NotificationService {
         item.setStatus(Item.ItemStatus.CANCELLED);
         itemRepository.save(item);
 
-        // 알림 생성
-        String cancelMessage = String.format("[%d] 거래가 취소되었습니다.", transactionId);
-        Notification notification = new Notification(userId, transaction.getItem().getItemId(), cancelMessage);
-        notificationRepository.save(notification);
+        // 거래 포기 알림 생성
+        String cancelMessage = String.format("[%d]상품의 거래가 취소되었습니다.", transactionId);
+        Notification notification = new Notification(userId, item, cancelMessage);
+        //notificationRepository.save(notification);
 
         // WebSocket으로 실시간 알림 전송
         messagingTemplate.convertAndSend("/topic/notifications", notification);
     }
 
-    // 거래완료 이벤트 처리
-    public void handleTransactionComplete(Long transactionId, Long userId) {
-        // 거래 확인
-        Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + transactionId));
-
-        // 아이템 상태 업데이트 (거래완료)
-        Item item = transaction.getItem();
-        item.setStatus(Item.ItemStatus.COMPLETED);
-        itemRepository.save(item);
-
-        // 알림 생성
-        String completeMessage = String.format("[%d] 거래가 완료되었습니다.", transactionId);
-        Notification notification = new Notification(userId, item.getItemId(), completeMessage);
-        notificationRepository.save(notification);
-
-        // WebSocket으로 실시간 알림 전송
-        messagingTemplate.convertAndSend("/topic/notifications", notification);
-    }
-
-    public void saveNotification(Notification notification) {
-        if (notification != null) {
-            // 알림 객체를 데이터베이스에 저장
-            notificationRepository.save(notification);
-        }
-    }
-
-    // 특정 사용자의 읽지 않은 알림 여부 확인
     @Transactional(readOnly = true)
-    public boolean hasUnreadNotifications(Long userId) {
-        return !notificationRepository.findByUserIdAndIsReadFalse(userId).isEmpty();
+    public List<Notification> getUnreadNotificationsByUserId(Long userId) {
+        return notificationRepository.findByUserIdAndIsReadFalse(userId);
     }
 
     // 알림 읽음 상태 변경
     @Transactional
     public void markNotificationsAsRead(Long userId) {
         List<Notification> unreadNotifications = notificationRepository.findByUserIdAndIsReadFalse(userId);
-
-        unreadNotifications.forEach(notification -> notification.setRead(true)); // 읽음 처리
-        notificationRepository.saveAll(unreadNotifications); // DB에 반영
+        unreadNotifications.forEach(notification -> notification.setRead(true));
+        notificationRepository.saveAll(unreadNotifications);
     }
 
     // 현재 사용자의 알림 목록 조회

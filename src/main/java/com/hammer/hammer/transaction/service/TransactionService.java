@@ -73,7 +73,7 @@ public class TransactionService {
         // 판매자 알림 생성
         String sellerMessage = String.format("등록하신 %d상품이 %s원으로 판매되었습니다! 구매자ID : %s",
                 item.getItemId(), transaction.getFinalPrice(), transaction.getBuyer().getUsername());
-        Notification sellerNotification = new Notification(transaction.getSeller().getUserId(), item.getItemId(), sellerMessage);
+        Notification sellerNotification = new Notification(transaction.getSeller().getUserId(), item, sellerMessage);
         notificationRepository.save(sellerNotification);
 
         // WebSocket을 통해 판매자에게 알림 전송
@@ -82,7 +82,7 @@ public class TransactionService {
         // 구매자 알림 생성
         String buyerMessage = String.format("입찰하신 %d상품이 %s원으로 낙찰되었습니다! 판매자ID: %s",
                 item.getItemId(), transaction.getFinalPrice(), transaction.getSeller().getUsername());
-        Notification buyerNotification = new Notification(transaction.getBuyer().getUserId(), item.getItemId(), buyerMessage);
+        Notification buyerNotification = new Notification(transaction.getBuyer().getUserId(), item, buyerMessage);
         notificationRepository.save(buyerNotification);
 
         // WebSocket을 통해 구매자에게 알림 전송
@@ -116,8 +116,6 @@ public class TransactionService {
     // 1분마다 경매 종료된 아이템을 확인하는 스케줄러
     @Scheduled(fixedRate = 60000)  // 1분마다 실행
     public void checkAuctionEndAndUpdateStatus() {
-        System.out.println("스케줄러 실행 시각: " + LocalDateTime.now());
-
         // 경매 진행 중인 아이템을 조회
         List<Item> ongoingItems = itemRepository.findByStatus(Item.ItemStatus.ONGOING);
         System.out.println("현재 진행 중인 아이템 수: " + ongoingItems.size());
