@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 @Builder
 public class ResponseSelectPointDto {
 
-    private BigDecimal pointAmount;
+    private String pointAmount;
     private LocalDateTime createAt;
     private PointStatus pointType;
     private String description;
-    private BigDecimal balanceAmount;
+    private String balanceAmount;
 }

@@ -62,9 +62,12 @@
                     <tr th:each="point : ${points}">
                         <td th:text="${point.pointType}"></td>
                         <td th:text="${point.description}"></td>
-                        <td th:text="${#dates.format(point.createAt, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td th:text="${#numbers.formatNumber(point.pointAmount, 0, 'COMMA')}"></td>
-                        <td th:text="${#numbers.formatNumber(point.balanceAmount, 0, 'COMMA')}"></td>
+                        <td>
+                            <span th:if="${point.createAt != null}" th:text="${#dates.format(point.createAt, 'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:if="${point.createAt == null}"></span>
+                        </td>
+                        <td th:text="${point.pointAmount}"></td>
+                        <td th:text="${point.balanceAmount}"></td>
                     </tr>
                     </tbody>
                 </table>

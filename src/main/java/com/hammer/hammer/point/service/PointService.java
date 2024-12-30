@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,15 +41,17 @@ public class PointService {
                 ()->new IllegalStateException("입출금 내역을 찾을 수 없습니다.")
         );
 
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+
         return selectPoint.stream()
                 .map(point -> ResponseSelectPointDto.builder()
                         .pointType(point.getPointType())
-                        .pointAmount(point.getPointAmount())
+                        .pointAmount(decimalFormat.format(point.getPointAmount()))
                         .description(point.getDescription())
                         .createAt(point.getCreateDate())
-                        .balanceAmount(point.getBalanceAmount())
+                        .balanceAmount(decimalFormat.format(point.getBalanceAmount()))
                         .build())
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
     }
 
