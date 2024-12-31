@@ -8,6 +8,8 @@ import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -32,18 +34,20 @@ public class AdminService {
     
     //카테고리 crud
     public List<Category> findAll() {
-        return categoryRepository.findAll();
+    	  List<Category> categories = categoryRepository.findAllCategories();
+          System.out.println("Categories fetched from DB: " + categories);
+          return categories;
     }
 
-    public Optional<Category> findById(Long categoryId) {
-        return categoryRepository.findById(categoryId);
+    public Optional<Category> findById(Long id) {
+        return categoryRepository.findById(id);
     }
-
+    @Transactional
     public Category save(Category category) {
         return categoryRepository.save(category);
     }
-
-    public void deleteById(Long categoryId) {
-        categoryRepository.deleteById(categoryId);
+    @Transactional
+    public void deleteById(Long id) {
+        categoryRepository.deleteById(id);
     }
 }

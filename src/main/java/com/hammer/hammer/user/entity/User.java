@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 //User는 예약어가 있어서 users라고 해야함
 @Setter
 @Getter

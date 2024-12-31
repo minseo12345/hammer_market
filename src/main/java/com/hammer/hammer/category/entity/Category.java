@@ -14,6 +14,7 @@ public class Category {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "category_id", nullable = false)
     private Long categoryId;
 	
 	@Column(name = "name", nullable = false)
@@ -40,4 +41,16 @@ public class Category {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+    
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+
 }
