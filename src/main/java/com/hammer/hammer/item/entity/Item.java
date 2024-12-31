@@ -32,10 +32,10 @@ public class Item{
     @Column(name = "description")
     private String description;
 
-    @Column(name = "starting_bid", precision = 10, scale = 2)
+    @Column(name = "starting_bid", precision = 12)
     private BigDecimal startingBid;
 
-    @Column(name = "buyNowPrice", precision = 10, scale = 2)
+    @Column(name = "buyNowPrice", precision = 12)
     private BigDecimal buyNowPrice;
 
     @Enumerated(EnumType.STRING) // ENUM을 문자열로 저장

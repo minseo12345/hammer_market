@@ -276,7 +276,7 @@ function login() {
         .catch((err) => {
             console.error('세션 정보 에러:', err);
             alert('로그인 필요');
-            window.location.href = '/login';
+
         });
 }
 // 시작
