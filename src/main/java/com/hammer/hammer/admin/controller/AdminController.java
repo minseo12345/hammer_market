@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -42,6 +42,7 @@ public class AdminController {
     @GetMapping("/transactions")
     public String getAllTransactions(Model model) {
         List<TransactionStatusDto> transactions = adminService.getTransactionStatuses();
+        System.out.println("transactions: " + transactions);
         model.addAttribute("transactions", transactions);
         return "admin/transactions";
     }
@@ -49,11 +50,18 @@ public class AdminController {
     // 카테고리 관리 화면
     @GetMapping("/categories")
     public String getCategory(Model model) {
-        List<Category> categories = adminService.findAll();
-        model.addAttribute("categories", categories);
-        return "/admin/categories";
+    	  List<Category> categories = adminService.findAll();
+    	    System.out.println("Categories sent to the view: " + categories);
+    	    model.addAttribute("categories", categories);
+    	    return "admin/categories";
     }
 
+    
+    @PostMapping("/categories")
+    public String saveCategory(@ModelAttribute Category category) {
+        adminService.save(category); // 서비스 계층에서 카테고리 저장
+        return "redirect:/admin/categories"; // 저장 후 카테고리 목록으로 리다이렉트
+    }
     // 카테고리 추가 폼
     @GetMapping("/categories/new")
     public String createCategoryForm(Model model) {
@@ -61,14 +69,16 @@ public class AdminController {
         return "/admin/categories.new";
     }
 
+    
     // 카테고리 수정 폼
     @GetMapping("/categories/edit/{id}")
-    public String editCategoryForm(@PathVariable Long id, Model model) {
+    public String editCategoryForm(@PathVariable("id") Long id, Model model) {
         Optional<Category> optionalCategory = adminService.findById(id);
         if (optionalCategory.isPresent()) {
             model.addAttribute("category", optionalCategory.get());
+            return "admin/categories.form";
         }
-        return "/admin/categories.form";
+        return "redirect:/admin/categories";
     }
 
     // 카테고리 상세 보기 화면

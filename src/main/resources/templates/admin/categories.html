@@ -15,19 +15,23 @@
         <th>Actions</th>
     </tr>
     </thead>
-    <tbody>
+   <tbody>
     <tr th:each="category : ${categories}">
-        <td th:text="${category.categoryId}"></td>
-        <td th:text="${category.name}"></td>
-        <td th:text="${category.description}"></td>
-        <td>
-            <a th:href="@{/admin/categories/{id}/edit(id=${category.categoryId})}">Edit</a>
-            <form th:action="@{/admin/categories/{id}/delete(id=${category.categoryId})}" method="post" style="display:inline;">
-                <button type="submit">삭제</button>
-            </form>
-        </td>
-    </tr>
+    <td th:text="${category.categoryId}"></td>
+    <td th:text="${category.name}"></td>
+    <td th:text="${category.description}"></td>
+<td>
+        <a th:href="@{/admin/categories/edit/{id}(id=${category.categoryId})}">Edit</a>
+        <form style="display:inline;" data-id="[[${category.categoryId}]]">
+         <button type="button" th:data-category-id="${category.categoryId}" onclick="deleteCategory(this)">삭제</button>
+
+        </form>
+
+
+</tr>
     </tbody>
+    
 </table>
+<script src="/js/admin/deleteCategory.js"></script>
 </body>
 </html>
