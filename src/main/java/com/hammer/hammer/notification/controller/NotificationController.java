@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,48 +30,26 @@ public class NotificationController {
     // 알림 목록 가져오기
     @PostMapping("/notifications/list")
     @ResponseBody
-    public List<Notification> getNotifications(@RequestBody HashMap<String, Object> params, Model model) {
+    public List<Notification> getNotificationsAndSend(@RequestBody HashMap<String, Object> params, Model model) {
         Long userId = (params.get("userId") instanceof Number)
                 ? ((Number) params.get("userId")).longValue()
                 : Long.valueOf(params.get("userId").toString());
 
         // userId를 이용해 알림 목록 가져오기
         List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
-        System.out.println(notifications);
+
         model.addAttribute("notifications", notifications);
+        notificationService.sendNotificationsToClient(userId);
         return notifications;
     }
 
-    /*@PostMapping("/notifications/list")
-    @ResponseBody
-    public List<Notification> getNotifications(@RequestBody HashMap<String, Object> params) {
-        Long userId = Long.valueOf(params.get("userId").toString());
-        return notificationService.getNotificationsByUserId(userId);
-    }*/
-
-    @PostMapping("/notifications/unread")
-    @ResponseBody
-    public List<Notification> getUnreadNotifications(@RequestParam Long userId) {
-        return notificationService.getUnreadNotificationsByUserId(userId);
+    @PostMapping("/notifications/update-read-status")
+    public ResponseEntity<Void> updateReadStatus(
+            @RequestParam Long notificationId,
+            @RequestParam boolean isRead) {
+        notificationService.updateReadStatus(notificationId, isRead);
+        return ResponseEntity.ok().build();
     }
-
-    @PostMapping("/notifications/mark-read")
-    @ResponseBody
-    public ResponseEntity<String> markAllNotificationsAsRead(@RequestBody Map<String, Object> params) {
-        Long userId = Long.valueOf(params.get("userId").toString());
-        notificationService.markNotificationsAsRead(userId);
-        // WebSocket을 통해 클라이언트에 알림
-        messagingTemplate.convertAndSend("/topic/notifications", "updated");
-        return ResponseEntity.ok("success");
-    }
-
-    /*@PostMapping("/notifications/mark-read")
-    @ResponseBody
-    public ResponseEntity<String> markAllNotificationsAsRead(@RequestParam Long userId) {
-        notificationService.markNotificationsAsRead(userId);
-        messagingTemplate.convertAndSend("/topic/notifications", "updated");
-        return ResponseEntity.ok("success");
-    }*/
 
     @PostMapping("/transaction/complete")
     public String completeTransaction(@RequestParam Long transactionId, @RequestParam Long userId, Model model) {

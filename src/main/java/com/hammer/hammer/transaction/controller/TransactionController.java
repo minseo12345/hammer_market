@@ -38,13 +38,6 @@ public class TransactionController {
         return "transaction/transaction-detail";
     }
 
-    /*// 트랜잭션 삭제
-    @DeleteMapping("/{id}")
-    public String deleteTransaction(@PathVariable Long id) {
-        transactionService.deleteTransaction(id);
-        return "redirect:/transactions";  // 삭제 후 트랜잭션 목록 페이지로 리디렉션
-    }*/
-
     // 즉시구매 버튼을 눌러서 경매 종료 처리
     @PostMapping("/immediate-purchase/{itemId}")
     public String createTransactionForImmediatePurchase(@PathVariable Long itemId) {
@@ -56,7 +49,7 @@ public class TransactionController {
         }
     }
 
-    /*// 경매 종료 후 트랜잭션 생성
+    // 경매 종료 후 트랜잭션 생성
     @PostMapping("/auction-end/{itemId}")
     public String createTransactionForAuctionEnd(@PathVariable Long itemId) {
         try {
@@ -65,7 +58,7 @@ public class TransactionController {
         } catch (IllegalArgumentException e) {
             return "error";
         }
-    }*/
+    }
 }
 
 

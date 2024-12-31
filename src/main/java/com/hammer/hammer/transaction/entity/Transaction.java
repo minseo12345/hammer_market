@@ -54,14 +54,5 @@ public class Transaction {
     public void addModifiedBy(Long userId) {
         this.modifiedBy.add(userId);
     }
-
-    // 거래 상태 반환 메서드
-    public String getTransactionStatus(Long userId) {
-        if (modifiedBy.contains(userId)) {
-            return "WAITING_FOR_OTHER_APPROVAL"; // 내가 수락함, 상대방 대기 중
-        } else {
-            return "WAITING_FOR_MY_APPROVAL"; // 상대방이 수락함, 내가 대기 중
-        }
-    }
 }
 

@@ -45,11 +45,6 @@ public class TransactionService {
         return transactionRepository.findById(id);
     }
 
-    /*// 트랜잭션 삭제
-    public void deleteTransaction(Long id) {
-        transactionRepository.deleteById(id);
-    }*/
-
     private void createTransaction(Item item) {
         Bid bid = (Bid) bidRepository.findTopByItem_ItemIdOrderByBidAmountDesc(item.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 입찰을 찾을 수 없습니다. 아이템 ID: " + item.getItemId()));
@@ -65,7 +60,7 @@ public class TransactionService {
         transaction.setFinalPrice(finalPrice);
         transaction.setTransactionDate(Timestamp.valueOf(LocalDateTime.now()).toLocalDateTime());  // 거래 시점
         transactionRepository.save(transaction);
-
+        System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 성공");
         // 아이템 상태를 '낙찰'로 변경
         item.setStatus(Item.ItemStatus.BIDDING_END);
         itemRepository.save(item);
@@ -78,6 +73,7 @@ public class TransactionService {
 
         // WebSocket을 통해 판매자에게 알림 전송
         messagingTemplate.convertAndSend("/topic/notifications", sellerNotification);
+        System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 알림 발송");
 
         // 구매자 알림 생성
         String buyerMessage = String.format("입찰하신 %d상품이 %s원으로 낙찰되었습니다! 판매자ID: %s",
@@ -87,6 +83,7 @@ public class TransactionService {
 
         // WebSocket을 통해 구매자에게 알림 전송
         messagingTemplate.convertAndSend("/topic/notifications", buyerNotification);
+        System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 알림 발송");
     }
 
     // 즉시구매에 의한 낙찰
@@ -109,7 +106,7 @@ public class TransactionService {
         if (item.getEndTime().isBefore(LocalDateTime.now())) {
             // 경매 종료 후 거래 생성
             createTransaction(item);
-            System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 성공");
+
         }
     }
 

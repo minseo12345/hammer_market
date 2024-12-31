@@ -33,7 +33,51 @@ async function fetchNotifications() {
             };
 
             // 알림 분류
-            data.forEach(notification => {
+            for (const notification of data) {
+                if (!notification.isRead) {
+                    // Toastify 표시
+                    Toastify({
+                        text: notification.message,
+                        duration: -1,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function () {
+                            const notificationModal = document.getElementById("notification-modal");
+                            if (notificationModal) {
+                                notificationModal.style.display = "block";
+                            }
+                        },
+                    }).showToast();
+
+                    // isRead 업데이트
+                    try {
+                        // URL-encoded 형식으로 데이터 생성
+                        const params = new URLSearchParams();
+                        params.append("notificationId", notification.notificationId);
+                        params.append("isRead", true);
+
+                        const response = await fetch("/notifications/update-read-status", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                            },
+                            body: params.toString(), // URL-encoded 데이터 전송
+                        });
+
+                        if (response.ok) {
+                            console.log(`Notification ${notification.notificationId} marked as read.`);
+                        } else {
+                            console.error(`Failed to update read status for notification ${notification.notificationId}:`, response.statusText);
+                        }
+                    } catch (updateError) {
+                        console.error(`Failed to update read status for notification ${notification.notificationId}:`, updateError);
+                    }
+                }
+
                 let status = notification.itemStatus?.trim() || "OTHER";
 
                 if (status === "PARTIALLY_COMPLETED") {
@@ -47,7 +91,7 @@ async function fetchNotifications() {
                 } else {
                     categories.OTHER.push(notification);
                 }
-            });
+            }
 
             // 카테고리별 UI 생성
             Object.keys(categories).forEach(category => {
@@ -98,9 +142,8 @@ async function fetchNotifications() {
 document.addEventListener("DOMContentLoaded", () => {
     const notificationModal = document.getElementById("notification-modal");
     const notificationIcon = document.getElementById("notification-icon");
-    const notificationList = document.getElementById("notification-list");
+    // const notificationList = document.getElementById("notification-list");
     const closeModalButton = document.getElementById("close-modal-button");
-    const markReadButton = document.getElementById("mark-read-button");
 
     if (!notificationIcon || !notificationModal || !closeModalButton) {
         console.error("Required DOM elements not found!");
@@ -125,133 +168,47 @@ document.addEventListener("DOMContentLoaded", () => {
         notificationModal.style.display = "none";
     });
 
-    // 알림 목록 가져오기
-
-    /*// 모든 알림 읽음 처리
-    markReadButton.addEventListener("click", async () => {
-        const userIdElement = document.getElementById("userId");
-        if (!userIdElement) {
-            console.error("User ID element not found!");
-            return;
-        }
-
-        try {
-            const response = await fetch("/notifications/mark-read", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId: userIdElement.textContent.trim() }),
-            });
-
-            if (response.ok) {
-                alert("모든 알림이 읽음 처리되었습니다.");
-                fetchNotifications();
-            } else {
-                console.error("Failed to mark notifications as read.");
-            }
-        } catch (error) {
-            console.error("Error marking notifications as read:", error);
-        }
-    });*/
 });
-
-function initializeWebSocket() {
+function initializeWebSocket(userId) {
     const socket = new SockJS('/ws');
     const stompClient = Stomp.over(socket);
-
     stompClient.connect({}, () => {
         console.log("WebSocket 연결 성공");
 
-        try {
-            stompClient.subscribe('/topic/notifications', (message) => {
+        stompClient.subscribe('/topic/notifications', (message) => {
+            console.log('웹소켓 구독 이벤트 발생');
+            const notifications = JSON.parse(message.body);
 
-                console.log('웹소켓 구독!')
-                // const notificationIcon = document.getElementById("notification-icon");
-                const notifications = JSON.parse(message.body);
-
-                try {
-
-                    const userIdElement = document.getElementById("userId");
-                    if (!userIdElement) {
-                        console.error("아이디 조회에 실패했습니다.");
-                        return;
-                    }
-
-                    fetchNotifications(); // 알림 목록 가져오기
-
-                    const currentUserId = userIdElement.textContent.trim();
-
-                    if (notifications.userId === parseInt(currentUserId)) {
-                        //toast 알림
-                        Toastify({
-                            text: notifications.message,
-                            duration: -1,
-                            // destination: "https://github.com/apvarun/toastify-js",
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: "center",
-                            // stopOnFocus: true, // Prevents dismissing of toast on hover
-                            style: {
-                                background: "linear-gradient(to right, #00b09b, #96c93d)",
-                            },
-                            onClick: function () {
-                                // 알림 클릭 시 모달 열기
-                                const notificationModal = document.getElementById("notification-modal");
-                                notificationModal.style.display = "block"; // 모달 열기
-
-                                fetchNotifications(); // 알림 목록 가져오기
-                                /*// 알림창 제거
-                                if (toastElement && toastElement.parentNode) {
-                                    toastElement.parentNode.removeChild(toastElement);
-                                }*/
-                            },
-                        }).showToast();
-                    }
-
-                    /*if (Array.isArray(notifications)) {
-                        const hasUnread = notifications.some(notification => !notification.isRead);
-                        if (hasUnread) {
-                            notificationIcon.src = "/img/bell2.png";
-                            notificationIcon.alt = "알림 아이콘(새 알림 있음)";
-                        } else {
-                            notificationIcon.src = "/img/bell1.png";
-                            notificationIcon.alt = "알림 아이콘(다 읽음)";
+            if (notifications.userId === parseInt(userId)) {
+                // Toastify로 실시간 알림 표시
+                Toastify({
+                    text: notifications.message,
+                    duration: -1,
+                    close: true,
+                    gravity: "top",
+                    position: "center",
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    },
+                    onClick: function () {
+                        const notificationModal = document.getElementById("notification-modal");
+                        if (notificationModal) {
+                            notificationModal.style.display = "block";
                         }
-                    } else if (notifications.isRead !== undefined) {
-                        // 단일 객체 처리 (예: 메시지가 배열이 아닐 경우)
-                        if (!notifications.isRead) {
-                            notificationIcon.src = "/img/bell2.png";
-                            notificationIcon.alt = "알림 아이콘(새 알림 있음)";
-                        } else {
-                            notificationIcon.src = "/img/bell1.png";
-                            notificationIcon.alt = "알림 아이콘(다 읽음)";
-                        }
-                    } else {
-                        console.log("WebSocket 메시지 형식이 올바르지 않습니다:", notifications.message);
-                    }*/
-                } catch (error) {
-                    console.log("WebSocket 메시지 처리 중 오류 발생:", error, "수신된 메시지:", notifications.message);
-                }
-            });
-
-        } catch (error) {
-            console.error("WebSocket 구독 중 오류 발생:", error);
-        }
+                    },
+                }).showToast();
+            }
+        });
     }, (error) => {
         console.error("WebSocket 연결 실패:", error);
     });
 }
-
 
 async function completeTransaction(itemId, userId) {
     // URL-encoded 형식으로 데이터 생성
     const params = new URLSearchParams();
     params.append("transactionId", itemId);
     params.append("userId", userId);
-    /*console.log("Transaction ID:", itemId);
-    console.log("User ID:", userId);*/
 
     try {
         const response = await fetch("/transaction/complete", {
@@ -284,6 +241,8 @@ async function cancelTransaction(itemId, userId) {
             },
         });
 
+        fetchNotifications();
+
         if (response.ok) {
             alert("거래 포기 요청이 접수되었습니다.");
             location.reload();
@@ -295,61 +254,13 @@ async function cancelTransaction(itemId, userId) {
     }
 }
 
-/*
-// 1. 읽지 않은 알림 가져오기
-async function fetchUnreadNotificationsForToast(userId) {
-    try {
-        const response = await fetch(`/notifications/unread?userId=${userId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-
-        if (response.ok) {
-            const unreadNotifications = await response.json();
-            displayUnreadNotificationsAsToast(unreadNotifications);
-        } else {
-            console.error("Failed to fetch unread notifications:", response.statusText);
-        }
-    } catch (error) {
-        console.error("Error fetching unread notifications:", error);
-    }
-}
-
-// 읽지 않은 알림을 Toast로 표시
-function displayUnreadNotificationsAsToast(notifications) {
-    notifications.forEach(notification => {
-        Toastify({
-            text: notification.message,
-            duration: -1, // 알림 유지
-            close: true,
-            gravity: "top",
-            position: "center",
-            style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
-            },
-            onClick: function () {
-                const notificationModal = document.getElementById("notification-modal");
-                if (notificationModal) {
-                    notificationModal.style.display = "block"; // 알림 클릭 시 모달 열기
-                }
-            },
-        }).showToast();
-    });
-}
-
-
-// 3. 로그인 후 초기화
-function initializeNotifications(userId) {
-    initializeWebSocket(); // WebSocket 초기화
-    fetchUnreadNotificationsForToast(userId); // 로그인 시 읽지 않은 알림 표시
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const userIdElement = document.getElementById("userId");
     if (userIdElement) {
         const userId = userIdElement.textContent.trim();
-        initializeNotifications(userId); // 알림 초기화
+        initializeWebSocket(userId); // 알림 초기화
+        fetchNotifications();
     }
 });
-*/
+
 
