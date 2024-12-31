@@ -24,11 +24,19 @@
             <div class="points-summary">
                 <div class="points-info">
                     <h2>포인트</h2>
-                    <p class="points-total" th:text="${#numbers.formatInteger(points[0].currentPoint, 0, 'COMMA')} + ' P'"></p>
+                    <p th:text="${#numbers.formatInteger(currentPoint, 0, 'COMMA')}"></p>
+
                     <div class="points-buttons">
-                        <button class="points-settings">충전</button>
-                        <button class="points-settings">환전</button>
+                        <form th:action="@{/points/charge/{userId}(userId=${userId})}" method="get">
+                            <button class="points-settings" type="submit">충전</button>
+                        </form>
+
+                        <form th:action="@{/points/currency/{userId}(userId=${userId})}" method="get">
+                            <button class="points-settings" type="submit">환전</button>
+                        </form>
+
                     </div>
+
                 </div>
             </div>
 
@@ -54,9 +62,12 @@
                     <tr th:each="point : ${points}">
                         <td th:text="${point.pointType}"></td>
                         <td th:text="${point.description}"></td>
-                        <td th:text="${point.createAt}"></td>
-                        <td th:text="${#numbers.formatInteger(point.pointAmount, 0, 'COMMA')}"></td>
-                        <td th:text="${#numbers.formatInteger(point.balanceAmount, 0, 'COMMA')}"></td>
+                        <td>
+                            <span th:if="${point.createAt != null}" th:text="${#dates.format(point.createAt, 'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:if="${point.createAt == null}"></span>
+                        </td>
+                        <td th:text="${point.pointAmount}"></td>
+                        <td th:text="${point.balanceAmount}"></td>
                     </tr>
                     </tbody>
                 </table>

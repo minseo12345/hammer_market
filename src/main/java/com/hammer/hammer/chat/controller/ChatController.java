@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
 @Controller
-@RequestMapping("/chat")
 public class ChatController {
 
-    @GetMapping
+    @GetMapping("/chat")
     public String chat() {
         return "/chat/chat";
     }
@@ -18,6 +17,5 @@ public class ChatController {
     public String cart() {
         return "/cart/cart";
     }
-    @GetMapping("/list")
-    public String list() { return "/cart/list"; }
+
 }

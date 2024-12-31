@@ -79,9 +79,6 @@ public class Item{
                 .buyNowPrice(buyNowPrice)
                 .status(status)
                 .fileUrl(fileUrl)
-                .startTime(startTime)
-                .endTime(endTime)
-                .createdAt(createdAt)
                 .build();
     }
 }

@@ -11,12 +11,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -110,6 +107,10 @@ public class User implements UserDetails {
     
     public String getName() { // 만약 다른 이름이 필요하다면 추가 가능
         return username;
+    }
+
+    public void chargePoint(BigDecimal pointAmount){
+        this.currentPoint = pointAmount;
     }
 
     @Override // 사용자의 id를 반환(고유 값)

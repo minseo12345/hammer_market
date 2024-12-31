@@ -67,7 +67,7 @@ document.getElementById('comCtfNoBtn').addEventListener('click', function (event
     .then(function (result) {
         // 정상적으로 인증이 성공한 경우
         console.log("message"+result.message);
-        window.location.href = `/login/changePw?username=${encodeURIComponent(userName)}&email=${encodeURIComponent(email)}`;
+        window.location.href = `/login/changePw?email=${encodeURIComponent(email)}`;
     })
     .catch(function (error) {
         console.error('Error:', error);

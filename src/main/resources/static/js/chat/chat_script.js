@@ -15,6 +15,24 @@ const messageInputEl = document.getElementById("message-input");
 const sendMessageBtn = document.getElementById("send-message");
 const chatRoomTitleEl = document.getElementById("chat-room-title");
 
+// Notification 권한 요청
+function requestNotificationPermission() {
+    if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                console.log("Notification permission granted.");
+            }
+        });
+    }
+}
+
+// Notification 전송
+function showNotification(title, options) {
+    if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(title, options);
+    }
+}
+
 // WebSocket 연결 설정
 function connectWebSocket() {
     const socket = new SockJS('/ws');
@@ -34,10 +52,15 @@ function connectWebSocket() {
                     addMessage(msg.senderId, msg.content);
                 } else {
                     // 읽지 않은 메시지 수 실시간 업데이트
-                    console.log("chatRoomId :",msg.chatRoomId);
+                    console.log("chatRoomId :", msg.chatRoomId);
                     updateUnreadCount(msg.chatRoomId);
-                }
 
+                    // Notification 전송
+                    showNotification("새 메시지", {
+                        body: `새로운 메세지 : ${msg.content}`,
+                        icon: "/img/chat.png",
+                    });
+                }
             });
             loadChatRooms(); // 채팅방 목록 불러오기
         },
@@ -126,7 +149,7 @@ function updateUnreadCount(chatRoomId) {
             .then((unreadCount) => {
                 updateUnreadUI(roomElement, unreadCount);
             });
-    }else{
+    } else {
         loadChatRooms();
     }
 }
@@ -248,6 +271,7 @@ function login() {
             console.log('로그인 유저:', currentUser.username);
             fetchUsers(); // 유저 목록 로드
             connectWebSocket(); // WebSocket 연결
+            requestNotificationPermission(); // Notification 권한 요청
         })
         .catch((err) => {
             console.error('세션 정보 에러:', err);

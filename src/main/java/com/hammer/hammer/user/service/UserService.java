@@ -53,7 +53,7 @@ public class UserService {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userEmail", user.getEmail());
-        claims.put("username", user.getUsername());
+        claims.put("username", user.getName());
 
         AuthTokenImpl accessToken = jwtProvider.createAccessToken(
                 user.getUserId().toString(),

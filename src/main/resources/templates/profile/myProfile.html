@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보</title>
+    <link rel="stylesheet" href="/css/bid/bidsByUser.css">
+    <link rel="stylesheet" href="/css/fragments/topbar.css">
+    <link rel="stylesheet" href="/css/fragments/sidebar.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+</head>
+<body>
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+<nav class="header">
+    <div class="headerbar-content">
+        <div class = "headerbar-logoname">
+            <a href="/main">
+                망치 마켓
+            </a>
+        </div>
+    </div>
+</nav>
+<div class="bids-by-user-container">
+    <div th:insert="~{'fragments/userSidebar' :: sidebar(userId=${userId})}"></div>
+
+    <div class="bid-container" th:attr="data-user-id=${userId}">
+        <h2 class="table-title">*내 정보</h2>
+        <div class="bid-list">
+            <table id="bidTable" class="bid-table">
+                <thead>
+                <tr>
+                    <th>이메일</th>
+                    <th>이름</th>
+                    <th>권한</th>
+                    <th>전화번호</th>
+                    <th>포인트</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${userInfo.email}">이메일</td>
+                    <td th:text="${userInfo.name}">이름</td>
+                    <td th:text="${userInfo.role.roleName}">권한</td>
+                    <td th:text="${userInfo.phoneNumber}">전화번호</td>
+                    <td th:text="${userInfo.currentPoint}">포인트</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

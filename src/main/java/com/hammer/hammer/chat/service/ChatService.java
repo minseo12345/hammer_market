@@ -37,7 +37,7 @@ public class ChatService {
                     .orElseThrow(() -> new EntityNotFoundException("Buyer not found"));
             chatRoom = ChatRoom.builder()
                     .sellerTitle(buyer.getUsername())
-                    .buyerTitle(seller.getUsername())
+                    .buyerTitle(seller.getUsername() )
                     .sellerId(sellerId)
                     .buyerId(buyerId)
                     .build();
