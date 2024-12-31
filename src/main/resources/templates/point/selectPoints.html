@@ -63,7 +63,7 @@
                         <td th:text="${point.pointType}"></td>
                         <td th:text="${point.description}"></td>
                         <td>
-                            <span th:if="${point.createAt != null}" th:text="${#dates.format(point.createAt, 'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:if="${point.createAt != null}" th:text="${point.createAt}"></span>
                             <span th:if="${point.createAt == null}"></span>
                         </td>
                         <td th:text="${point.pointAmount}"></td>

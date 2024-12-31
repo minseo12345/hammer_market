@@ -7,14 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelButton = document.getElementById('cancel');
     const descriptionInput = document.getElementById('description');
 
-    // 상태 초기화 함수
     function resetState() {
         pointButtons.forEach(btn => btn.classList.remove('selected'));
         nextButton.disabled = true;
         descriptionInput.value = '';
     }
 
-    // 포인트 선택 시 처리
     pointButtons.forEach(button => {
         button.addEventListener('click', () => {
             pointButtons.forEach(btn => btn.classList.remove('selected'));
@@ -23,13 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 취소 버튼 클릭 처리
     cancelButton.addEventListener('click', () => {
         alert('환전을 취소했습니다.');
         resetState();
     });
 
-    // 환전 버튼 클릭 처리
     nextButton.addEventListener('click', () => {
         const selectedButton = document.querySelector('.charge-points button.selected');
         if (!selectedButton) {
@@ -47,14 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 환전 처리 로직
         processExchange(selectedValue);
     });
 
-    // 환전 처리 함수
     function processExchange(selectedValue) {
         currentBalance = (parseInt(currentBalance.replace(',', '').replace('P', '').trim()) - parseInt(selectedValue)).toLocaleString();
-        balanceElement.textContent = `${currentBalance}P`;  // 새 잔액 갱신
+        balanceElement.textContent = `${currentBalance}`;
 
         const description = descriptionInput.value.trim() || '환전';
         const userId = window.location.pathname.split("/")[3];
