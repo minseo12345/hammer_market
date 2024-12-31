@@ -32,9 +32,6 @@ public class PointService {
     /**
      *  포인트 조회
      */
-    /**
-     * 포인트 조회
-     */
     @Transactional(readOnly = true)
     public List<ResponseSelectPointDto> getAllPoints(Long userId, UserDetails userDetails) {
 
@@ -69,14 +66,16 @@ public class PointService {
     /**
      *  point 충전
      */
-    @Transactional
-    public void chargePoint(Long userId, RequestChargePointDto requestChargePointDto, UserDetails userDetails){
+    public synchronized void chargePoint(
+            Long userId,
+            RequestChargePointDto requestChargePointDto,
+            UserDetails userDetails){
 
         if (!userId.toString().equals(userDetails.getUsername())) {
             throw new AccessDeniedException("접근 권한이 없습니다.");
         }
 
-        User chargePointUser = userRepository.findByUserId(userId).orElseThrow(
+        User chargePointUser = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("사용자를 찾을 수 없습니다.")
         );
 
@@ -84,7 +83,7 @@ public class PointService {
         BigDecimal updatePoint = currentPoint.add(requestChargePointDto.getPointAmount());
 
         chargePointUser.chargePoint(updatePoint);
-        userRepository.save(chargePointUser);
+        userRepository.saveAndFlush(chargePointUser);
 
         Point point = Point.builder()
                 .user(chargePointUser)
@@ -118,8 +117,12 @@ public class PointService {
                 .build();
     }
 
-    @Transactional
-    public void currencyPoint(Long userId, RequestChargePointDto requestChargePointDto, UserDetails userDetails){
+    /**
+     * 포인트 환전
+     */
+    public synchronized void currencyPoint(Long userId,
+                              RequestChargePointDto requestChargePointDto,
+                              UserDetails userDetails){
 
         if (!userId.toString().equals(userDetails.getUsername())) {
             throw new AccessDeniedException("접근 권한이 없습니다.");
@@ -137,7 +140,7 @@ public class PointService {
         }
 
         currencyUser.chargePoint(updatePoint);
-        userRepository.save(currencyUser);
+        userRepository.saveAndFlush(currencyUser);
 
         Point currencyPoint = Point.builder()
                 .pointType(PointStatus.C)
