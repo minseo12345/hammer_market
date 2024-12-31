@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Table(name="transactions")
 @Entity
@@ -45,5 +47,12 @@ public class Transaction {
 
     @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
+
+    @ElementCollection
+    private Set<Long> modifiedBy = new HashSet<>(); // 거래 상태를 변경한 사용자 ID 저장
+
+    public void addModifiedBy(Long userId) {
+        this.modifiedBy.add(userId);
+    }
 }
 

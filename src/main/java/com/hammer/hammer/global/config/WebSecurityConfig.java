@@ -59,6 +59,7 @@ public class WebSecurityConfig {
                                 "/jwt-login",
                                 "/chat","/api/**","/chat/**","/topic/messages","/ws/**","/app/chat","/ws",
                                 "/error",
+                                "/transaction/complete","/transaction/cancel",
                                 "/css/**", "/js/**", "/img/**"
                         ).permitAll()  // 로그인 API는 인증 없이 접근 가능
                         .requestMatchers("/admin/**").hasRole("ADMIN")

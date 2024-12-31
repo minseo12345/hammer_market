@@ -1,5 +1,7 @@
 package com.hammer.hammer.item.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hammer.hammer.notification.entity.Notification;
 import com.hammer.hammer.transaction.entity.Transaction;
 //import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.user.entity.User;
@@ -10,6 +12,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "items")
@@ -56,7 +59,7 @@ public class Item{
 
     // ENUM 선언
     public enum ItemStatus {
-        ONGOING,BIDDING_END,COMPLETED,CANCELLED
+        ONGOING,BIDDING_END,COMPLETED,CANCELLED,WAITING_FOR_MY_APPROVAL,WAITING_FOR_OTHER_APPROVAL
     }
 
     @ManyToOne
