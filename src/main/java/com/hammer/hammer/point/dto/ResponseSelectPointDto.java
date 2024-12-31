@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ResponseSelectPointDto {
 
     private String pointAmount;
-    private LocalDateTime createAt;
+    private String createAt;
     private PointStatus pointType;
     private String description;
     private String balanceAmount;

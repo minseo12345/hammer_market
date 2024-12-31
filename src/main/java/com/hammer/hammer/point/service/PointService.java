@@ -10,6 +10,7 @@ import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,38 +36,46 @@ public class PointService {
     public List<ResponseSelectPointDto> getAllPoints(Long userId, UserDetails userDetails) {
 
         if (!userId.toString().equals(userDetails.getUsername())) {
-            throw new IllegalStateException("접근 권한이 없습니다.");
+            throw new AccessDeniedException("접근 권한이 없습니다.");
         }
 
-        List<Point> selectPoint = pointRepository.findByUser_UserId(userId).orElseThrow(
-                ()->new IllegalStateException("입출금 내역을 찾을 수 없습니다.")
-        );
+        List<Point> selectPoint = pointRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new IllegalStateException("입출금 내역을 찾을 수 없습니다."));
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         return selectPoint.stream()
-                .map(point -> ResponseSelectPointDto.builder()
-                        .pointType(point.getPointType())
-                        .pointAmount(decimalFormat.format(point.getPointAmount()))
-                        .description(point.getDescription())
-                        .createAt(point.getCreateDate())
-                        .balanceAmount(decimalFormat.format(point.getBalanceAmount()))
-                        .build())
-                .collect(Collectors.toList());
+                .map(point -> {
+                    String formattedCreateDate = point.getCreateDate() != null
+                            ? point.getCreateDate().format(formatter)
+                            : null;
 
+                    return ResponseSelectPointDto.builder()
+                            .pointType(point.getPointType())
+                            .pointAmount(decimalFormat.format(point.getPointAmount()))
+                            .description(point.getDescription())
+                            .createAt(formattedCreateDate)
+                            .balanceAmount(decimalFormat.format(point.getBalanceAmount()))
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
+
 
     /**
      *  point 충전
      */
-    @Transactional
-    public void chargePoint(Long userId, RequestChargePointDto requestChargePointDto, UserDetails userDetails){
+    public synchronized void chargePoint(
+            Long userId,
+            RequestChargePointDto requestChargePointDto,
+            UserDetails userDetails){
 
         if (!userId.toString().equals(userDetails.getUsername())) {
-            throw new IllegalStateException("접근 권한이 없습니다.");
+            throw new AccessDeniedException("접근 권한이 없습니다.");
         }
 
-        User chargePointUser = userRepository.findByUserId(userId).orElseThrow(
+        User chargePointUser = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("사용자를 찾을 수 없습니다.")
         );
 
@@ -73,7 +83,7 @@ public class PointService {
         BigDecimal updatePoint = currentPoint.add(requestChargePointDto.getPointAmount());
 
         chargePointUser.chargePoint(updatePoint);
-        userRepository.save(chargePointUser);
+        userRepository.saveAndFlush(chargePointUser);
 
         Point point = Point.builder()
                 .user(chargePointUser)
@@ -94,7 +104,7 @@ public class PointService {
     public ResponseCurrentPointDto currentPointByUser(Long userId, UserDetails userDetails){
 
         if (!userId.toString().equals(userDetails.getUsername())) {
-            throw new IllegalStateException("접근 권한이 없습니다.");
+            throw new AccessDeniedException("접근 권한이 없습니다.");
         }
 
         User findCurrentPointByUser = userRepository.findByUserId(userId).orElseThrow(
@@ -107,11 +117,15 @@ public class PointService {
                 .build();
     }
 
-    @Transactional
-    public void currencyPoint(Long userId, RequestChargePointDto requestChargePointDto, UserDetails userDetails){
+    /**
+     * 포인트 환전
+     */
+    public synchronized void currencyPoint(Long userId,
+                              RequestChargePointDto requestChargePointDto,
+                              UserDetails userDetails){
 
         if (!userId.toString().equals(userDetails.getUsername())) {
-            throw new IllegalStateException("접근 권한이 없습니다.");
+            throw new AccessDeniedException("접근 권한이 없습니다.");
         }
 
         User currencyUser = userRepository.findByUserId(userId).orElseThrow(
@@ -126,7 +140,7 @@ public class PointService {
         }
 
         currencyUser.chargePoint(updatePoint);
-        userRepository.save(currencyUser);
+        userRepository.saveAndFlush(currencyUser);
 
         Point currencyPoint = Point.builder()
                 .pointType(PointStatus.C)
