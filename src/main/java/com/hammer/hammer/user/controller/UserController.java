@@ -26,15 +26,15 @@ public class UserController {
     @GetMapping("/login")
     public String login(@AuthenticationPrincipal UserDetails userDetails) {
         if(userDetails == null) {
-            return "/user/login";
+            return "user/login";
         }
-        return "/item/list";
+        return "item/list";
     }
 
     // 회원가입 화면
     @GetMapping("/signup")
     public String signup() {
-        return "/user/signUp";
+        return "user/signUp";
     }
 
     // 로그아웃
@@ -55,13 +55,13 @@ public class UserController {
     // 아이디 찾기
     @GetMapping("/login/find-id")
     public String findId() {
-        return "/user/findId";
+        return "user/findId";
     }
 
     // 비밀번호 찾기
     @GetMapping("/login/find-pw")
     public String findPw() {
-        return "/user/findPw";
+        return "user/findPw";
     }
 
     @GetMapping("/login/changePw")
@@ -72,10 +72,10 @@ public class UserController {
             Long userId = Long.valueOf(userDetails.getUsername());
             User userInfo = userService.getUserById(userId);
             model.addAttribute("userEmail", userInfo.getEmail());
-            return "/user/changePw";
+            return "user/changePw";
         }
         model.addAttribute("userEmail", email);
-        return "/user/changePw";
+        return "user/changePw";
 
     }
 }

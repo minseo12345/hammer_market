@@ -30,11 +30,11 @@ public class PointController {
 
         if(userId == null) {
             model.addAttribute("error", "잘못된 요청입니다.");
-            return "/global/error";
+            return "global/error";
         }
         if(userDetails == null) {
             model.addAttribute("error", "로그인이 필요합니다.");
-            return "/global/error";
+            return "global/error";
         }
         List<ResponseSelectPointDto> responseSelectPointDtoList = pointService.getAllPoints(userId,userDetails);
 
@@ -52,14 +52,14 @@ public class PointController {
                                       Model model) {
         if (userDetails == null) {
             model.addAttribute("error", "로그인이 필요합니다.");
-            return "/global/error";
+            return "global/error";
         }
 
         ResponseCurrentPointDto responseCurrentPointDto = pointService.currentPointByUser(userId,userDetails);
 
         model.addAttribute("userId", userId);
         model.addAttribute("currentPoint", responseCurrentPointDto.getCurrentPoint());
-        return "/point/chargePoint";
+        return "point/chargePoint";
     }
 
 
@@ -72,25 +72,25 @@ public class PointController {
 
         if(userId == null) {
             model.addAttribute("error", "잘못된 요청입니다.");
-            return "/global/error";
+            return "global/error";
         }
         if(userDetails == null) {
             model.addAttribute("error","로그인이 필요합니다.");
-            return "/global/error";
+            return "global/error";
         }
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "유효하지 않은 입력 값입니다.");
             model.addAttribute("bindingResult", bindingResult);
-            return "/global/error";
+            return "global/error";
         }
         try{
             pointService.chargePoint(userId,requestChargePointDto,userDetails);
         }catch(Exception e){
             model.addAttribute("error", "포인트 충전 중 문제가 발생했습니다: " + e.getMessage());
-            return "/global/error";
+            return "global/error";
         }
 
-        return "redirect:/points/select/"+userId;
+        return "redirect:points/select/"+userId;
     }
 
     @GetMapping("/currency/{userId}")
@@ -99,14 +99,14 @@ public class PointController {
                                       Model model) {
         if (userDetails == null) {
             model.addAttribute("error", "로그인이 필요합니다.");
-            return "/global/error";
+            return "global/error";
         }
 
         ResponseCurrentPointDto responseCurrentPointDto = pointService.currentPointByUser(userId,userDetails);
 
         model.addAttribute("userId", userId);
         model.addAttribute("currentPoint", responseCurrentPointDto.getCurrentPoint());
-        return "/point/currencyPoint";
+        return "point/currencyPoint";
     }
 
     @PostMapping("/currency/{userId}")
@@ -118,24 +118,24 @@ public class PointController {
 
         if(userId == null) {
             model.addAttribute("error", "잘못된 요청입니다.");
-            return "/global/error";
+            return "global/error";
         }
         if(userDetails == null) {
             model.addAttribute("error","로그인이 필요합니다.");
-            return "/global/error";
+            return "global/error";
         }
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "유효하지 않은 입력 값입니다.");
             model.addAttribute("bindingResult", bindingResult);
-            return "/global/error";
+            return "global/error";
         }
         try{
             pointService.currencyPoint(userId,requestChargePointDto,userDetails);
         }catch(Exception e){
             model.addAttribute("error", "포인트 환전 중 문제가 발생했습니다: " + e.getMessage());
-            return "/global/error";
+            return "global/error";
         }
 
-        return "redirect:/points/select/"+userId;
+        return "redirect:points/select/"+userId;
     }
 }

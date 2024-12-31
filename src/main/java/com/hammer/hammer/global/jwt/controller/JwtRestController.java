@@ -36,7 +36,7 @@ public class JwtRestController {
             );
 
             refreshTokenCookie.setHttpOnly(true); // 자바스크립트에서 접근할 수 없도록 설정
-            refreshTokenCookie.setSecure(true); // HTTPS에서만 전송되도록 설정 (생산 환경에서 사용)
+//            refreshTokenCookie.setSecure(true); // HTTPS에서만 전송되도록 설정 (생산 환경에서 사용)
             refreshTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정
             refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키의 유효 기간 설정 (예: 7일)
 
