@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
 
 import static com.hammer.hammer.global.jwt.auth.AuthToken.AUTHORITIES_TOKEN_KEY;
 import static com.hammer.hammer.global.jwt.constants.UserConstants.ACCESS_TOKEN_TYPE_VALUE;
@@ -116,5 +117,38 @@ public class JwtProviderImpl implements JwtProvider<AuthTokenImpl> {
         );
     }
 
+    public String refreshAccessToken(String refreshToken) {
+        try {
+            // Refresh Token 검증
+            AuthTokenImpl refreshAuthToken = convertAuthToken(refreshToken);
+            if (!refreshAuthToken.validate()) {
+                throw new JwtException("Invalid Refresh Token");
+            }
+
+            // Refresh Token에서 사용자 정보 추출
+            Claims claims = refreshAuthToken.getDate();
+            String userId = claims.getSubject();
+            
+            // 새로운 Access Token 발급
+            Map<String, Object> newClaims = new HashMap<>();
+            newClaims.put("userEmail", claims.get("userEmail"));
+            newClaims.put("username", claims.get("username"));
+
+            // Role 직접 가져오기
+            Role role = Role.builder()
+                    .roleName("ROLE_USER")
+                    .build();  // 기본값으로 USER 설정
+            String roleStr = claims.get("role", String.class);
+            if ("ADMIN".equals(roleStr)) {
+                role = Role.builder()
+                        .roleName("ROLE_ADMIN")
+                        .build();
+            }
+
+            return createAccessToken(userId, role, newClaims).getToken();
+        } catch (Exception e) {
+            throw new JwtException("Failed to refresh token", e);
+        }
+    }
 
 }

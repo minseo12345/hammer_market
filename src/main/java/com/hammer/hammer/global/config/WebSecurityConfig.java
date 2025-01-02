@@ -72,8 +72,7 @@ public class WebSecurityConfig {
                 )
                 .logout(logout -> logout // 5. 로그아웃 설정
                         .logoutSuccessUrl("/login")
-                        .deleteCookies(
-                                "JSESSIONID", "refreshToken", "remember-me")
+                        .deleteCookies("JSESSIONID", "accessToken", "refreshToken")
                         .invalidateHttpSession(true)
                         .permitAll()
                 )
