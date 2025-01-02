@@ -5,28 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>내 정보</title>
     <link rel="stylesheet" href="/css/bid/bidsByUser.css">
+    <link rel="stylesheet" href="/css/profile/myProfile.css">
     <link rel="stylesheet" href="/css/fragments/topbar.css">
     <link rel="stylesheet" href="/css/fragments/sidebar.css">
     <link rel="stylesheet" href="/css/fragments/header.css">
 </head>
 <body>
 <div th:insert="~{'fragments/topbar' :: topbar}"></div>
-<nav class="header">
-    <div class="headerbar-content">
-        <div class = "headerbar-logoname">
-            <a href="/main">
-                망치 마켓
-            </a>
-        </div>
-    </div>
-</nav>
-<div class="bids-by-user-container">
+<div class="profile-by-user-container">
     <div th:insert="~{'fragments/userSidebar' :: sidebar(userId=${userId})}"></div>
 
-    <div class="bid-container" th:attr="data-user-id=${userId}">
+    <div class="profile-container" th:attr="data-user-id=${userId}">
         <h2 class="table-title">*내 정보</h2>
-        <div class="bid-list">
-            <table id="bidTable" class="bid-table">
+        <div class="profile-list">
+            <table id="profileTable" class="profile-table">
                 <thead>
                 <tr>
                     <th>이메일</th>
@@ -34,6 +26,7 @@
                     <th>권한</th>
                     <th>전화번호</th>
                     <th>포인트</th>
+                    <th>관리</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -42,7 +35,11 @@
                     <td th:text="${userInfo.name}">이름</td>
                     <td th:text="${userInfo.role.roleName}">권한</td>
                     <td th:text="${userInfo.phoneNumber}">전화번호</td>
-                    <td th:text="${userInfo.currentPoint}">포인트</td>
+                    <td th:text="${#numbers.formatDecimal(userInfo.currentPoint, 0, 'COMMA', 0, 'POINT')}">포인트</td>
+                    <td>
+                        <button onclick="location.href='/profile/edit'" class="edit-btn">수정</button>
+                        <button onclick="confirmDelete()" class="delete-btn">탈퇴</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -50,5 +47,30 @@
         </div>
     </div>
 </div>
+<script>
+
+    function confirmDelete() {
+        if (confirm('정말로 탈퇴하시겠습니까?')) {
+            fetch(`/api/delete`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('회원 탈퇴가 완료되었습니다.');
+                    window.location.href = '/logout';  // 로그아웃 처리 후 메인 페이지로 이동
+                } else {
+                    alert('회원 탈퇴 처리 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('회원 탈퇴 처리 중 오류가 발생했습니다.');
+            });
+        }
+    }
+</script>
 </body>
 </html>
