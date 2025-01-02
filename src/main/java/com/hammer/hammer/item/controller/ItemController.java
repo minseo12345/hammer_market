@@ -3,16 +3,22 @@ package com.hammer.hammer.item.controller;
 import com.hammer.hammer.bid.dto.RequestBidDto;
 import com.hammer.hammer.bid.exception.BidAmountTooLowException;
 import com.hammer.hammer.bid.service.BidService;
+import com.hammer.hammer.category.entity.Category;
+import com.hammer.hammer.category.repository.CategoryRepository;
 import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.service.ItemService;
 import com.hammer.hammer.user.entity.User;
+import com.hammer.hammer.user.repository.UserRepository;
 import com.hammer.hammer.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,27 +38,56 @@ public class ItemController {
     private final ItemService itemService;
     private final BidService bidService;
     private final UserService userService;
+    private final CategoryRepository CategoryRepository;
+    private final CategoryRepository categoryRepository;
+
     @PostMapping("/create")
     public String createItem(@ModelAttribute Item item,
                              @RequestParam("image") MultipartFile image,
                              @RequestParam("itemPeriod") String itemPeriod,
                              RedirectAttributes redirectAttributes) throws IOException {
-        // 사용자 ID를 1로 가정하고 조회 (테스트용)
-        User user = userService.getUserById(1L);
-        itemService.createItem(item, image, user, itemPeriod);
+
+        log.info("period:{}", itemPeriod);
+        log.info("img:{}", image.getOriginalFilename());
+        log.info("Item:{}", item.getTitle());
+        itemService.createItem(item, image,itemPeriod);
 
         redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 생성되었습니다!");
-        return "redirect:/items/list";
+        return "redirect:list";
     }
 
     @GetMapping("/list")
-    public String getAuctionListPage(Model model) {
-        List<Item> items = itemService.getAllItems();
-        model.addAttribute("items", items);
+    public String getAuctionListPage(@RequestParam(value = "page", defaultValue = "0") int page,
+                                     @RequestParam(value = "size", defaultValue = "12") int size,
+                                     @RequestParam(value = "sortBy", defaultValue = "itemId") String sortBy,
+                                     @RequestParam(required = false, defaultValue = "") String status,
+                                     @RequestParam(value = "direction", defaultValue = "asc") String direction,
+                                     @RequestParam(value = "search", required = false) String search,
+                                     Model model) {
+
+        List<String> statuses = itemService.getAllStatuses();
+        Page<Item> items;
+        if (search != null && !search.isEmpty()) {
+            items = itemService.searchItems(search,page,size,sortBy,direction,status); // 검색이 포함된 서비스 메서드 호출
+        } else {
+            items = itemService.getAllItems(page,size,sortBy,direction,status); // 검색 없이 모든 아이템 가져오기
+        }
+
+        model.addAttribute("items", items.getContent());
+        model.addAttribute("currentPage", items.getNumber());
+        model.addAttribute("totalPages", items.getTotalPages());
+        model.addAttribute("totalItems", items.getTotalElements());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+        model.addAttribute("search", search);
+        model.addAttribute("status", status);
+        model.addAttribute("statuses", statuses);
         return "item/list";
     }
     @GetMapping("/create")
-    public String getAuctionCreatePage() {
+    public String getAuctionCreatePage(Model model) {
+        List<Category> categories=categoryRepository.findAll();
+        model.addAttribute("categories",categories);
         return "item/create";
     }
 

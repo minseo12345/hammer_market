@@ -28,7 +28,7 @@ public class UserController {
         if(userDetails == null) {
             return "user/login";
         }
-        return "item/list";
+        return "redirect:items/list";
     }
 
     // 회원가입 화면

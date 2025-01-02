@@ -21,6 +21,8 @@
     padding: 20px;
     background-color: #f4f8fc;
     border-radius: 8px;
+    height: 200px;
+    overflow: hidden;
 }
 
 .points-history {
@@ -56,6 +58,10 @@
     border-radius: 4px;
     cursor: pointer;
 }
+.points-tabs {
+    display: flex;
+    gap: 10px;
+}
 
 .points-tabs button {
     margin-right: 10px;
@@ -85,4 +91,64 @@
 
 .points-table th {
     background-color: #f4f4f4;
+}
+
+.points-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    font-size: 16px;
+    flex-direction: row;
+}
+
+.points-pagination ul{
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.points-pagination {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.points-pagination li {
+    margin: 0 5px;
+}
+
+.points-pagination a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.points-pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.points-pagination a:hover {
+    background-color: #f2f2f2;
+}
+
+.points-pagination li.disabled a {
+    pointer-events: none;
+    color: #ccc;
+    text-decoration: none;
+}
+
+.points-pagination li.active a {
+    font-weight: bold;
+    color: #007bff;
+    pointer-events: none;
 }

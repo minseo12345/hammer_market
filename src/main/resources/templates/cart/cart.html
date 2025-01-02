@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/fragments/topbar.css">
     <link rel="stylesheet" href="/css/fragments/sidebar.css">
     <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/item/item_list.css">
 </head>
 
 <body>
@@ -19,74 +20,137 @@
 
     <!-- Your Cart Section -->
     <div class="content-container flex-grow-1 p-4">
-        <h2>Your Cart</h2>
-        <div id="cartItems"></div>
+        <h3>장바구니 목록</h3>
+        <div id="cartItems" class="row"></div>
     </div>
-    <button onclick="clearCart()">Clear Cart</button>
 </div>
 
 <script>
-    let currentUserId;
 
     document.addEventListener("DOMContentLoaded", () => {
-        const userId = getCurrentUserId();
-        syncWithServer(userId).then(() => loadCart(userId));
+        getCurrentUserId().then((userId) => {
+            syncWithServer(userId).then(() => loadCart(userId));
+        });
     });
 
     function getCurrentUserId() {
-        fetch('/api/currentUser')
+        return fetch('/api/currentUser')
             .then((response) => {
-                if (!response.ok) {
-                    throw new Error('활성화된 세션이나 로그인된 유저가 없습니다.');
-                }
+                if (!response.ok) throw new Error('활성화된 세션이나 로그인된 유저가 없습니다.');
                 return response.json();
             })
             .then((user) => {
-                currentUserId=user.userId;
+                return user.userId;
             })
             .catch((err) => {
                 console.error('세션 정보 에러:', err);
                 alert('로그인 필요');
                 window.location.href = '/login';
             });
-        return currentUserId;
     }
 
     function loadCart(userId) {
         const cartItems = JSON.parse(localStorage.getItem(userId)) || [];
-        const ul = document.getElementById("cartItems");
-        ul.innerHTML = ""; // Clear the list before adding items
+        const cartContainer = document.getElementById("cartItems");
+        cartContainer.innerHTML = ""; // Clear the list before adding items
 
         cartItems.forEach((item) => {
-            const li = document.createElement("li");
-            li.textContent = `${item.name} - $${item.price}`;
-            ul.appendChild(li);
+            // Create a card for each item
+            const cardCol = document.createElement("div");
+            cardCol.classList.add("col-lg-3", "col-md-4", "col-sm-6", "mb-4"); // One row fits 4 cards on large screens
+
+            const card = document.createElement("a");
+            card.href = `/items/detail/${item.itemId}`;
+            card.classList.add("card", "auction-card", "h-100"); // Full height card
+
+            card.dataset.title = item.title;
+            card.dataset.startingBid = item.startingBid;
+            card.dataset.buyNowPrice = item.buyNowPrice;
+            card.dataset.status = item.status;
+            card.dataset.imgSrc = item.fileUrl;
+
+            const cardImg = document.createElement("img");
+            cardImg.classList.add("card-img-top");
+            cardImg.src = item.fileUrl; // Assuming each item has an image URL
+            cardImg.alt = "상품 이미지";
+
+            const cardBody = document.createElement("div");
+            cardBody.classList.add("card-body");
+
+            const cardTitle = document.createElement("h5");
+            cardTitle.classList.add("card-title");
+            cardTitle.textContent = item.title;
+
+            const cardText = document.createElement("div");
+            cardText.classList.add("card-text");
+
+            const bidInfo = document.createElement("p");
+            bidInfo.innerHTML = `
+                <strong>현재가:</strong> ${item.startingBid} 원<br>
+                <strong>즉시 구매가:</strong> ${item.buyNowPrice} 원<br>
+                <strong>상태:</strong> ${item.status}
+            `;
+
+            // Add "Remove from Cart" button
+            const removeButton = document.createElement("button");
+            removeButton.classList.add("btn", "btn-danger", "mt-2");
+            removeButton.textContent = "삭제";
+            removeButton.onclick = (e) => {
+                e.preventDefault();
+                removeFromCart(item.itemId, userId);
+            };
+
+            // Append elements
+            cardText.appendChild(bidInfo);
+            cardText.appendChild(removeButton);
+
+            cardBody.appendChild(cardTitle);
+            cardBody.appendChild(cardText);
+
+            card.appendChild(cardImg);
+            card.appendChild(cardBody);
+
+            cardCol.appendChild(card);
+            cartContainer.appendChild(cardCol);
         });
     }
 
-    function clearCart() {
-        const userId = getCurrentUserId();
-        localStorage.removeItem(userId);
-        alert("Cart cleared!");
-        document.getElementById("cartItems").innerHTML = "";
+
+    function removeFromCart(itemId, userId) {
+        let cartItems = JSON.parse(localStorage.getItem(userId)) || [];
+        cartItems = cartItems.filter(item => item.itemId !== itemId);
+        localStorage.setItem(userId, JSON.stringify(cartItems));
+        loadCart(userId);
     }
 
     async function syncWithServer(userId) {
         try {
-            // Fetch item list from the server
-            const response = await fetch("/api/item-list"); // Replace with the actual API URL
-            if (!response.ok) throw new Error("Failed to fetch item list from server.");
-            const serverItems = await response.json();
-
+            // Fetch local cart items
             const localCart = JSON.parse(localStorage.getItem(userId)) || [];
+            console.log("Local Cart Items before Sync:", localCart);
             const localCartMap = new Map(localCart.map(item => [item.itemId, item]));
 
-            serverItems.forEach((serverItem) => {
+            // Send item IDs of the local cart to the server
+            const localItemIds = Array.from(localCartMap.keys());
+
+            const response = await fetch("/api/sync-cart", { // Replace with the actual API URL
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId, itemIds: localItemIds }), // Send userId and itemIds to server
+            });
+
+            if (!response.ok) throw new Error("Failed to sync cart with server.");
+
+            const serverItems = await response.json();
+
+            // Update only the items that exist in local storage
+            serverItems.forEach(serverItem => {
                 if (localCartMap.has(serverItem.itemId)) {
-                    // Update the existing item
                     localCartMap.set(serverItem.itemId, {
                         ...localCartMap.get(serverItem.itemId),
-                        ...serverItem
+                        ...serverItem, // Update with the latest server data
                     });
                 }
             });
@@ -100,6 +164,7 @@
             console.error("Error syncing with server:", error);
         }
     }
+
 </script>
 </body>
 </html>
