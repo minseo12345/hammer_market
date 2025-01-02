@@ -9,19 +9,23 @@
       </div>
 
       <!-- 검색바 -->
-      <form class="d-flex w-50" action="/search" method="GET">
+      <form class="d-flex w-50" action="/items/list" method="GET" id="searchForm2">
         <input
                 type="text"
                 id="searchInput"
-                name="query"
+                name="search"
                 class="form-control me-2"
                 placeholder="상품명을 입력해주세요"
-                required>
+                th:value="${search}">
         <button type="submit" class="btn btn-outline-secondary">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
           </svg>
         </button>
+        <!-- 정렬 관련 파라미터 숨김 입력 -->
+        <input type="hidden" name="sortBy" th:value="${sortBy}">
+        <input type="hidden" name="direction" th:value="${direction}">
+        <input type="hidden" name="status" th:value="${status}">
       </form>
 
       <!-- 링크 -->

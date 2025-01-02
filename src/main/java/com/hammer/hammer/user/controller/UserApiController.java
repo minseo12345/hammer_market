@@ -47,6 +47,7 @@ public class UserApiController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long currentUserId = Long.parseLong(authentication.getName());
         User currentUser = userRepository.findByUserId(currentUserId).orElse(null);
+        log.info("Returning user: {}", currentUser);
         if (currentUser != null) {
             log.info("user found! {}", currentUser.getUsername());
             return ResponseEntity.ok(currentUser);

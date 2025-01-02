@@ -1,5 +1,6 @@
 package com.hammer.hammer.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.point.entity.Point;
 import com.hammer.hammer.transaction.entity.Transaction;
@@ -42,12 +43,15 @@ public class User implements UserDetails {
     private String email; // 이메일
 
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Transaction> transactionsAsBuyer; // 구매자로 참조된 거래
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Transaction> transactionsAsSeller; // 판매자로 참조된 거래
 
     @Column(name = "password", nullable = false, length = 255)
+    @JsonIgnore
     private String password; // 비밀번호
 
     @Column(precision = 10, scale = 2)
@@ -79,12 +83,15 @@ public class User implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
+    @JsonIgnore
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Item> items;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Point> points;
 
     @Override // 권한 반환
