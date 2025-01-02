@@ -85,11 +85,6 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // 8. JWT 필터 추가
-                .rememberMe(rememberMe -> rememberMe
-                        .key("hammer")
-                        .userDetailsService(userDetailsService)
-                        .tokenValiditySeconds(604800)
-                )
                 .build();
     }
 

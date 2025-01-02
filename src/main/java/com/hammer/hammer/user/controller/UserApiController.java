@@ -64,10 +64,6 @@ public class UserApiController {
             return ResponseEntity.badRequest().body(response); // HTTP 400
         }
 
-        if (userRepository.existsByEmail(userDto.getEmail())) {
-            response.put("message", "이미 등록된 이메일입니다.");
-            return ResponseEntity.badRequest().body(response); // HTTP 400
-        }
         try {
             // 회원가입 처리
             userService.save(userDto);

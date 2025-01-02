@@ -47,6 +47,8 @@ public class JwtFilter extends OncePerRequestFilter {
                             .getContext()
                             .setAuthentication(authentication);
                 }
+            }else{
+
             }
         } catch (JwtException ex) {
             SecurityContextHolder.clearContext(); // 유효하지 않은 토큰 시 보안 컨텍스트 초기화
