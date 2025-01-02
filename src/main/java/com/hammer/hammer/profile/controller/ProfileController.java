@@ -46,6 +46,6 @@ public class ProfileController {
         model.addAttribute("currentPage", pageable.getPageNumber());
         model.addAttribute("totalPages", myItems.getTotalPages());
         model.addAttribute("data-user-id",userId);
-        return "/profile/mySell";
+        return "profile/mySell";
     }
 }

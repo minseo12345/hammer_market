@@ -12,4 +12,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Page<Item> findByStatus(Item.ItemStatus itemStatus, Pageable pageable);
     Page<Item> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
     Page<Item> findByTitleContainingIgnoreCaseAndStatus(String keyword, Pageable pageable,Item.ItemStatus itemStatus);
+//    List<Item> findByUserIdAndStatus(Long userId, String status);
+    Page<Item> findByUser_UserId(Long userId, Pageable pageable);
+
 }
