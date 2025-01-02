@@ -14,6 +14,7 @@ import com.hammer.hammer.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -56,10 +57,31 @@ public class ItemController {
     }
 
     @GetMapping("/list")
-    public String getAuctionListPage(Model model) {
-        List<Item> items = itemService.getAllItems();
-        log.info("item size : {}",items.size());
-        model.addAttribute("items", items);
+    public String getAuctionListPage(@RequestParam(value = "page", defaultValue = "0") int page,
+                                     @RequestParam(value = "size", defaultValue = "12") int size,
+                                     @RequestParam(value = "sortBy", defaultValue = "itemId") String sortBy,
+                                     @RequestParam(required = false, defaultValue = "") String status,
+                                     @RequestParam(value = "direction", defaultValue = "asc") String direction,
+                                     @RequestParam(value = "search", required = false) String search,
+                                     Model model) {
+
+        List<String> statuses = itemService.getAllStatuses();
+        Page<Item> items;
+        if (search != null && !search.isEmpty()) {
+            items = itemService.searchItems(search,page,size,sortBy,direction,status); // 검색이 포함된 서비스 메서드 호출
+        } else {
+            items = itemService.getAllItems(page,size,sortBy,direction,status); // 검색 없이 모든 아이템 가져오기
+        }
+
+        model.addAttribute("items", items.getContent());
+        model.addAttribute("currentPage", items.getNumber());
+        model.addAttribute("totalPages", items.getTotalPages());
+        model.addAttribute("totalItems", items.getTotalElements());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("direction", direction);
+        model.addAttribute("search", search);
+        model.addAttribute("status", status);
+        model.addAttribute("statuses", statuses);
         return "item/list";
     }
     @GetMapping("/create")

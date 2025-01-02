@@ -1,15 +1,14 @@
 package com.hammer.hammer.admin;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,9 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hammer.hammer.admin.service.AdminService;
-import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.category.entity.Category;
+import com.hammer.hammer.category.repository.CategoryRepository;
 import com.hammer.hammer.item.entity.Item.ItemStatus;
 import com.hammer.hammer.transaction.dto.TransactionStatusDto;
 import com.hammer.hammer.transaction.repository.TransactionRepository;
@@ -27,8 +28,9 @@ import com.hammer.hammer.user.entity.Role;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 
-import jakarta.validation.constraints.AssertTrue;
 
+
+@Transactional
 class AdminServiceTest {
 
     @Mock
@@ -36,6 +38,9 @@ class AdminServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    
+    @Mock
+    private CategoryRepository categoryRepository;
     
     @InjectMocks
     private AdminService adminService;
@@ -118,5 +123,29 @@ class AdminServiceTest {
         assertEquals("buyer1@example.com", actual.getBuyerEmail());
         assertEquals(ItemStatus.BIDDING_END, actual.getStatus());
     }
+    
+
+    @Test
+     void testFindAll() {
+        // Given: 테스트용 데이터 생성
+        Category category1 = Category.builder()
+                .name("Test Category")
+                .description("Test Description")
+                .build();
+
+        Category savedCategory = categoryRepository.save(category1); // 데이터 저장
+        System.out.println("Saved Category: " + savedCategory); // 저장된 데이터 출력
+
+        // When
+        List<Category> categories = categoryRepository.findAll();
+        System.out.println("Fetched Categories: " + categories); // 조회된 데이터 출력
+
+        // Then
+        assertNotNull(categories); // null 확인
+        assertThat(categories).isNotEmpty(); // 데이터가 비어있지 않은지 확인
+    }
+
+
+
 
 }

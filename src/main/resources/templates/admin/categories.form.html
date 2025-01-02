@@ -7,7 +7,8 @@
 </head>
 <body>
     <h1>카테고리 수정</h1>
-    <form th:action="@{/admin/categories/edit/{id}(id=${category.categoryId})}" th:object="${category}" method="post">
+    <form th:action="@{/admin/categories/edit/{id}(id=${category.categoryId})}" 
+    th:object="${category}" method="post">
         <label>이름:</label>
         <input type="text" th:field="*{name}" required />
         <br />

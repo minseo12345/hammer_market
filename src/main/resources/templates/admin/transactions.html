@@ -40,10 +40,10 @@
                 </tr>
             </thead>
             <tbody id="transactionTable">
-              <!--      <tr th:each="transaction : ${transactions}" 
+                  <tr th:each="transaction : ${transactions}" 
                   th:data-status="${transaction.status}"
                   th:data-finalprice="${transaction.finalPrice}" 
-                  th:data-transactiondate="${transaction.transactionDate}">-->
+                  th:data-transactiondate="${transaction.transactionDate}">
                    <tr th:if="${#lists.isEmpty(transactions)}">
        				 <td colspan="7">거래 데이터가 없습니다.</td>
     				</tr>

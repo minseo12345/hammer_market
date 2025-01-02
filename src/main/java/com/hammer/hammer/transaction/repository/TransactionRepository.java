@@ -20,7 +20,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 	           "t.transactionDate, " +
 	           "t.buyer.email, " +
 	           "t.item.status) " +
-	           "FROM Transaction t ")
+	           "FROM Transaction t " +
+	           "WHERE t.seller.role.roleName = 'SELLER' AND t.buyer.role.roleName = 'BUYER'")
 	    List<TransactionStatusDto> findAllTransactionStatus();
 
 	void deleteById(Long id);
