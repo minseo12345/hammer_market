@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface BidRepository extends JpaRepository<Bid, Long> {
@@ -19,4 +20,5 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     Optional<Object> findTopByItem_ItemIdOrderByBidAmountDesc(Long itemId);
     Optional<Page<Bid>> findByUser_UserId(Long userId, Pageable pageable);
     Optional<Page<Bid>> findByItem_TitleContainingIgnoreCase(String itemName, Pageable pageable);
+    Optional<List<Bid>> findBidByItem_ItemId(Long itemId);
 }

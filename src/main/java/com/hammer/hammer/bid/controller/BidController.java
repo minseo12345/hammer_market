@@ -33,7 +33,8 @@ public class BidController {
     @PostMapping
     public String createBid(@ModelAttribute @Valid RequestBidDto requestBidDto,
                              Model model,
-                             BindingResult bindingResult) {
+                             BindingResult bindingResult,
+                            @AuthenticationPrincipal UserDetails userDetails) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("validFail", "입력값이 잘못되었습니다.");
@@ -41,13 +42,14 @@ public class BidController {
         }
 
         try{
-            bidService.saveBid(requestBidDto);
+            bidService.saveBid(requestBidDto,userDetails);
+            model.addAttribute("highestBid", requestBidDto.getBidAmount());
+            model.addAttribute("success", true);
             return "redirect:/item/detail";
         }catch (BidAmountTooLowException | IllegalStateException e){
             model.addAttribute("bidPrice", e.getMessage());
         }
         return "item/detail";
-
     }
 
     /**

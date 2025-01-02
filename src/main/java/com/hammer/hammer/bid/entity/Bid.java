@@ -41,4 +41,8 @@ public class Bid {
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
+    public void updateBidAmount(BigDecimal bidAmount) {
+        this.bidAmount = bidAmount;
+    }
+
 }

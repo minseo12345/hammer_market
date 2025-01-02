@@ -17,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -93,10 +95,11 @@ public class ItemController {
     @PostMapping("/detail/{id}/bid")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> placeBid(@PathVariable Long id,
-                                                        @RequestBody RequestBidDto requestBidDto) {
+                                                        @RequestBody RequestBidDto requestBidDto,
+                                                        @AuthenticationPrincipal UserDetails userDetails) {
         try {
             // 입찰 저장
-            bidService.saveBid(requestBidDto);
+            bidService.saveBid(requestBidDto,userDetails);
 
             // 새로운 최고 입찰가 반환
             BigDecimal highestBid = bidService.getHighestBidAmount(id);

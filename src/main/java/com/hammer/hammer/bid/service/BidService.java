@@ -39,7 +39,11 @@ public class BidService {
      * 입찰 등록
      */
     @Transactional
-    public void saveBid(RequestBidDto requestBidDto){
+    public void saveBid(RequestBidDto requestBidDto, UserDetails userDetails) {
+
+        if (!requestBidDto.getUserId().toString().equals(userDetails.getUsername())) {
+            throw new IllegalStateException("접근 권한이 없습니다.");
+        }
 
         User user = userRepository.findById(requestBidDto.getUserId()).orElseThrow(
                 ()-> new IllegalStateException("사용자를 찾을 수 없습니다.")
