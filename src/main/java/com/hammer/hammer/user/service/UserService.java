@@ -4,14 +4,17 @@ import com.hammer.hammer.global.jwt.auth.AuthTokenImpl;
 import com.hammer.hammer.global.jwt.auth.JwtProviderImpl;
 import com.hammer.hammer.global.jwt.dto.JwtTokenDto;
 import com.hammer.hammer.global.jwt.dto.JwtTokenLoginRequest;
+import com.hammer.hammer.profile.dto.ProfileUpdateRequestDto;
 import com.hammer.hammer.user.entity.Role;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.dto.UserDto;
 import com.hammer.hammer.user.repository.RoleRepository;
 import com.hammer.hammer.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -90,6 +93,36 @@ public class UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Transactional
+    public void updateProfile(Long userId, ProfileUpdateRequestDto request) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        user.setUsername(request.getName());
+        user.setPhoneNumber(request.getPhoneNumber());
+
+        // 비밀번호 변경이 요청된 경우에만 처리
+        if (StringUtils.hasText(request.getPassword())) {
+            if (!request.getPassword().equals(request.getPasswordConfirm())) {
+                throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            }
+            user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
+        }
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 연관된 데이터 처리 (필요한 경우)
+        // ex) user.getBids().clear();
+
+        userRepository.delete(user);
     }
 //    public void updatePassword(User user, String tempPassword) {
 //        user.setPassword(encodePassword(tempPassword)); // 비밀번호 암호화
