@@ -41,7 +41,7 @@ loginForm.addEventListener("submit", (event) => {
     .then((data) => {
         // 성공 시 필요한 추가 로직 (예: 토큰 저장)
         alert("로그인에 성공했습니다!");
-        window.location.href = "/items/list"; // 성공 시 페이지 이동
+        window.location.href = "items/list"; // 성공 시 페이지 이동
 
     })
     .catch((error) => {

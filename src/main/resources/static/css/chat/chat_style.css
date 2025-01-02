@@ -1,12 +1,10 @@
 #chat-html {
-    margin: 0;
-    padding: 0;
     height: 100%;
     overflow: hidden; /* 스크롤 제거 */
 }
 
 #chat-body {
-    font-family: Arial, sans-serif;
+
     height: 100%; /* 부모 크기와 일치 */
     display: flex;
     flex-direction: column;
@@ -109,4 +107,49 @@
 .message-received {
     text-align: left;
     background-color: #f1f1f1;
+}
+
+#seller-room-list, #buyer-room-list {
+     display: inline-block;
+     vertical-align: top;
+     width: auto;
+     max-width: 100%;
+     overflow-x: auto;
+     word-wrap: break-word;
+     padding: 15px;
+     background-color: #f9f9f9;
+     border-radius: 8px;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#seller-room-list ul, #buyer-room-list ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#seller-room-list li, #buyer-room-list li {
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+#seller-room-list li:hover, #buyer-room-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#seller-room-list h5, #buyer-room-list h5 {
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #444;
 }

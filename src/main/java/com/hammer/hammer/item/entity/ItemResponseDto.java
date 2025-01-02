@@ -17,12 +17,9 @@ public class ItemResponseDto {
     private BigDecimal buyNowPrice;
     private Item.ItemStatus status;
     private String fileUrl;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private LocalDateTime createdAt;
+
     // ENUM 선언
     public enum ItemStatus {
         ONGOING,BIDDING_END,COMPLETED,CANCELLED
     }
-    private User user;
 }

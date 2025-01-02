@@ -13,14 +13,12 @@
 <div th:insert="~{'fragments/topbar' :: topbar}"></div>
 
 <div class="points-container">
-
     <div th:insert="~{'fragments/userSidebar' :: sidebar(userId=${userId})}"></div>
 
     <div class="points-content">
         <h1>포인트 관리</h1>
 
         <div class="points-section">
-
             <div class="points-summary">
                 <div class="points-info">
                     <h2>포인트</h2>
@@ -34,18 +32,17 @@
                         <form th:action="@{/points/currency/{userId}(userId=${userId})}" method="get">
                             <button class="points-settings" type="submit">환전</button>
                         </form>
-
                     </div>
-
                 </div>
             </div>
 
             <div class="points-history">
                 <div class="points-tabs">
-                    <button class="active">전체</button>
-                    <button>적립</button>
-                    <button>출금</button>
-                    <button>차감</button>
+                    <form th:action="@{/points/select/{userId}(userId=${userId})}" method="get">
+                        <button type="submit" name="type" value="ALL" th:classappend="${type == 'ALL' ? 'active' : ''}">전체</button>
+                        <button type="submit" name="type" value="C" th:classappend="${type == 'C' ? 'active' : ''}">환전</button>
+                        <button type="submit" name="type" value="D" th:classappend="${type == 'D' ? 'active' : ''}">충전</button>
+                    </form>
                 </div>
 
                 <table class="points-table">
@@ -62,12 +59,43 @@
                     <tr th:each="point : ${points}">
                         <td th:text="${point.pointType}"></td>
                         <td th:text="${point.description}"></td>
-                        <td th:text="${#dates.format(point.createAt, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td th:text="${#numbers.formatNumber(point.pointAmount, 0, 'COMMA')}"></td>
-                        <td th:text="${#numbers.formatNumber(point.balanceAmount, 0, 'COMMA')}"></td>
+                        <td th:text="${point.createAt}"></td>
+                        <td th:text="${point.pointAmount}"></td>
+                        <td th:text="${point.balanceAmount}"></td>
                     </tr>
                     </tbody>
                 </table>
+
+                <div class="points-pagination">
+                    <ul>
+                        <li th:classappend="${points.first} ? 'disabled' : ''">
+                            <a th:href="@{/points/select/{userId}(userId=${userId}, page=0, type=${type})}"><<</a>
+                        </li>
+
+                        <li th:classappend="${points.hasPrevious()} ? '' : 'disabled'">
+                            <a th:href="@{/points/select/{userId}(userId=${userId}, page=${points.number - 1}, type=${type})}"><</a>
+                        </li>
+
+                        <li th:each="i : ${#numbers.sequence(points.number - 3, points.number + 3)}"
+                            th:classappend="${points.number == i} ? 'active' : ''"
+                            th:if="${i >= 0 && i < points.totalPages}">
+                            <a th:href="@{/points/select/{userId}(userId=${userId}, page=${i}, type=${type})}" th:text="${i + 1}"></a>
+                        </li>
+
+                        <li th:if="${points.number > 3 && points.number + 3 < points.totalPages}">
+                            <a>...</a>
+                        </li>
+
+                        <li th:classappend="${points.hasNext()} ? '' : 'disabled'">
+                            <a th:href="@{/points/select/{userId}(userId=${userId}, page=${points.number + 1}, type=${type})}">></a>
+                        </li>
+
+                        <li th:classappend="${points.last} ? 'disabled' : ''">
+                            <a th:href="@{/points/select/{userId}(userId=${userId}, page=${points.totalPages - 1}, type=${type})}">>></a>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
         </div>
     </div>

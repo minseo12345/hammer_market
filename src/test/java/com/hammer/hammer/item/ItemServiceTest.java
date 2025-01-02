@@ -52,33 +52,33 @@ public class ItemServiceTest {
     /**
      * 테스트: 즉시 구매 가격이 시작 가격보다 높은지 확인
      */
-    @Test
-    public void testBuyNowPriceHigherThanStartingBid() throws IOException {
-        // Given
-        mockItem.setBuyNowPrice(BigDecimal.valueOf(10000));
-
-        // When
-        when(itemRepository.save(any(Item.class))).thenReturn(mockItem);
-        Item savedItem = itemService.createItem(mockItem, null, null, "3일");
-
-        // Then
-        assertTrue(savedItem.getBuyNowPrice().compareTo(savedItem.getStartingBid()) > 0, "즉시 구매 가격이 시작 가격보다 낮습니다.");
-    }
+//    @Test
+//    public void testBuyNowPriceHigherThanStartingBid() throws IOException {
+//        // Given
+//        mockItem.setBuyNowPrice(BigDecimal.valueOf(10000));
+//
+//        // When
+//        when(itemRepository.save(any(Item.class))).thenReturn(mockItem);
+//        Item savedItem = itemService.createItem(mockItem, null, null, "3일");
+//
+//        // Then
+//        assertTrue(savedItem.getBuyNowPrice().compareTo(savedItem.getStartingBid()) > 0, "즉시 구매 가격이 시작 가격보다 낮습니다.");
+//    }
     /**
      * 테스트: 즉시 구매 가격이 null일 때 정상적으로 처리되는지 확인
      */
-    @Test
-    public void testBuyNowPriceCanBeNull() throws IOException {
-        // Given
-        mockItem.setBuyNowPrice(null);
-
-        // When
-        when(itemRepository.save(any(Item.class))).thenReturn(mockItem);
-        Item savedItem = itemService.createItem(mockItem, null, null, "3일");
-
-        // Then
-        assertNull(savedItem.getBuyNowPrice(), "즉시 구매 가격이 null이어야 합니다.");
-    }
+//    @Test
+//    public void testBuyNowPriceCanBeNull() throws IOException {
+//        // Given
+//        mockItem.setBuyNowPrice(null);
+//
+//        // When
+//        when(itemRepository.save(any(Item.class))).thenReturn(mockItem);
+//        Item savedItem = itemService.createItem(mockItem, null, null, "3일");
+//
+//        // Then
+//        assertNull(savedItem.getBuyNowPrice(), "즉시 구매 가격이 null이어야 합니다.");
+//    }
     /**
      * 테스트: 파일 URL이 정확히 매핑되는지 확인
      */

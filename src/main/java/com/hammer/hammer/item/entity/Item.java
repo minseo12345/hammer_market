@@ -1,5 +1,7 @@
 package com.hammer.hammer.item.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hammer.hammer.notification.entity.Notification;
 import com.hammer.hammer.transaction.entity.Transaction;
 //import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.user.entity.User;
@@ -10,6 +12,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "items")
@@ -32,10 +35,10 @@ public class Item{
     @Column(name = "description")
     private String description;
 
-    @Column(name = "starting_bid", precision = 10, scale = 2)
+    @Column(name = "starting_bid", precision = 12)
     private BigDecimal startingBid;
 
-    @Column(name = "buyNowPrice", precision = 10, scale = 2)
+    @Column(name = "buyNowPrice", precision = 12)
     private BigDecimal buyNowPrice;
 
     @Enumerated(EnumType.STRING) // ENUM을 문자열로 저장
@@ -56,7 +59,7 @@ public class Item{
 
     // ENUM 선언
     public enum ItemStatus {
-        ONGOING,BIDDING_END,COMPLETED,CANCELLED
+        ONGOING,BIDDING_END,COMPLETED,CANCELLED,WAITING_FOR_MY_APPROVAL,WAITING_FOR_OTHER_APPROVAL
     }
 
     @ManyToOne
@@ -76,9 +79,6 @@ public class Item{
                 .buyNowPrice(buyNowPrice)
                 .status(status)
                 .fileUrl(fileUrl)
-                .startTime(startTime)
-                .endTime(endTime)
-                .createdAt(createdAt)
                 .build();
     }
 }

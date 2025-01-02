@@ -48,8 +48,10 @@ public class UserApiController {
         Long currentUserId = Long.parseLong(authentication.getName());
         User currentUser = userRepository.findByUserId(currentUserId).orElse(null);
         if (currentUser != null) {
+            log.info("user found! {}", currentUser.getUsername());
             return ResponseEntity.ok(currentUser);
         }else{
+            log.info("user not found");
             return ResponseEntity.notFound().build();
         }
     }
