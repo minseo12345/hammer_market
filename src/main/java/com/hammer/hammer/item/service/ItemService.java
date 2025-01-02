@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -148,4 +151,10 @@ public class ItemService {
     public List<Item> getItemsByIds(List<Long> ids) {
         return itemRepository.findAllByItemIdIn(ids);
     }
+
+    public Page<Item> findByUserId(Long userId, Pageable pageable) {
+
+        return itemRepository.findByUser_UserId(userId, pageable);
+    }
+
 }

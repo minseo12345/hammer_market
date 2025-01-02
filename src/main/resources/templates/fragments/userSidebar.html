@@ -4,7 +4,7 @@
         <div class="menu-item"><a th:href="@{'/profile/myProfile/' + ${userId}}">내 정보</a></div>
         <div class="menu-item"><a th:href="@{'/login/changePw'}">비밀번호 변경</a></div>
         <div class="menu-item"><a th:href="@{'/bid/user/' + ${userId}}">입찰 내역 조회</a></div>
-        <div class="menu-item"><a href="#">판매 내역 조회</a></div>
+        <div class="menu-item"><a th:href="@{'/profile/mySell/' + ${userId}}">판매 내역 조회</a></div>
         <div class="menu-item"><a th:href="@{'/points/select/' + ${userId}}">포인트 관리</a></div>
     </div>
 </div>
