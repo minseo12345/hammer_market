@@ -90,7 +90,7 @@ public class PointController {
             return "global/error";
         }
 
-        return "redirect:points/select/"+userId;
+        return "redirect:/points/select/"+userId;
     }
 
     @GetMapping("/currency/{userId}")
@@ -136,6 +136,6 @@ public class PointController {
             return "global/error";
         }
 
-        return "redirect:points/select/"+userId;
+        return "redirect:/points/select/"+userId;
     }
 }

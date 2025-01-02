@@ -18,5 +18,13 @@ function TransactionPage() {
     window.location.href = '/transactions';
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const userIdElement = document.getElementById("userId");
+    if (userIdElement) {
+        const userId = userIdElement.textContent.trim();
+        initializeNotifications(userId); // 알림 초기화
+    }
+});
+
 
 

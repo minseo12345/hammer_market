@@ -45,11 +45,6 @@ public class TransactionService {
         return transactionRepository.findById(id);
     }
 
-    /*// 트랜잭션 삭제
-    public void deleteTransaction(Long id) {
-        transactionRepository.deleteById(id);
-    }*/
-
     private void createTransaction(Item item) {
         Bid bid = (Bid) bidRepository.findTopByItem_ItemIdOrderByBidAmountDesc(item.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 입찰을 찾을 수 없습니다. 아이템 ID: " + item.getItemId()));
@@ -65,7 +60,7 @@ public class TransactionService {
         transaction.setFinalPrice(finalPrice);
         transaction.setTransactionDate(Timestamp.valueOf(LocalDateTime.now()).toLocalDateTime());  // 거래 시점
         transactionRepository.save(transaction);
-
+        System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 성공");
         // 아이템 상태를 '낙찰'로 변경
         item.setStatus(Item.ItemStatus.BIDDING_END);
         itemRepository.save(item);
@@ -73,21 +68,22 @@ public class TransactionService {
         // 판매자 알림 생성
         String sellerMessage = String.format("등록하신 %d상품이 %s원으로 판매되었습니다! 구매자ID : %s",
                 item.getItemId(), transaction.getFinalPrice(), transaction.getBuyer().getUsername());
-        Notification sellerNotification = new Notification(transaction.getSeller().getUserId(), item.getItemId(), sellerMessage);
+        Notification sellerNotification = new Notification(transaction.getSeller().getUserId(), item, sellerMessage);
         notificationRepository.save(sellerNotification);
 
         // WebSocket을 통해 판매자에게 알림 전송
         messagingTemplate.convertAndSend("/topic/notifications", sellerNotification);
+        System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 알림 발송");
 
         // 구매자 알림 생성
         String buyerMessage = String.format("입찰하신 %d상품이 %s원으로 낙찰되었습니다! 판매자ID: %s",
                 item.getItemId(), transaction.getFinalPrice(), transaction.getSeller().getUsername());
-        Notification buyerNotification = new Notification(transaction.getBuyer().getUserId(), item.getItemId(), buyerMessage);
+        Notification buyerNotification = new Notification(transaction.getBuyer().getUserId(), item, buyerMessage);
         notificationRepository.save(buyerNotification);
 
         // WebSocket을 통해 구매자에게 알림 전송
         messagingTemplate.convertAndSend("/topic/notifications", buyerNotification);
-
+        System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 알림 발송");
     }
 
     // 즉시구매에 의한 낙찰
@@ -96,9 +92,7 @@ public class TransactionService {
         // item 조회
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이템을 찾을 수 없습니다. 아이템 ID: " + itemId));
-
         createTransaction(item);
-
     }
 
     // 경매시간마감에 의한 낙찰 (1분마다 스케줄러로 실행)
@@ -112,33 +106,20 @@ public class TransactionService {
         if (item.getEndTime().isBefore(LocalDateTime.now())) {
             // 경매 종료 후 거래 생성
             createTransaction(item);
+
         }
     }
 
     // 1분마다 경매 종료된 아이템을 확인하는 스케줄러
     @Scheduled(fixedRate = 60000)  // 1분마다 실행
     public void checkAuctionEndAndUpdateStatus() {
-        System.out.println("스케줄러 실행 시각: " + LocalDateTime.now());
-
         // 경매 진행 중인 아이템을 조회
         List<Item> ongoingItems = itemRepository.findByStatus(Item.ItemStatus.ONGOING);
         System.out.println("현재 진행 중인 아이템 수: " + ongoingItems.size());
 
-        // 각 아이템에 대해 경매 종료 시점을 확인
+        //상태가 경매중인 아이템에 대해서 조회
         for (Item item : ongoingItems) {
-            System.out.println("아이템 ID: " + item.getItemId() + ", 종료 시각: " + item.getEndTime());
-
-            if (item.getEndTime().isBefore(LocalDateTime.now())) {
-                System.out.println("아이템 ID: " + item.getItemId() + "는 경매 종료 시각을 초과했습니다. 상태를 변경하고 거래를 생성합니다.");
-                try {
-                    createTransactionForAuctionEnd(item.getItemId());
-                    System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 성공");
-                } catch (Exception e) {
-                    System.err.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 실패: " + e.getMessage());
-                }
-            } else {
-                System.out.println("아이템 ID: " + item.getItemId() + "는 아직 경매 종료 시각이 되지 않았습니다.");
-            }
+            createTransactionForAuctionEnd(item.getItemId());
         }
     }
 }
