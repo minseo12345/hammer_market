@@ -1,12 +1,10 @@
 #chat-html {
-    margin: 0;
-    padding: 0;
     height: 100%;
     overflow: hidden; /* 스크롤 제거 */
 }
 
 #chat-body {
-    font-family: Arial, sans-serif;
+
     height: 100%; /* 부모 크기와 일치 */
     display: flex;
     flex-direction: column;

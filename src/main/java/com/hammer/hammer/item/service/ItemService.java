@@ -4,8 +4,11 @@ import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.repository.ItemRepository;
 import com.hammer.hammer.user.entity.User;
 
+import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,9 +23,9 @@ import java.util.UUID;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
-
-    public Item createItem(Item item, MultipartFile image, User user, String itemPeriod) throws IOException {
+    public Item createItem(Item item, MultipartFile image, String itemPeriod) throws IOException {
         if (!image.isEmpty()) {
             String uploadPath = "C:/uploads/";
             File uploadDir = new File(uploadPath);
@@ -35,14 +38,16 @@ public class ItemService {
             String fileName = UUID.randomUUID() + "_" + sanitizedFileName;
             File uploadFile = new File(uploadPath + fileName);
             image.transferTo(uploadFile);
-
             item.setFileUrl("/uploads/" + fileName);
         }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = Long.parseLong(authentication.getName());
+        User currentUser = userRepository.findByUserId(currentUserId).orElse(null);
 
         item.setStartTime(LocalDateTime.now());
         item.setEndTime(calculateEndTime(item.getStartTime(), itemPeriod)); // 종료 시간 계산
         item.setStatus(Item.ItemStatus.ONGOING);
-        item.setUser(user);
+        item.setUser(currentUser);
 
 
         return itemRepository.save(item);
