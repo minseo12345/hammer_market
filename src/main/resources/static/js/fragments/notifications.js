@@ -142,7 +142,7 @@ async function fetchNotifications() {
 document.addEventListener("DOMContentLoaded", () => {
     const notificationModal = document.getElementById("notification-modal");
     const notificationIcon = document.getElementById("notification-icon");
-    // const notificationList = document.getElementById("notification-list");
+    const notificationList = document.getElementById("notification-list");
     const closeModalButton = document.getElementById("close-modal-button");
 
     if (!notificationIcon || !notificationModal || !closeModalButton) {
@@ -169,6 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
 function initializeWebSocket(userId) {
     const socket = new SockJS('/ws');
     const stompClient = Stomp.over(socket);
@@ -181,22 +182,24 @@ function initializeWebSocket(userId) {
 
             if (notifications.userId === parseInt(userId)) {
                 // Toastify로 실시간 알림 표시
-                Toastify({
-                    text: notifications.message,
-                    duration: -1,
-                    close: true,
-                    gravity: "top",
-                    position: "center",
-                    style: {
-                        background: "linear-gradient(to right, #00b09b, #96c93d)",
-                    },
-                    onClick: function () {
-                        const notificationModal = document.getElementById("notification-modal");
-                        if (notificationModal) {
-                            notificationModal.style.display = "block";
-                        }
-                    },
-                }).showToast();
+                if (!notification.isRead) {
+                    Toastify({
+                        text: notifications.message,
+                        duration: -1,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function () {
+                            const notificationModal = document.getElementById("notification-modal");
+                            if (notificationModal) {
+                                notificationModal.style.display = "block";
+                            }
+                        },
+                    }).showToast();
+                }
             }
         });
     }, (error) => {
