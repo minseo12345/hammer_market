@@ -1,7 +1,7 @@
 <!-- fragments/sidebar.html -->
 <div th:fragment="sidebar">
     <div class="sidebar">
-        <div class="menu-item"><a th:href="@{'/profile/myProfile/' + ${userId}}">내 정보</a></div>
+        <div class="menu-item"><a th:href="@{'/profile/myProfile'}">내 정보</a></div>
         <div class="menu-item"><a th:href="@{'/login/changePw'}">비밀번호 변경</a></div>
         <div class="menu-item"><a th:href="@{'/bid/user/' + ${userId}}">입찰 내역 조회</a></div>
         <div class="menu-item"><a th:href="@{'/profile/mySell/' + ${userId}}">판매 내역 조회</a></div>

@@ -28,8 +28,9 @@ public class ProfileController {
     private final UserService userService;
     private final ItemService itemService;
 
-    @GetMapping("/myProfile/{userId}")
-    public String profile(@PathVariable Long userId, Model model){
+    @GetMapping("/myProfile")
+    public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model){
+        Long userId = Long.valueOf(userDetails.getUsername());
         User userInfo = userService.getUserById(userId);
         model.addAttribute("userInfo", userInfo);
         return "/profile/myProfile";
