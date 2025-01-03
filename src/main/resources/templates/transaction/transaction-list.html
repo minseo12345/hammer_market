@@ -1,27 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{fragments/layout}">
 <head>
     <meta charset="UTF-8">
     <title>거래 목록 페이지</title>
 </head>
 <body>
-<h1>거래 목록</h1>
-<table>
-    <tr>
-        <th>거래ID</th>
-        <th>품  명</th>
-        <th>낙찰자</th>
-        <th>판매자</th>
-        <th>낙찰가</th>
-    </tr>
-    <tr th:each="transaction : ${transactions}">
-        <td th:text="${transaction.transactionId}"></td>
-        <td th:text="${transaction.item.title}"></td>
-        <td th:text="${transaction.buyer.username}"></td>
-        <td th:text="${transaction.seller.username}"></td>
-        <td th:text="${transaction.finalPrice}"></td>
-    </tr>
-</table>
+<main layout:fragment="content">
+    <h1>거래 목록</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>거래ID</th>
+            <th>품 명</th>
+            <th>낙찰자</th>
+            <th>판매자</th>
+            <th>낙찰가</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="transaction : ${transactions}">
+            <td th:text="${transaction.transactionId}"></td>
+            <td th:text="${transaction.item.title}"></td>
+            <td th:text="${transaction.buyer.username}"></td>
+            <td th:text="${transaction.seller.username}"></td>
+            <td th:text="${transaction.finalPrice}"></td>
+        </tr>
+        </tbody>
+    </table>
+</main>
 </body>
 </html>
 

@@ -64,7 +64,7 @@
 
         <!-- 카드 컨테이너 -->
         <div class="card-container">
-            <a th:href="@{/items/detail/{id}(id=${item.itemId})}" class="card auction-card" th:each="item : ${items}" th:id="'item-card-' + ${item.itemId}"
+            <a th:href="@{/items/detail/{id}(id=${item.itemId})}" class="card auction-card" th:each="item : ${itemsWithBids}"  th:id="'item-card-' + ${item.itemId}"
                th:data-title="${item.title}"
                th:data-starting-bid="${item.startingBid}"
                th:data-status="${item.status}"
@@ -76,9 +76,13 @@
                     <div class="card-text">
                         <p>
                             <strong>현재가:</strong>
-                            <span th:text="${item.startingBid} + ' 원'">현재가</span><br>
-                            <strong>경매 상태:</strong>
-                            <span th:text="${item.status}">상태</span>
+                            <span th:text="${item.highestBid != null ? item.highestBid + ' 원' : item.startingBid + ' 원'}">현재가</span><br>
+                            <strong>즉시 거래가:</strong>
+                            <span th:text="${item.buyNowPrice != null ? item.buyNowPrice + ' 원' : '없음'}">즉시 거래가</span><br>
+                            <strong>경매 종료일:</strong>
+                            <span th:text="${#dates.format(item.endTime, 'yyyy-MM-dd HH:mm')}">경매 종료일</span><br>
+                            <strong>남은 시간:</strong>
+                            <span th:text="${item.remainingTime}">남은 시간</span>
                         </p>
                         <!-- 장바구니 추가 버튼 -->
                         <button class="like-btn" onclick="addToCart(event)">
