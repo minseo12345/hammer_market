@@ -60,24 +60,6 @@ public class Notification {
         this.itemStatus = item != null && item.getStatus() != null ? item.getStatus().name() : "UNKNOWN";
     }
 
-    public String getDynamicStatus(Long currentUserId) {
-        if (item != null && item.getStatus() != null) {
-            switch (item.getStatus()) {
-                case WAITING_FOR_OTHER_APPROVAL:
-                    return userId.equals(currentUserId) ? "내 수락 대기 중" : "상대방 수락 대기 중";
-                case WAITING_FOR_MY_APPROVAL:
-                    return userId.equals(currentUserId) ? "상대방 수락 대기 중" : "내 수락 대기 중";
-                case COMPLETED:
-                    return "거래 완료";
-                case CANCELLED:
-                    return "취소된 거래";
-                default:
-                    return item.getStatus().name(); // 상태 그대로 반환
-            }
-        }
-        return "UNKNOWN";
-    }
-
     // 생성자: Notification 생성 시 기본 데이터 설정
     public Notification(Long userId, Item item, String message) {
         this.userId = userId;

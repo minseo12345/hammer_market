@@ -51,6 +51,22 @@ public class TransactionService {
         Bid bid = (Bid) bidRepository.findTopByItem_ItemIdOrderByBidAmountDesc(item.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 입찰을 찾을 수 없습니다. 아이템 ID: " + item.getItemId()));
 
+        //유찰 시 처리
+        if (bid == null) {
+            // 입찰자가 없는 경우 아이템을 CANCELLED로 처리
+            item.setStatus(Item.ItemStatus.CANCELLED);
+            itemRepository.save(item);
+
+            // 판매자에게 유찰 알림 생성
+            String sellerMessage = String.format("등록하신 %d 상품이 유찰(CANCELLED)되었습니다.", item.getItemId());
+            Notification sellerNotification = new Notification(item.getUser().getUserId(), item, sellerMessage);
+//            notificationRepository.save(sellerNotification);
+
+            // WebSocket을 통해 유찰 알림 전송
+            messagingTemplate.convertAndSend("/topic/notifications", sellerNotification);
+            return;
+        }
+
         // 낙찰자 (입찰자) 정보
         User buyer = bid.getUser();
 

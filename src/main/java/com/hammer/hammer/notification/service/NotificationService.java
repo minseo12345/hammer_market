@@ -43,26 +43,16 @@ public class NotificationService {
             throw new IllegalStateException("이미 완료된 거래입니다.");
         }
 
-        // 거래 완료 상태 변경
         if (transaction.getModifiedBy().contains(userId)) {
             throw new IllegalStateException("이미 거래 완료 요청을 한 사용자입니다.");
         }
 
-        // 1명만 거래확인 선택시
+        // 상태 변경 로직
         if (item.getStatus() == Item.ItemStatus.BIDDING_END) {
-            item.setStatus(Item.ItemStatus.WAITING_FOR_OTHER_APPROVAL);
-            transaction.addModifiedBy(userId); // 변경한 사용자 추가
+            item.setStatus(Item.ItemStatus.PARTIALLY_APPROVE);
+        } else if (item.getStatus() == Item.ItemStatus.PARTIALLY_APPROVE && !transaction.getModifiedBy().contains(userId)) {
+            item.setStatus(Item.ItemStatus.COMPLETED);
 
-        } else if (item.getStatus() == Item.ItemStatus.WAITING_FOR_OTHER_APPROVAL ||
-                item.getStatus() == Item.ItemStatus.WAITING_FOR_MY_APPROVAL) {
-            // 상대방의 상태 확인
-            if (item.getStatus() == Item.ItemStatus.WAITING_FOR_OTHER_APPROVAL && !transaction.getModifiedBy().contains(userId)) {
-                item.setStatus(Item.ItemStatus.COMPLETED);
-            } else if (item.getStatus() == Item.ItemStatus.WAITING_FOR_MY_APPROVAL && !transaction.getModifiedBy().contains(userId)) {
-                item.setStatus(Item.ItemStatus.COMPLETED);
-            } else {
-                throw new IllegalStateException("이미 거래 완료 요청을 한 사용자입니다.");
-            }
             transaction.addModifiedBy(userId); // 변경한 사용자 추가
 
             // 포인트 처리

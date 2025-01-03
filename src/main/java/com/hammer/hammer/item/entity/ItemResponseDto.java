@@ -1,5 +1,4 @@
 package com.hammer.hammer.item.entity;
-import com.hammer.hammer.user.entity.User;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,6 +22,6 @@ public class ItemResponseDto {
 
     // ENUM 선언
     public enum ItemStatus {
-        ONGOING,BIDDING_END,COMPLETED,CANCELLED,WAITING_FOR_MY_APPROVAL,WAITING_FOR_OTHER_APPROVAL
+        ONGOING,BIDDING_END,COMPLETED,CANCELLED, PARTIALLY_APPROVE
     }
 }

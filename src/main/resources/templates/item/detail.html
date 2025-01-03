@@ -22,7 +22,7 @@
         <h1 class="item-title" th:text="${item.title}">상품 제목</h1>
         <div class="item-content">
             <div class="item-image">
-                <img th:src="${item.fileUrl}" alt="상품 이미지" onerror="this.src='/images/default.png';">
+                <img th:src="${item.fileUrl}" alt="상품 이미지" onerror="this.src='/img/logo.png';">
             </div>
             <div class="item-details">
                 <p><strong>현재가:</strong> <span id="current-highest-bid" th:text="'₩' + ${highestBid}">₩0</span></p>
