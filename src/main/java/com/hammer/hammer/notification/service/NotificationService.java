@@ -4,6 +4,7 @@ import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.repository.ItemRepository;
 import com.hammer.hammer.notification.entity.Notification;
 import com.hammer.hammer.notification.repository.NotificationRepository;
+import com.hammer.hammer.point.service.PointService;
 import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.transaction.repository.TransactionRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +24,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final ItemRepository itemRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final PointService pointService;
 
     // 거래 확인 이벤트 처리
     public void handleTransactionComplete(Long transactionId, Long userId) {
@@ -62,6 +64,9 @@ public class NotificationService {
                 throw new IllegalStateException("이미 거래 완료 요청을 한 사용자입니다.");
             }
             transaction.addModifiedBy(userId); // 변경한 사용자 추가
+
+            // 포인트 처리
+            pointService.processTransactionPoints(transaction);
 
             // 최종 거래 완료 알림 생성
             String completeMessage = String.format("%d상품의 거래가 완료되었습니다.", transactionId);

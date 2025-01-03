@@ -72,3 +72,32 @@
 .btn-cancel:hover {
     background-color: #e53935; /* 취소 버튼 hover 효과 */
 }
+
+/* 추가된 스타일 */
+.notification-icon img {
+    width: 30px; /* 알림 아이콘 크기 */
+    cursor: pointer; /* 클릭 가능 표시 */
+}
+
+/*.modal {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+    border-radius: 10px;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content button {
+    margin-top: 10px;
+    padding: 5px 10px;
+}*/
+

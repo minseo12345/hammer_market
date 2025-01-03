@@ -21,6 +21,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.text.DecimalFormat;
+
 
 @Service
 @Transactional
@@ -66,8 +68,9 @@ public class TransactionService {
         itemRepository.save(item);
 
         // 판매자 알림 생성
+        DecimalFormat df = new DecimalFormat("#");
         String sellerMessage = String.format("등록하신 %d상품이 %s원으로 판매되었습니다! 구매자ID : %s",
-                item.getItemId(), transaction.getFinalPrice(), transaction.getBuyer().getUsername());
+                item.getItemId(), df.format(transaction.getFinalPrice()), transaction.getBuyer().getUsername());
         Notification sellerNotification = new Notification(transaction.getSeller().getUserId(), item, sellerMessage);
         notificationRepository.save(sellerNotification);
 
@@ -77,7 +80,7 @@ public class TransactionService {
 
         // 구매자 알림 생성
         String buyerMessage = String.format("입찰하신 %d상품이 %s원으로 낙찰되었습니다! 판매자ID: %s",
-                item.getItemId(), transaction.getFinalPrice(), transaction.getSeller().getUsername());
+                item.getItemId(), df.format(transaction.getFinalPrice()), transaction.getSeller().getUsername());
         Notification buyerNotification = new Notification(transaction.getBuyer().getUserId(), item, buyerMessage);
         notificationRepository.save(buyerNotification);
 

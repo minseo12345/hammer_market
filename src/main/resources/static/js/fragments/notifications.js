@@ -8,6 +8,10 @@ async function fetchNotifications() {
     }
 
     const params = { userId: userIdElement.textContent.trim() };
+    console.log("User ID:", userId);
+
+    console.log("Sending params:", params);
+    console.log("Stringified params:", JSON.stringify(params));
 
     try {
         const response = await fetch("/notifications/list", {
@@ -15,6 +19,9 @@ async function fetchNotifications() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params),
         });
+
+        // API 호출 후 응답 데이터 로깅
+        console.log("Response:", response);
 
         if (response.ok) {
             const data = await response.json();
@@ -118,7 +125,7 @@ async function fetchNotifications() {
                                 ? `<button onclick="completeTransaction(${notification.itemId}, ${notification.userId})">거래수락</button>
                                     <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
                                 : category === "WAITING_FOR_OTHER_APPROVAL" 
-                                    ? `<button disabled>거래수락</button>
+                                    ? `<button onclick="completeTransaction(${notification.itemId}, ${notification.userId})">거래수락</button>
                                         <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
                                     : ""
                         }
