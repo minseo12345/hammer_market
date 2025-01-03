@@ -86,7 +86,6 @@
                                 class="time-remaining"
                                 th:data-end-time="${item.endTime}">남은 시간</span>
                             <span th:unless="${item.status != null and item.status.name() == 'ONGOING'}">TimeOver</span>
-<!--                             <span th:if="${item.status.name() == 'ONGOING'}" class="time-remaining" th:data-end-time="${item.endTime}">남은 시간</span> -->
                         </p>
                         <!-- 장바구니 추가 버튼 -->
                         <button class="like-btn" onclick="addToCart(event)">
