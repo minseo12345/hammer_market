@@ -94,3 +94,34 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.send(formData);
     });
 });
+document.querySelector('#contact-seller').addEventListener('click', function () {
+    const sellerId = this.getAttribute('data-seller-id');
+    const buyerId = this.getAttribute('data-buyer-id');
+    createChatRoom(sellerId, buyerId);
+});
+async function createChatRoom(sellerId, buyerId) {
+    try {
+        // POST 요청을 보냅니다.
+        const response = await fetch('/api/chat/createChatRoom', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                buyerId: buyerId,
+                sellerId: sellerId
+            })
+        });
+
+        // 응답 상태 확인
+        if (response.ok) {
+            console.log("Chat room created successfully.");
+            // /chat으로 GET 요청 전송
+            window.location.href = '/chat';
+        } else {
+            console.error("방 생성 실패:", response.status);
+        }
+    } catch (error) {
+        console.error("에러 발생:", error);
+    }
+}

@@ -19,11 +19,7 @@ public class WebSocketController {
 
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
-    public Message sendMessage(@Valid Message message, BindingResult result) {
-        if (result.hasErrors()) {
-            log.info("valid error occured: {}", result.getAllErrors());
-            throw new ValidationException(result.getAllErrors().toString());
-        }
+    public Message sendMessage(Message message) {
         return chatService.saveMessage(message.getChatRoomId(), message.getSenderId(), message.getContent());
     }
 }

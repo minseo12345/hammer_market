@@ -4,13 +4,21 @@
     <ul class="list-group">
       <li class="list-group-item list-group-item-action">
         <a th:href="@{/items/list(sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status})}"
-           class="text-decoration-none text-dark category-link">전체 보기</a>
+           class="text-decoration-none text-dark category-link" onclick="setActiveCategory(this)">전체 보기</a>
       </li>
       <li th:each="category : ${categories}"
           class="list-group-item list-group-item-action">
         <a th:href="@{/items/list(sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${category.categoryId})}"
-           th:text="${category.name}" class="text-decoration-none text-dark category-link"></a>
+           th:text="${category.name}" class="text-decoration-none text-dark category-link" onclick="setActiveCategory(this)"></a>
       </li>
     </ul>
   </div>
+  <script>
+    function setActiveCategory(clickedElement) {
+      // 이미 'active' 클래스가 있는지 확인하고, 없으면 추가
+      if (!clickedElement.classList.contains('active')) {
+        clickedElement.classList.add('active');
+      }
+    }
+  </script>
 </div>

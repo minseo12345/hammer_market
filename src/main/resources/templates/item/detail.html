@@ -20,35 +20,38 @@
 
     <div class="detail-container">
         <div id="item-details" data-item-id="123" data-highest-bid="${highestBid}">
-            <h1 class="item-title" th:text="${item.title}" >상품 상세</h1>
+            <h1 class="item-title" th:text="${item.title}">상품 상세</h1>
             <div class="item-content">
                 <div class="item-details">
                     <div class="item-image">
                         <img th:src="${item.fileUrl}" alt="상품 이미지">
                     </div>
 
-                    <p><strong>현재가:</strong> <span id="current-highest-bid" th:text="${highestBid}" ></span></p>
-                    <p><strong>시작가:</strong> <span  th:text="${item.getStartingBid()}"></span></p>
+                    <p><strong>현재가:</strong> <span id="current-highest-bid" th:text="${highestBid}"></span></p>
+                    <p><strong>시작가:</strong> <span th:text="${item.getStartingBid()}"></span></p>
                     <p><strong>즉시구매가:</strong> <span id="buy-now-price" th:text="${item.buyNowPrice}"></span></p>
                     <p><strong>시작일:</strong> <span th:text="${item.getCreatedAt()}"></span></p>
                     <p><strong>종료일:</strong> <span th:text="${item.getEndTime()}"></span></p>
                     <p><strong>상품 설명:</strong> <span th:text="${item.description}"></span></p>
                     <p><strong>상품 상태:</strong> <span th:text="${item.getStatus()}"></span></p>
 
-
                     <div class="bid-section">
                         <form id="bid-form" action="/bid" method="post">
                             <label for="bidAmount"><strong>입찰 금액:</strong></label>
                             <input type="number" id="bidAmount" name="bidAmount" class="form-control" min="1" required>
-                            <input type="hidden" name="itemId" th:value="${#numbers.formatInteger(itemId, 0)}">
-                            <input type="hidden" name="userId" th:value="${#numbers.formatInteger(userId, 0)}">
+                            <input type="hidden" name="itemId" th:value="${item.itemId}">
+                            <input type="hidden" name="userId" th:value="${userId}">
                         </form>
                         <div class="bid-buttons">
                             <button type="button" id="submit-bid" class="btn btn-primary">입찰하기</button>
                             <button type="button" id="buy-now" class="btn btn-danger">즉시구매</button>
                         </div>
+                        <!-- 구매자와 대화 버튼 -->
+                        <button type="button" id="contact-seller"
+                                th:attr="data-seller-id=${item.user.userId}, data-buyer-id=${userId}">
+                            판매자와 대화
+                        </button>
                     </div>
-
                 </div>
 
                 <div class="bids-list">
