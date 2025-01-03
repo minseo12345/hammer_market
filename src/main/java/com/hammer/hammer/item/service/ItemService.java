@@ -109,7 +109,13 @@ public class ItemService {
     @Transactional
     public Item createItem(Item item, MultipartFile image, String itemPeriod) throws IOException {
         if (!image.isEmpty()) {
-            String uploadPath = "C:/uploads/";
+            String uploadPath;
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("win")) {
+                uploadPath = "C:/uploads/";
+            } else {
+                uploadPath = "/var/uploads/";
+            }
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
