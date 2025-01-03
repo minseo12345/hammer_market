@@ -29,7 +29,6 @@ public class Bid {
     @Positive(message = "입찰 금액은 양수여야 합니다.")
     private BigDecimal bidAmount;
 
-    @FutureOrPresent(message = "입찰 시간은 과거일 수 없습니다.")
     @Column(nullable = false)
     private LocalDateTime bidTime;
 

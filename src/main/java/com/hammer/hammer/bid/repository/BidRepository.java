@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public interface BidRepository extends JpaRepository<Bid, Long> {
     Optional<Page<Bid>> findByUser_UserIdOrderByBidAmountDesc(Long userId, Pageable pageable);
-    Optional<Page<Bid>> findByItem_ItemIdOrderByBidAmountDesc(Long itemId, Pageable pageable);
+    Optional<List<Bid>> findByItem_ItemIdOrderByBidAmountDesc(Long itemId);
     @Query("SELECT MAX(b.bidAmount) FROM Bid b WHERE b.item.itemId = :itemId")
     Optional<BigDecimal> findHighestBidByItemId(@Param("itemId") Long itemId);
     Optional<Object> findTopByItem_ItemIdOrderByBidAmountDesc(Long itemId);

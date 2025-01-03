@@ -88,6 +88,11 @@ public class PointService {
         );
 
         BigDecimal currentPoint = chargePointUser.getCurrentPoint();
+
+        if (requestChargePointDto.getPointAmount().compareTo(currentPoint) > 0) {
+            throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
+        }
+
         BigDecimal updatePoint = currentPoint.add(requestChargePointDto.getPointAmount());
 
         chargePointUser.chargePoint(updatePoint);

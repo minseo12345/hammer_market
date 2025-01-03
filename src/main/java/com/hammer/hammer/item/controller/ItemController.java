@@ -1,6 +1,8 @@
 package com.hammer.hammer.item.controller;
 
 import com.hammer.hammer.bid.dto.RequestBidDto;
+import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
+import com.hammer.hammer.bid.entity.Bid;
 import com.hammer.hammer.bid.exception.BidAmountTooLowException;
 import com.hammer.hammer.bid.service.BidService;
 import com.hammer.hammer.category.entity.Category;
@@ -14,6 +16,9 @@ import com.hammer.hammer.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -72,10 +77,12 @@ public class ItemController {
     }
 
     @GetMapping("/detail/{id}")
-    public String getAuctionDetailPage(@PathVariable Long id, Model model) {
+    public String getAuctionDetailPage(@PathVariable Long id, Model model
+                                      ) {
         // 상품 및 최고 입찰가 조회
         Item item = itemService.getItemById(id);
         BigDecimal highestBid = bidService.getHighestBidAmount(id);
+        List<ResponseBidByItemDto> bids = bidService.getBidsByItem(id);
 
         // 최고 입찰가가 없으면 시작가로 설정
         if (highestBid.compareTo(BigDecimal.ZERO) == 0) {
@@ -84,6 +91,9 @@ public class ItemController {
 
         model.addAttribute("item", item);
         model.addAttribute("highestBid", highestBid);
+        model.addAttribute("bids",bids);
+        model.addAttribute("userId",SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("itemId",id);
 
         if (item.getStatus() == Item.ItemStatus.COMPLETED) {
             return "item/soldout"; // 판매 완료 화면으로 이동
