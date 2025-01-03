@@ -61,7 +61,6 @@ function loadCart(userId) {
         bidInfo.innerHTML = `
                 <strong>시작가:</strong> ${item.startingBid} 원<br>
                 <strong>즉시 구매가:</strong> ${item.buyNowPrice} 원<br>
-                <strong>종료일:</strong> ${item.endTime}<br>
                 <strong>상태:</strong> ${item.status}
             `;
 

@@ -68,6 +68,7 @@
             <a th:href="@{/items/detail/{id}(id=${item.itemId})}" class="card auction-card" th:each="item : ${items}" th:id="'item-card-' + ${item.itemId}"
                th:data-title="${item.title}"
                th:data-starting-bid="${item.startingBid}"
+               th:data-current-price="${item.currentPrice}"
                th:data-status="${item.status}"
                th:data-buy-Now-Price="${item.buyNowPrice}"
                th:data-img-src="${item.fileUrl}">
@@ -77,7 +78,7 @@
                     <div class="card-text">
                         <p>
                             <strong>현재가:</strong>
-                            <span th:text="${item.startingBid} + ' 원'">현재가</span><br>
+                            <span th:text="${item.currentPrice != null ? item.currentPrice : item.startingBid} + ' 원'">현재가</span><br>
                             <strong>즉시 구매가:</strong>
                             <span th:text="${item.buyNowPrice}">즉시 구매가</span><br>
                             <strong>남은 시간:</strong>

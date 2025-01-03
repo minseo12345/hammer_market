@@ -6,6 +6,7 @@ import com.hammer.hammer.bid.service.BidService;
 import com.hammer.hammer.category.entity.Category;
 import com.hammer.hammer.category.repository.CategoryRepository;
 import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.item.entity.ItemResponseDto;
 import com.hammer.hammer.item.service.ItemService;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
@@ -37,7 +38,6 @@ public class ItemController {
 
     private final ItemService itemService;
     private final BidService bidService;
-    private final UserService userService;
 
     private final CategoryRepository categoryRepository;
 
@@ -67,7 +67,7 @@ public class ItemController {
         itemService.updateItemStatus();
 
         List<String> statuses = itemService.getAllStatuses();
-        Page<Item> items;
+        Page<ItemResponseDto> items;
         if (search != null && !search.isEmpty()) {
             items = itemService.searchItems(search,page,sortBy,direction,status,categoryId); // 검색이 포함된 서비스 메서드 호출
         } else {

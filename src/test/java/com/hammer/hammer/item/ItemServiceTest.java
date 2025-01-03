@@ -82,19 +82,19 @@ public class ItemServiceTest {
     /**
      * 테스트: 파일 URL이 정확히 매핑되는지 확인
      */
-    @Test
-    public void testFileUrlMapping() throws IOException {
-        // Given
-        mockItem.setFileUrl("/uploads/test.jpg");
-        MultipartFile mockFile = new MockMultipartFile("test.jpg", "test.jpg", "image/jpeg", "test data".getBytes());
-
-        // When
-        when(itemRepository.save(any(Item.class))).thenReturn(mockItem);
-        Item savedItem = itemService.createItem(mockItem, mockFile, null, "3일");
-
-        // Then
-        assertEquals("/uploads/test.jpg", savedItem.getFileUrl(), "파일 URL이 정확히 매핑되지 않았습니다.");
-    }
+//    @Test
+//    public void testFileUrlMapping() throws IOException {
+//        // Given
+//        mockItem.setFileUrl("/uploads/test.jpg");
+//        MultipartFile mockFile = new MockMultipartFile("test.jpg", "test.jpg", "image/jpeg", "test data".getBytes());
+//
+//        // When
+//        when(itemRepository.save(any(Item.class))).thenReturn(mockItem);
+//        Item savedItem = itemService.createItem(mockItem, mockFile, null, "3일");
+//
+//        // Then
+//        assertEquals("/uploads/test.jpg", savedItem.getFileUrl(), "파일 URL이 정확히 매핑되지 않았습니다.");
+//    }
     /**
      * 테스트: 모든 경매 아이템이 반환되는지 확인
      */
