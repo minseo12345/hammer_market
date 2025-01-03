@@ -21,7 +21,7 @@ public class TransactionController {
     public String getAllTransactions(Model model) {
         List<Transaction> transactions = transactionService.findAllTransactions();
         model.addAttribute("transactions", transactions);
-        return "transaction/transaction-list";
+        return "transaction/list";
     }
 
     // ID로 트랜잭션 조회
@@ -34,8 +34,8 @@ public class TransactionController {
         // 모델에 데이터 추가
         model.addAttribute("transaction", transaction);
 
-        // transaction-detail.html 렌더링
-        return "transaction/transaction-detail";
+        // detail.html 렌더링
+        return "transaction/detail";
     }
 
     // 즉시구매 버튼을 눌러서 경매 종료 처리
