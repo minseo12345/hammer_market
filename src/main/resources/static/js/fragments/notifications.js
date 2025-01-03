@@ -11,6 +11,7 @@ async function fetchNotifications() {
     }
 
     const params = { userId: userIdElement.textContent.trim() };
+    console.log("Sending Request Params:", params);
 
     try {
         const response = await fetch("/notifications/list", {
@@ -19,17 +20,18 @@ async function fetchNotifications() {
             body: JSON.stringify(params),
         });
 
+        console.log("Response Status:", response.status);
+
         if (response.ok) {
             const data = await response.json();
-
+            console.log("Received Data:", data);
             // 기존 내용 제거
             notificationList.innerHTML = "";
 
             // 카테고리별 리스트 초기화
             const categories = {
                 BIDDING_END: [],
-                WAITING_FOR_MY_APPROVAL: [],
-                WAITING_FOR_OTHER_APPROVAL: [],
+                PARTIALLY_APPROVE: [],
                 COMPLETED: [],
                 CANCELLED: [],
                 OTHER: []
@@ -67,13 +69,15 @@ async function fetchNotifications() {
 
                 const categoryMapping = {
                     "낙찰": "BIDDING_END",
-                    "내 수락 대기 중": "WAITING_FOR_MY_APPROVAL",
-                    "상대방 수락 대기 중": "WAITING_FOR_OTHER_APPROVAL",
-                    "거래 완료": "COMPLETED",
+                    "거래수락 대기": "PARTIALLY_APPROVE",
+                    "완료된 거래": "COMPLETED",
                     "취소된 거래": "CANCELLED",
                 };
-
                 status = categoryMapping[status] || status;
+
+                // 상태 매핑 결과 디버깅
+                console.log("Notification Status:", notification.itemStatus);
+                console.log("Mapped Status:", status);
 
                 if (Object.keys(categories).includes(status)) {
                     categories[status].push(notification);
@@ -86,10 +90,9 @@ async function fetchNotifications() {
             Object.keys(categories).forEach(category => {
                 const categoryTitle = {
                     BIDDING_END: "<낙찰>",
-                    WAITING_FOR_MY_APPROVAL: "<수락 대기 중>",
-                    WAITING_FOR_OTHER_APPROVAL: "<상대방 수락 대기 중>",
-                    COMPLETED: "<거래완료>",
-                    CANCELLED: "<취소된거래>",
+                    PARTIALLY_APPROVE: "<거래수락 대기>",
+                    COMPLETED: "<완료된 거래>",
+                    CANCELLED: "<취소된 거래>",
                     OTHER: "<기타 알림>"
                 }[category] || "<기타 알림>";
 
@@ -103,9 +106,9 @@ async function fetchNotifications() {
                         li.innerHTML = `
                             <p>${notification.message}</p>
                             ${
-                            ["BIDDING_END", "WAITING_FOR_MY_APPROVAL", "WAITING_FOR_OTHER_APPROVAL"].includes(category)
+                            ["BIDDING_END", "PARTIALLY_APPROVE"].includes(category)
                                 ? `<button onclick="completeTransaction(${notification.itemId}, ${notification.userId})">거래수락</button>
-                                       <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
+                                           <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
                                 : ""
                         }
                         `;

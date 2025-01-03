@@ -29,13 +29,15 @@ public class NotificationController {
         return notification; // 클라이언트로 전송
     }
 
+
+
     // 알림 목록 가져오기
     @PostMapping("/notifications/list")
     @ResponseBody
     public List<Map<String, Object>> getNotificationsAndSend(@RequestBody Map<String, Object> params) {
         // userId 변환
         Long userId = Long.valueOf(params.get("userId").toString());
-
+        System.out.println("Request Params: " + params);
         // userId를 이용해 알림 목록 가져오기
         List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
 
@@ -46,7 +48,7 @@ public class NotificationController {
                     map.put("notificationId", notification.getNotificationId());
                     map.put("userId", notification.getUserId());
                     map.put("itemId", notification.getItemId());
-                    map.put("itemStatus", notification.getDynamicStatus(userId)); // 동적 상태 반환
+                    map.put("itemStatus", notification.getItemStatus()); // 동적 상태 대신 고정된 상태 반환
                     map.put("message", notification.getMessage());
                     map.put("isRead", notification.isRead());
                     map.put("createdAt", notification.getCreatedAt());
@@ -62,6 +64,7 @@ public class NotificationController {
 
         return response;
     }
+
 
 
     @PostMapping("/notifications/update-read-status")
