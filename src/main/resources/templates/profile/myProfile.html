@@ -35,7 +35,7 @@
                     <td th:text="${userInfo.name}">이름</td>
                     <td th:text="${userInfo.role.roleName}">권한</td>
                     <td th:text="${userInfo.phoneNumber}">전화번호</td>
-                    <td th:text="${#numbers.formatDecimal(userInfo.currentPoint, 0, 'COMMA', 0, 'POINT')}">포인트</td>
+                    <td th:text="${#numbers.formatDecimal(userInfo.currentPoint, 0, 'COMMA', 0, 'POINT')} + 'p'">포인트</td>
                     <td>
                         <button onclick="location.href='/profile/edit'" class="edit-btn">수정</button>
                         <button onclick="confirmDelete()" class="delete-btn">탈퇴</button>

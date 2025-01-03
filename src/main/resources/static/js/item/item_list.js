@@ -19,7 +19,39 @@ document.addEventListener("DOMContentLoaded", function () {
     statusSelect.addEventListener("change", function () {
         document.getElementById("searchForm").submit();
     });
+
+    // 장바구니 상태 확인 및 버튼 스타일 업데이트
+    updateCartButtonStyles();
 });
+
+// 장바구니 버튼 스타일 업데이트 함수 추가
+async function updateCartButtonStyles() {
+    try {
+        const response = await fetch('/api/currentUser');
+        if (!response.ok) throw new Error('Failed to get current user');
+        
+        const currentUser = await response.json();
+        const userId = currentUser.userId;
+        
+        // 현재 유저의 장바구니 데이터 가져오기
+        const cartItems = JSON.parse(localStorage.getItem(userId)) || [];
+        const cartItemIds = cartItems.map(item => item.itemId);
+        
+        // 모든 장바구니 버튼 순회
+        document.querySelectorAll('.like-btn').forEach(button => {
+            const itemCard = button.closest('.auction-card');
+            const itemId = itemCard.id.split('-')[2];
+            
+            if (cartItemIds.includes(itemId)) {
+                button.classList.remove('like-btn'); // 기존 클래스 제거
+                button.classList.add('unlike-btn'); // 장바구니에 있는 경우 성공 스타일
+            }
+        });
+    } catch (error) {
+        console.error('장바구니 상태 업데이트 중 오류:', error);
+    }
+}
+
 async function addToCart(event) {
     // 기본 동작 방지 (아이템 상세 페이지로 이동하지 않도록)
     event.preventDefault();
@@ -59,6 +91,12 @@ async function addToCart(event) {
         let cart = JSON.parse(localStorage.getItem(userId)) || [];
         cart.push(itemData);
         localStorage.setItem(userId, JSON.stringify(cart));
+
+        // 버튼 스타일 즉시 업데이트
+        const button = event.target;
+        button.classList.remove('like-btn');
+        button.classList.add('unlike-btn'); // 장바구니에 있는 경우 성공 스타일
+
 
         alert('아이템이 장바구니에 추가되었습니다!');
         console.log("Local Storage Data:", localStorage.getItem(userId));
