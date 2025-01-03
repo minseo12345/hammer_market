@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 imageError.textContent = '이미지 파일만 업로드 가능합니다. (JPEG, PNG, JPG)';
                 imageError.style.color = 'red';
                 isValid = false;
-            } else if (file.size > 5 * 1024 * 1024) { // 5MB 제한
-                imageError.textContent = '파일 크기는 5MB 이하여야 합니다.';
+            } else if (file.size > 10 * 1024 * 1024) { // 10MB 제한
+                imageError.textContent = '파일 크기는 10MB 이하여야 합니다.';
                 imageError.style.color = 'red';
                 isValid = false;
             } else {

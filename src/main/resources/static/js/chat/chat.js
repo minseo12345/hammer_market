@@ -7,7 +7,6 @@ const maxReconnectAttempts = 5; // 최대 재연결 시도 횟수
 const reconnectInterval = 1000; // 초기 재연결 간격 (1초)
 
 // HTML 요소 참조
-const userListEl = document.getElementById("users");
 const sellerRoomsEl = document.getElementById("seller-rooms");
 const buyerRoomsEl = document.getElementById("buyer-rooms");
 const messagesEl = document.getElementById("messages");
@@ -153,21 +152,6 @@ function updateUnreadCount(chatRoomId) {
         loadChatRooms();
     }
 }
-// 유저 목록 불러오기
-function fetchUsers() {
-    fetch('/api/users')
-        .then((response) => response.json())
-        .then((users) => {
-            userListEl.innerHTML = '';
-            users.forEach((user) => {
-                const li = document.createElement('li');
-                li.textContent = user.username;
-                li.style.cursor = 'pointer';
-                li.onclick = () => selectUser(user);
-                userListEl.appendChild(li);
-            });
-        });
-}
 
 // 채팅방 입장
 function enterChatRoom(room) {
@@ -280,7 +264,6 @@ function login() {
         .then((user) => {
             currentUser = user;
             console.log('로그인 유저:', currentUser.username);
-            fetchUsers(); // 유저 목록 로드
             connectWebSocket(); // WebSocket 연결
             requestNotificationPermission(); // Notification 권한 요청
         })

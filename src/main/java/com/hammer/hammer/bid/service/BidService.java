@@ -17,8 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,14 +39,23 @@ public class BidService {
      * 입찰 등록
      */
     @Transactional
-    public void saveBid(RequestBidDto requestBidDto){
+    public void saveBid(RequestBidDto requestBidDto, UserDetails userDetails) {
+
+        if (!requestBidDto.getUserId().toString().equals(userDetails.getUsername())) {
+            throw new IllegalStateException("접근 권한이 없습니다.");
+        }
 
         User user = userRepository.findById(requestBidDto.getUserId()).orElseThrow(
                 ()-> new IllegalStateException("사용자를 찾을 수 없습니다.")
         );
+
         Item item = itemRepository.findById(requestBidDto.getItemId()).orElseThrow(
                 ()-> new IllegalStateException("상품을 찾을 수 없습니다.")
         );
+
+        if (requestBidDto.getBidAmount().compareTo(user.getCurrentPoint()) > 0) {
+            throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
+        }
 
         BigDecimal currentHighestBid = bidRepository.findHighestBidByItemId(requestBidDto.getItemId())
                 .orElse(BigDecimal.ZERO);
@@ -112,17 +121,16 @@ public class BidService {
      *  상품 별 입찰 조회
      */
     @Transactional(readOnly = true)
-    public Page<ResponseBidByItemDto> getBidsByItem(Long itemId, Pageable pageable) {
+    public List<ResponseBidByItemDto> getBidsByItem(Long itemId) {
 
-        Page<Bid> bids = bidRepository.findByItem_ItemIdOrderByBidAmountDesc(itemId, pageable).orElseThrow(
-                () -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다.")
-        );
+        List<Bid> bids = bidRepository.findByItem_ItemIdOrderByBidAmountDesc(itemId)
+                .orElseThrow(() -> new IllegalStateException("입찰 데이터를 찾을 수 없습니다."));
 
-        Item item = itemRepository.findById(itemId).orElseThrow(()->new IllegalStateException("상품을 찾을 수 없습니다."));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new IllegalStateException("상품을 찾을 수 없습니다."));
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-        return bids.map(bid -> {
+        return bids.stream().map(bid -> {
             String formattedBidAmount = decimalFormat.format(bid.getBidAmount()) + "원";
             return ResponseBidByItemDto.builder()
                     .userId(bid.getUser().getUserId())
@@ -134,8 +142,9 @@ public class BidService {
                     .username(item.getUser().getUsername())
                     .imageUrl(item.getFileUrl())
                     .build();
-        });
+        }).collect(Collectors.toList());
     }
+
 
     /**
      * 정렬 조건 반환 메서드
@@ -159,7 +168,8 @@ public class BidService {
 
     //최고 입찰금액 조회
     public BigDecimal getHighestBidAmount(Long itemId) {
-        return bidRepository.findHighestBidByItemId(itemId).orElse(null);
+        Item item = itemRepository.findById(itemId).orElseThrow(()-> new IllegalStateException("상품을 찾을 수 없습니다."));
+        return bidRepository.findHighestBidByItemId(itemId).orElse(item.getStartingBid());
     }
 
     /**

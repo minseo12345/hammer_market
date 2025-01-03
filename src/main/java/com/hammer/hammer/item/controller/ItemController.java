@@ -1,6 +1,8 @@
 package com.hammer.hammer.item.controller;
 
 import com.hammer.hammer.bid.dto.RequestBidDto;
+import com.hammer.hammer.bid.dto.ResponseBidByItemDto;
+import com.hammer.hammer.bid.entity.Bid;
 import com.hammer.hammer.bid.exception.BidAmountTooLowException;
 import com.hammer.hammer.bid.service.BidService;
 import com.hammer.hammer.category.entity.Category;
@@ -20,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +65,7 @@ public class ItemController {
                     .stream()
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.joining(", "));
-            
+
             redirectAttributes.addFlashAttribute("error", errorMessage);
             return "redirect:/items/create";
         }
@@ -69,8 +73,8 @@ public class ItemController {
         // 이미지 타입 검증
         String contentType = image.getContentType();
         if (contentType == null || !(contentType.equals("image/jpeg") ||
-                                    contentType.equals("image/png") ||
-                                    contentType.equals("image/jpg"))) {
+                contentType.equals("image/png") ||
+                contentType.equals("image/jpg"))) {
             redirectAttributes.addFlashAttribute("error", "JPG, JPEG 또는 PNG 형식의 이미지만 업로드 가능합니다.");
             return "redirect:/items/create";
         }
@@ -111,7 +115,7 @@ public class ItemController {
             items = itemService.getAllItems(page,sortBy,direction,status,categoryId); // 검색 없이 모든 아이템 가져오기
         }
         List<Category> categories = categoryRepository.findAll();
-        log.info("get size{}",items.getSize());
+
 
         model.addAttribute("categories", categories);
         model.addAttribute("items", items.getContent());
@@ -135,18 +139,25 @@ public class ItemController {
     }
 
     @GetMapping("/detail/{id}")
-    public String getAuctionDetailPage(@PathVariable Long id, Model model) {
+    public String getAuctionDetailPage(@PathVariable Long id, Model model
+    ) {
         // 상품 및 최고 입찰가 조회
         Item item = itemService.getItemById(id);
         BigDecimal highestBid = bidService.getHighestBidAmount(id);
+        List<ResponseBidByItemDto> bids = bidService.getBidsByItem(id);
 
         // 최고 입찰가가 없으면 시작가로 설정
         if (highestBid.compareTo(BigDecimal.ZERO) == 0) {
             highestBid = item.getStartingBid();
         }
+        List<Category> categories = categoryRepository.findAll();
 
+        model.addAttribute("categories", categories);
         model.addAttribute("item", item);
         model.addAttribute("highestBid", highestBid);
+        model.addAttribute("bids",bids);
+        model.addAttribute("userId",SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("itemId",id);
 
         if (item.getStatus() == Item.ItemStatus.COMPLETED) {
             return "item/soldout"; // 판매 완료 화면으로 이동
@@ -158,10 +169,11 @@ public class ItemController {
     @PostMapping("/detail/{id}/bid")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> placeBid(@PathVariable Long id,
-                                                        @RequestBody RequestBidDto requestBidDto) {
+                                                        @RequestBody RequestBidDto requestBidDto,
+                                                        @AuthenticationPrincipal UserDetails userDetails) {
         try {
             // 입찰 저장
-            bidService.saveBid(requestBidDto);
+            bidService.saveBid(requestBidDto,userDetails);
 
             // 새로운 최고 입찰가 반환
             BigDecimal highestBid = bidService.getHighestBidAmount(id);
