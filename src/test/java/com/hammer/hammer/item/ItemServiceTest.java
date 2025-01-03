@@ -42,7 +42,9 @@ public class ItemServiceTest {
     public void setup() {
         mockItem = new Item();
         mockItem.setItemId(1L);
+
         mockItem.setTitle("Test Item");
+        mockItem.setDescription("Test Description");
         mockItem.setStartingBid(BigDecimal.valueOf(5000));
         mockItem.setBuyNowPrice(BigDecimal.valueOf(10000));
         mockItem.setStartTime(LocalDateTime.now());

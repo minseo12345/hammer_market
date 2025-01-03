@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/fragments/topbar.css">
     <link rel="stylesheet" href="/css/fragments/sidebar.css">
     <link rel="stylesheet" href="/css/fragments/header.css">
-    <link rel="stylesheet" href="/css/item/item_list.css">
+    <link rel="stylesheet" href="/css/item/list.css">
 </head>
 <body>
 <div th:insert="~{'fragments/topbar' :: topbar}"></div>
@@ -65,7 +65,7 @@
 
         <!-- 카드 컨테이너 -->
         <div class="card-container">
-            <a th:href="@{/items/detail/{id}(id=${item.itemId})}" class="card auction-card" th:each="item : ${items}" th:id="'item-card-' + ${item.itemId}"
+            <a th:href="@{/items/detail/{id}(id=${item.itemId})}" class="card auction-card" th:each="item : ${itemsWithBids}"  th:id="'item-card-' + ${item.itemId}"
                th:data-title="${item.title}"
                th:data-starting-bid="${item.startingBid}"
                th:data-current-price="${item.currentPrice}"

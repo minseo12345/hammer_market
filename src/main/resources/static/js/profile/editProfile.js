@@ -49,4 +49,35 @@ document.getElementById('signUpForm').addEventListener('submit', function(e) {
         document.getElementById('phoneNumberError').textContent = '전화번호는 10~11자리 숫자여야 합니다.';
         return;
     }
+
+    // 모든 검증이 통과되면 서버로 데이터 전송
+    const userData = {
+        username: username,
+        phoneNumber: phoneNumber
+        password: password,
+        confirmPw: confirmPw,
+    };
+
+    fetch('/profile/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('서버 응답이 실패했습니다.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // 성공적으로 처리된 경우
+        alert('프로필이 성공적으로 수정되었습니다.');
+        window.location.href = '/profile/myProfile'; // 프로필 페이지로 리다이렉트
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('프로필 수정 중 오류가 발생했습니다.');
+    });
 });
