@@ -1,3 +1,15 @@
+.chat-room-list {
+    display: flex; /* 유연한 배치를 위해 flexbox 사용 */
+    flex-direction: column; /* 세로 방향으로 콘텐츠 배치 */
+    justify-content: flex-start; /* 콘텐츠를 상단에 정렬 */
+    align-items: stretch; /* 자식 요소를 부모의 너비에 맞춤 */
+    padding: 15px; /* 내부 여백 */
+    background-color: #f9f9f9; /* 연한 배경색 */
+    border-radius: 8px; /* 둥근 모서리 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 */
+    height: 100%; /* 부모의 높이에 맞춤 */
+    overflow-y: auto; /* 세로 스크롤 필요 시 표시 */
+}
 #chat-html {
     height: 100%;
     overflow: hidden; /* 스크롤 제거 */
@@ -15,38 +27,6 @@
     flex: 1;
     background-color: #f8f9fa;
     overflow: hidden; /* 스크롤 방지 */
-}
-
-#seller-room-list, #buyer-room-list {
-    flex: 2; /* 같은 비율로 공간 차지 */
-    max-width: 50%; /* 너비 제한 */
-    height: 100%; /* 전체 높이 사용 */
-    border-right: 1px solid #ddd;
-    overflow-y: auto; /* 세로 스크롤 필요 시만 표시 */
-    background-color: #f8f9fa;
-}
-
-#seller-room-list {
-    border-right: 1px solid #ddd; /* 오른쪽 경계선 */
-}
-
-#buyer-room-list {
-    border-left: 1px solid #ddd; /* 왼쪽 경계선 */
-}
-
-#seller-room-list ul, #buyer-room-list ul {
-    padding: 0;
-    margin: 0;
-}
-
-#seller-room-list li, #buyer-room-list li {
-    list-style: none;
-    padding: 10px;
-    cursor: pointer;
-}
-
-#seller-room-list li:hover, #buyer-room-list li:hover {
-    background-color: #f1f1f1;
 }
 
 #chat-box {

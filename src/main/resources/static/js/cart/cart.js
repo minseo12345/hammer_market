@@ -1,73 +1,139 @@
-// // 사용자 ID 설정 및 관리
-// let currentUserId = null;
-//
-// // 로컬 스토리지에 사용자별 장바구니 저장
-// const saveCart = (cart) => {
-//     if (!currentUserId) {
-//         alert("Please set a User ID first.");
-//         return;
-//     }
-//     localStorage.setItem(`cart_${currentUserId}`, JSON.stringify(cart));
-// };
-//
-// // 로컬 스토리지에서 사용자별 장바구니 가져오기
-// const getCart = () => {
-//     if (!currentUserId) {
-//         alert("Please set a User ID first.");
-//         return [];
-//     }
-//     const cart = localStorage.getItem(`cart_${currentUserId}`);
-//     return cart ? JSON.parse(cart) : [];
-// };
-//
-// // 장바구니 UI 업데이트
-// const updateCartUI = () => {
-//     const cart = getCart();
-//     const cartEl = document.getElementById("cart");
-//     cartEl.innerHTML = ""; // 기존 장바구니 초기화
-//
-//     cart.forEach((item, index) => {
-//         const li = document.createElement("li");
-//         li.textContent = `${item.name} - $${item.price} x ${item.quantity}`;
-//         const removeButton = document.createElement("button");
-//         removeButton.textContent = "Remove";
-//         removeButton.onclick = () => removeFromCart(index);
-//         li.appendChild(removeButton);
-//         cartEl.appendChild(li);
-//     });
-// };
-//
-// // 장바구니에 아이템 추가
-// const addToCart = (product) => {
-//     const cart = getCart();
-//     const existingItem = cart.find((item) => item.id === product.id);
-//     if (existingItem) {
-//         existingItem.quantity += 1; // 수량 증가
-//     } else {
-//         cart.push({ ...product, quantity: 1 });
-//     }
-//     saveCart(cart);
-//     updateCartUI();
-// };
-//
-// // 장바구니에서 아이템 제거
-// const removeFromCart = (index) => {
-//     const cart = getCart();
-//     cart.splice(index, 1); // 해당 인덱스 아이템 제거
-//     saveCart(cart);
-//     updateCartUI();
-// };
-//
-// // 장바구니 초기화
-// const clearCart = () => {
-//     if (!currentUserId) {
-//         alert("Please set a User ID first.");
-//         return;
-//     }
-//     localStorage.removeItem(`cart_${currentUserId}`);
-//     updateCartUI();
-// };
-//
-// // 사용자 ID 설정
-// document.getElementById("setUser").onclick = () => {
-//     const userIdInput = document.getElementBy
+
+document.addEventListener("DOMContentLoaded", () => {
+    getCurrentUserId().then((userId) => {
+        syncWithServer(userId).then(() => loadCart(userId));
+    });
+});
+
+function getCurrentUserId() {
+    return fetch('/api/currentUser')
+        .then((response) => {
+            if (!response.ok) throw new Error('활성화된 세션이나 로그인된 유저가 없습니다.');
+            return response.json();
+        })
+        .then((user) => {
+            return user.userId;
+        })
+        .catch((err) => {
+            console.error('세션 정보 에러:', err);
+            alert('로그인 필요');
+            window.location.href = '/login';
+        });
+}
+
+function loadCart(userId) {
+    const cartItems = JSON.parse(localStorage.getItem(userId)) || [];
+    const cartContainer = document.getElementById("cartItems");
+    cartContainer.innerHTML = ""; // Clear the list before adding items
+
+    cartItems.forEach((item) => {
+        // Create a card for each item
+        const cardCol = document.createElement("div");
+        cardCol.classList.add("col-lg-3", "col-md-4", "col-sm-6", "mb-4"); // One row fits 4 cards on large screens
+
+        const card = document.createElement("a");
+        card.href = `/items/detail/${item.itemId}`;
+        card.classList.add("card", "auction-card", "h-100"); // Full height card
+
+        card.dataset.title = item.title;
+        card.dataset.startingBid = item.startingBid;
+        card.dataset.buyNowPrice = item.buyNowPrice;
+        card.dataset.endTime = item.endTime;
+        card.dataset.status = item.status;
+        card.dataset.imgSrc = item.fileUrl;
+
+        const cardImg = document.createElement("img");
+        cardImg.classList.add("card-img-top");
+        cardImg.src = item.fileUrl; // Assuming each item has an image URL
+        cardImg.alt = "상품 이미지";
+
+        const cardBody = document.createElement("div");
+        cardBody.classList.add("card-body");
+
+        const cardTitle = document.createElement("h5");
+        cardTitle.classList.add("card-title");
+        cardTitle.textContent = item.title;
+
+        const cardText = document.createElement("div");
+        cardText.classList.add("card-text");
+
+        const bidInfo = document.createElement("p");
+        bidInfo.innerHTML = `
+                <strong>시작가:</strong> ${item.startingBid} 원<br>
+                <strong>즉시 구매가:</strong> ${item.buyNowPrice} 원<br>
+                <strong>상태:</strong> ${item.status}
+            `;
+
+        // Add "Remove from Cart" button
+        const removeButton = document.createElement("button");
+        removeButton.classList.add("btn", "btn-danger", "mt-2");
+        removeButton.textContent = "삭제";
+        removeButton.onclick = (e) => {
+            e.preventDefault();
+            removeFromCart(item.itemId, userId);
+        };
+
+        // Append elements
+        cardText.appendChild(bidInfo);
+        cardText.appendChild(removeButton);
+
+        cardBody.appendChild(cardTitle);
+        cardBody.appendChild(cardText);
+
+        card.appendChild(cardImg);
+        card.appendChild(cardBody);
+
+        cardCol.appendChild(card);
+        cartContainer.appendChild(cardCol);
+    });
+}
+
+
+function removeFromCart(itemId, userId) {
+    let cartItems = JSON.parse(localStorage.getItem(userId)) || [];
+    cartItems = cartItems.filter(item => item.itemId !== itemId);
+    localStorage.setItem(userId, JSON.stringify(cartItems));
+    loadCart(userId);
+}
+
+async function syncWithServer(userId) {
+    try {
+        // Fetch local cart items
+        const localCart = JSON.parse(localStorage.getItem(userId)) || [];
+        console.log("Local Cart Items before Sync:", localCart);
+        const localCartMap = new Map(localCart.map(item => [item.itemId, item]));
+
+        // Send item IDs of the local cart to the server
+        const localItemIds = Array.from(localCartMap.keys());
+
+        const response = await fetch("/api/sync-cart", { // Replace with the actual API URL
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId, itemIds: localItemIds }), // Send userId and itemIds to server
+        });
+
+        if (!response.ok) throw new Error("Failed to sync cart with server.");
+
+        const serverItems = await response.json();
+
+        // Update only the items that exist in local storage
+        serverItems.forEach(serverItem => {
+            if (localCartMap.has(serverItem.itemId)) {
+                localCartMap.set(serverItem.itemId, {
+                    ...localCartMap.get(serverItem.itemId),
+                    ...serverItem, // Update with the latest server data
+                });
+            }
+        });
+
+        // Save updated cart back to localStorage
+        const updatedCart = Array.from(localCartMap.values());
+        localStorage.setItem(userId, JSON.stringify(updatedCart));
+
+        console.log("Cart synced successfully with server.");
+    } catch (error) {
+        console.error("Error syncing with server:", error);
+    }
+}

@@ -20,46 +20,36 @@ public class AdminApiController {
 
     private final AdminService adminService;
 
-
-    // 특정 카테고리 조회
+    //카테고리 저장
+    @PostMapping("/categories")
+    public ResponseEntity<Void> saveCategory(@RequestBody Category category) {
+        adminService.save(category);
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+    }
+    
     @GetMapping("/categories/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable("id") Long id) {
         Optional<Category> optionalCategory = adminService.findById(id);
         if (optionalCategory.isPresent()) {
             return ResponseEntity.ok(optionalCategory.get());
         }
-        return ResponseEntity.notFound().build(); // 404 Not Found
+        return ResponseEntity.notFound().build();
     }
 
-    // 카테고리 생성
-    @PostMapping("/categories")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category savedCategory = adminService.save(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory); // 201 Created
+    @PostMapping("/categories/edit/{id}")
+    public String updateCategory(@PathVariable("id") Long id, @ModelAttribute("category") Category category) {
+    	 System.out.println("Category ID: " + id);
+    	adminService.updateCategory(id, category);
+        return "redirect:/admin/categories";
     }
-
-    // 카테고리 수정
-    @PutMapping("/categories/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
-        Optional<Category> optionalCategory = adminService.findById(id);
-        if (optionalCategory.isPresent()) {
-            Category category = optionalCategory.get();
-            category.setName(categoryDetails.getName());
-            category.setDescription(categoryDetails.getDescription());
-            Category updatedCategory = adminService.save(category);
-            return ResponseEntity.ok(updatedCategory); // 200 OK
-        }
-        return ResponseEntity.notFound().build(); // 404 Not Found
-    }
-
     // 카테고리 삭제
     @DeleteMapping("/categories/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
         Optional<Category> optionalCategory = adminService.findById(id);
         if (optionalCategory.isPresent()) {
             adminService.deleteById(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.notFound().build(); // 404 Not Found
+        return ResponseEntity.notFound().build();
     }
 }

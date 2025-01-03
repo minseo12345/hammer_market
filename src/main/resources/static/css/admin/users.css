@@ -1,0 +1,16 @@
+   h1 {
+        text-align: center;
+        font-weight: bold !important; /* 강제 적용 */
+        margin-bottom: 20px;
+    }
+    .container-fluid {
+        padding: 20px;
+    }
+    .table-container {
+        margin: 0 auto; /* 표를 가운데로 */
+        max-width: 90%; /* 양쪽 여유 */
+    }
+    .filter-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;}

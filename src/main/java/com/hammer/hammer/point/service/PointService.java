@@ -6,6 +6,7 @@ import com.hammer.hammer.point.dto.ResponseSelectPointDto;
 import com.hammer.hammer.point.entity.Point;
 import com.hammer.hammer.point.entity.PointStatus;
 import com.hammer.hammer.point.repository.PointRepository;
+import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -165,5 +166,46 @@ public class PointService {
                 .build();
 
         pointRepository.save(currencyPoint);
+    }
+
+    public synchronized void processTransactionPoints(Transaction transaction) {
+        User seller = transaction.getSeller();
+        User buyer = transaction.getBuyer();
+        BigDecimal finalPrice = transaction.getFinalPrice();
+
+        // 판매자 포인트 증가
+        BigDecimal sellerCurrentPoint = seller.getCurrentPoint();
+        BigDecimal sellerUpdatedPoint = sellerCurrentPoint.add(finalPrice);
+        seller.chargePoint(sellerUpdatedPoint);
+
+        // 판매자 포인트 기록
+        Point sellerPoint = Point.builder()
+                .user(seller)
+                .pointType(PointStatus.D)
+                .createDate(LocalDateTime.now())
+                .pointAmount(finalPrice)
+                .description("상품 판매에 의한 포인트 증가")
+                .balanceAmount(sellerUpdatedPoint)
+                .build();
+        pointRepository.save(sellerPoint);
+
+        // 구매자 포인트 감소
+        BigDecimal buyerCurrentPoint = buyer.getCurrentPoint();
+        BigDecimal buyerUpdatedPoint = buyerCurrentPoint.subtract(finalPrice);
+        buyer.chargePoint(buyerUpdatedPoint);
+
+        // 구매자 포인트 기록
+        Point buyerPoint = Point.builder()
+                .user(buyer)
+                .pointType(PointStatus.C)
+                .createDate(LocalDateTime.now())
+                .pointAmount(finalPrice)
+                .description("상품 구매에 의한 포인트 감소")
+                .balanceAmount(buyerUpdatedPoint)
+                .build();
+        pointRepository.save(buyerPoint);
+
+        userRepository.save(seller);
+        userRepository.save(buyer);
     }
 }

@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,6 +49,7 @@ public class UserApiController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long currentUserId = Long.parseLong(authentication.getName());
         User currentUser = userRepository.findByUserId(currentUserId).orElse(null);
+        log.info("Returning user: {}", currentUser);
         if (currentUser != null) {
             log.info("user found! {}", currentUser.getUsername());
             return ResponseEntity.ok(currentUser);
@@ -66,10 +69,6 @@ public class UserApiController {
             return ResponseEntity.badRequest().body(response); // HTTP 400
         }
 
-        if (userRepository.existsByEmail(userDto.getEmail())) {
-            response.put("message", "이미 등록된 이메일입니다.");
-            return ResponseEntity.badRequest().body(response); // HTTP 400
-        }
         try {
             // 회원가입 처리
             userService.save(userDto);
@@ -170,5 +169,15 @@ public class UserApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("message", "비밀번호 변경 성공"));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            userService.deleteUser(Long.valueOf(userDetails.getUsername()));
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

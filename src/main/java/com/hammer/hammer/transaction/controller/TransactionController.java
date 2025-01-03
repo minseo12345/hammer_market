@@ -49,7 +49,7 @@ public class TransactionController {
         }
     }
 
-    // 경매 종료 후 트랜잭션 생성
+    /*// 경매 종료 후 트랜잭션 생성
     @PostMapping("/auction-end/{itemId}")
     public String createTransactionForAuctionEnd(@PathVariable Long itemId) {
         try {
@@ -58,7 +58,7 @@ public class TransactionController {
         } catch (IllegalArgumentException e) {
             return "error";
         }
-    }
+    }*/
 }
 
 
