@@ -1,49 +1,96 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const bidForm = document.getElementById("bid-form");
-    const itemDetails = document.getElementById("item-details");
+document.addEventListener('DOMContentLoaded', function() {
+    var itemStatus = document.getElementById('item-details').getAttribute('data-item-status');
+    console.log(itemStatus)
+    var bidAmountInput = document.getElementById('bidAmount');
+    var submitBidButton = document.getElementById('submit-bid');
+    var buyNowButton = document.getElementById('buy-now');
+    var auctionEndedMessage = document.createElement('p');
 
+    if (itemStatus === 'BIDDING_END') {
+        bidAmountInput.disabled = true;
+        bidAmountInput.value = '';
+        bidAmountInput.placeholder = '경매 종료';
+        auctionEndedMessage.textContent = '경매 종료';
+        auctionEndedMessage.style.color = 'red';
+        bidAmountInput.parentElement.appendChild(auctionEndedMessage);
+        submitBidButton.disabled = true;
+        buyNowButton.disabled = true;
+    }
 
-    const itemId = itemDetails.getAttribute("data-item-id");
+    // 입찰하기 버튼 클릭 이벤트
+    submitBidButton.addEventListener('click', function(event) {
+        if (itemStatus === 'BIDDING_END') {
+            event.preventDefault();
+            alert('경매가 종료되었습니다.');
+            return;
+        }
 
+        var bidAmount = bidAmountInput.value;
+        var buyNowPrice = document.getElementById('buy-now-price').textContent.trim();
 
-    bidForm.addEventListener("submit", (event) => {
-        event.preventDefault();
+        if (!bidAmount) {
+            event.preventDefault();
+            alert('입찰 금액을 입력해주세요.');
+            return;
+        }
 
-        const userId = 1; // 사용자 ID는 하드코딩 (실제 환경에서는 변경 필요)
-        const bidAmount = parseFloat(document.getElementById("bidAmount").value);
-        const bidTime = new Date().toISOString();  // 현재 시간을 ISO 형식으로 생성
+        if (Number(bidAmount) > Number(buyNowPrice)) {
+            event.preventDefault();
+            alert('입찰 금액이 즉시 구매가보다 높습니다. 다시 시도해주세요.');
+        } else {
+            var form = document.getElementById('bid-form');
+            var formData = new FormData(form);
 
-        fetch(`/items/detail/${itemId}/bid`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                itemId: itemId,
-                userId: userId,
-                bidAmount: bidAmount,
-                bidTime: bidTime,
-            }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("입찰에 실패했습니다.");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                if (data.success) {
-                    // 현재가 업데이트
-                    const highestBidElement = document.getElementById("current-highest-bid");
-                    highestBidElement.textContent = `₩${data.highestBid}`;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/bid', true);
 
-                    alert("입찰 성공! 현재가가 갱신되었습니다.");
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('입찰 성공! 현재가가 갱신되었습니다.');
                 } else {
-                    throw new Error(data.error || "알 수 없는 오류");
+                    var errorMessage = xhr.responseText || '입찰 실패! 다시 시도해주세요.';
+                    alert(errorMessage);
                 }
-            })
-            .catch((error) => {
-                alert(error.message);
-            });
+            };
+
+            xhr.onerror = function() {
+                alert('서버와의 연결에 실패했습니다. 다시 시도해주세요.');
+            };
+
+            xhr.send(formData);
+        }
+    });
+
+    // 즉시 구매 버튼 클릭 이벤트
+    buyNowButton.addEventListener('click', function(event) {
+        if (itemStatus === 'BIDDING_END') {
+            event.preventDefault();
+            alert('경매가 종료되었습니다.');
+            return;
+        }
+
+        var buyNowPrice = document.getElementById('buy-now-price').textContent.trim();
+        bidAmountInput.value = buyNowPrice;
+
+        var form = document.getElementById('bid-form');
+        var formData = new FormData(form);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/bid/buy/now', true);
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert('즉시 구매가로 입찰 성공! 현재가가 갱신되었습니다.');
+            } else {
+                var errorMessage = xhr.responseText || '입찰 실패! 다시 시도해주세요.';
+                alert(errorMessage);
+            }
+        };
+
+        xhr.onerror = function() {
+            alert('서버와의 연결에 실패했습니다. 다시 시도해주세요.');
+        };
+
+        xhr.send(formData);
     });
 });
