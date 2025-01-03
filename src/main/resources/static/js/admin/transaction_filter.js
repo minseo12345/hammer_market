@@ -1,8 +1,8 @@
-let originalRows = []; // 원본 데이터를 저장할 배열
+let originalRows = []; // 전역 변수로 선언
 
 document.addEventListener("DOMContentLoaded", function () {
-    const rows = Array.from(document.querySelectorAll("#transactionTable tr"));
-    originalRows = rows; // 원본 데이터를 저장
+    const rows = Array.from(document.querySelectorAll("#transactionTable tr")); // 테이블 행 가져오기
+    originalRows = rows; // 초기화
     filterTransactions(); // 초기 필터링 및 정렬 적용
 });
 
@@ -17,7 +17,9 @@ function filterTransactions() {
 
     // 선택된 상태를 배열에 저장
     const selectedStatuses = [];
-    if (isOngoingChecked) selectedStatuses.push("ONGOING");
+    if (isOngoingChecked) {
+        selectedStatuses.push("ONGOING", "WAITING_FOR_MY_APPROVAL", "WAITING_FOR_OTHER_APPROVAL");
+    }
     if (isCompletedChecked) selectedStatuses.push("COMPLETED");
     if (isBiddingEndChecked) selectedStatuses.push("BIDDING_END");
 

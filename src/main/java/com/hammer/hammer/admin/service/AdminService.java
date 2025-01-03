@@ -50,4 +50,16 @@ public class AdminService {
     public void deleteById(Long id) {
         categoryRepository.deleteById(id);
     }
+    
+    public void updateCategory(Long id, Category category) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isPresent()) {
+            Category existingCategory = optionalCategory.get();
+            existingCategory.setName(category.getName());
+            existingCategory.setDescription(category.getDescription());
+            categoryRepository.save(existingCategory);
+        } else {
+            throw new RuntimeException("Category not found for id " + id);
+        }
+    }
 }

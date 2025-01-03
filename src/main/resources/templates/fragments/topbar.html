@@ -9,6 +9,9 @@
                 <a href="#" th:href="@{/chat}" class="d-flex align-items-center">
                     <img th:src="@{/img/chat.png}" alt="채팅" class="chat-icon" style="width: 30px; height: 25px;">
                 </a>
+                <td sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{'/admin'}">관리자 페이지</a>
+                </td>
                 <a th:href="@{'/profile/myProfile'}">내정보</a>
                 <a th:href="@{/cart}">장바구니</a>
                 <a href="/logout">로그아웃</a>
