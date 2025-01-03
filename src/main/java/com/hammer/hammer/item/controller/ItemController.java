@@ -6,11 +6,13 @@ import com.hammer.hammer.bid.service.BidService;
 import com.hammer.hammer.category.entity.Category;
 import com.hammer.hammer.category.repository.CategoryRepository;
 import com.hammer.hammer.item.entity.Item;
+import com.hammer.hammer.item.entity.ItemResponseDto;
 import com.hammer.hammer.item.service.ItemService;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 import com.hammer.hammer.user.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +31,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
 @Slf4j
 @Controller
 @RequestMapping("/items")
@@ -37,42 +44,75 @@ public class ItemController {
 
     private final ItemService itemService;
     private final BidService bidService;
-    private final UserService userService;
-    private final CategoryRepository CategoryRepository;
+
     private final CategoryRepository categoryRepository;
 
     @PostMapping("/create")
-    public String createItem(@ModelAttribute Item item,
+    public String createItem(@Valid @ModelAttribute Item item,
+                             BindingResult bindingResult,
                              @RequestParam("image") MultipartFile image,
                              @RequestParam("itemPeriod") String itemPeriod,
                              RedirectAttributes redirectAttributes) throws IOException {
 
-        log.info("period:{}", itemPeriod);
-        log.info("img:{}", image.getOriginalFilename());
-        log.info("Item:{}", item.getTitle());
-        itemService.createItem(item, image,itemPeriod);
+        // 검증 오류 처리
+        if (bindingResult.hasErrors()) {
+            // 모든 에러 메시지를 수집
+            String errorMessage = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
+            
+            redirectAttributes.addFlashAttribute("error", errorMessage);
+            return "redirect:/items/create";
+        }
 
-        redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 생성되었습니다!");
-        return "redirect:list";
+        // 이미지 타입 검증
+        String contentType = image.getContentType();
+        if (contentType == null || !(contentType.equals("image/jpeg") ||
+                                    contentType.equals("image/png") ||
+                                    contentType.equals("image/jpg"))) {
+            redirectAttributes.addFlashAttribute("error", "JPG, JPEG 또는 PNG 형식의 이미지만 업로드 가능합니다.");
+            return "redirect:/items/create";
+        }
+
+
+        // 경매 기간 검증
+        if (itemPeriod == null || itemPeriod.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "경매 기간을 선택해주세요.");
+            return "redirect:/items/create";
+        }
+
+        try {
+            itemService.createItem(item, image, itemPeriod);
+            redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 생성되었습니다!");
+            return "redirect:list";
+        } catch (Exception e) {
+            log.error("Item creation failed", e);
+            redirectAttributes.addFlashAttribute("error", "경매 생성 중 오류가 발생했습니다.");
+            return "redirect:/items/create";
+        }
     }
 
     @GetMapping("/list")
     public String getAuctionListPage(@RequestParam(value = "page", defaultValue = "0") int page,
-                                     @RequestParam(value = "size", defaultValue = "12") int size,
                                      @RequestParam(value = "sortBy", defaultValue = "itemId") String sortBy,
-                                     @RequestParam(required = false, defaultValue = "") String status,
+                                     @RequestParam(value = "status", defaultValue = "ONGOING") String status,
                                      @RequestParam(value = "direction", defaultValue = "asc") String direction,
                                      @RequestParam(value = "search", required = false) String search,
+                                     @RequestParam(value = "categoryId", required = false) Long categoryId,
                                      Model model) {
+        itemService.updateItemStatus();
 
         List<String> statuses = itemService.getAllStatuses();
-        Page<Item> items;
+        Page<ItemResponseDto> items;
         if (search != null && !search.isEmpty()) {
-            items = itemService.searchItems(search,page,size,sortBy,direction,status); // 검색이 포함된 서비스 메서드 호출
+            items = itemService.searchItems(search,page,sortBy,direction,status,categoryId); // 검색이 포함된 서비스 메서드 호출
         } else {
-            items = itemService.getAllItems(page,size,sortBy,direction,status); // 검색 없이 모든 아이템 가져오기
+            items = itemService.getAllItems(page,sortBy,direction,status,categoryId); // 검색 없이 모든 아이템 가져오기
         }
+        List<Category> categories = categoryRepository.findAll();
 
+        model.addAttribute("categories", categories);
         model.addAttribute("items", items.getContent());
         model.addAttribute("currentPage", items.getNumber());
         model.addAttribute("totalPages", items.getTotalPages());
@@ -80,10 +120,12 @@ public class ItemController {
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("direction", direction);
         model.addAttribute("search", search);
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("status", status);
         model.addAttribute("statuses", statuses);
         return "item/list";
     }
+
     @GetMapping("/create")
     public String getAuctionCreatePage(Model model) {
         List<Category> categories=categoryRepository.findAll();

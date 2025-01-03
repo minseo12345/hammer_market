@@ -10,8 +10,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByItemIdIn(List<Long> itemIds);
     List<Item> findByStatus(Item.ItemStatus itemStatus);
     Page<Item> findByStatus(Item.ItemStatus itemStatus, Pageable pageable);
-    Page<Item> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<Item> findByStatusAndCategoryId(Item.ItemStatus itemStatus, Long categoryId, Pageable pageable);
     Page<Item> findByTitleContainingIgnoreCaseAndStatus(String keyword, Pageable pageable,Item.ItemStatus itemStatus);
+    Page<Item> findByTitleContainingIgnoreCaseAndStatusAndCategoryId(String keyword, Pageable pageable,Item.ItemStatus itemStatus, Long categoryId);
 //    List<Item> findByUserIdAndStatus(Long userId, String status);
     Page<Item> findByUser_UserId(Long userId, Pageable pageable);
 

@@ -1,11 +1,16 @@
-<!-- fragments/sidebar.html -->
 <div th:fragment="sidebar">
-  <div class="sidebar">
-    <div class="menu-item"><a href="/items/list">진행중인 경매</a></div>
-    <div class="menu-item"><a href="#">의류</a></div>
-    <div class="menu-item"><a href="#">가전제품</a></div>
-    <div class="menu-item"><a href="#">자동차</a></div>
-    <div class="menu-item"><a href="#">티켓</a></div>
-    <div class="menu-item"><a href="#">운동기구</a></div>
+  <div class="sidebar bg-light border rounded shadow-sm p-3 sticky-sidebar">
+    <h5 class="mb-3">카테고리</h5>
+    <ul class="list-group">
+      <li class="list-group-item list-group-item-action">
+        <a th:href="@{/items/list(sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status})}"
+           class="text-decoration-none text-dark category-link">전체 보기</a>
+      </li>
+      <li th:each="category : ${categories}"
+          class="list-group-item list-group-item-action">
+        <a th:href="@{/items/list(sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${category.categoryId})}"
+           th:text="${category.name}" class="text-decoration-none text-dark category-link"></a>
+      </li>
+    </ul>
   </div>
 </div>

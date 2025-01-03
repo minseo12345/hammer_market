@@ -50,9 +50,14 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
 
+        if (!user.isActive()) {
+            throw new IllegalArgumentException("비활성화된 계정입니다.");
+        }
+
         if (!bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
+//        정학님 벨리데이션 체크
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userEmail", user.getEmail());
