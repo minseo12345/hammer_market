@@ -68,12 +68,13 @@ public class ItemController {
 
         // 이미지 타입 검증
         String contentType = image.getContentType();
-        if (contentType == null || !(contentType.equals("image/jpeg") || 
-                                    contentType.equals("image/png") || 
+        if (contentType == null || !(contentType.equals("image/jpeg") ||
+                                    contentType.equals("image/png") ||
                                     contentType.equals("image/jpg"))) {
             redirectAttributes.addFlashAttribute("error", "JPG, JPEG 또는 PNG 형식의 이미지만 업로드 가능합니다.");
             return "redirect:/items/create";
         }
+
 
         // 경매 기간 검증
         if (itemPeriod == null || itemPeriod.trim().isEmpty()) {
