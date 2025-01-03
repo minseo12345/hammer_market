@@ -27,13 +27,21 @@
                         <img th:src="${item.fileUrl}" alt="상품 이미지">
                     </div>
 
-                    <p><strong>현재가:</strong> <span id="current-highest-bid" th:text="${highestBid}"></span></p>
-                    <p><strong>시작가:</strong> <span th:text="${item.getStartingBid()}"></span></p>
-                    <p><strong>즉시구매가:</strong> <span id="buy-now-price" th:text="${item.buyNowPrice}"></span></p>
-                    <p><strong>시작일:</strong> <span th:text="${item.getCreatedAt()}"></span></p>
-                    <p><strong>종료일:</strong> <span th:text="${item.getEndTime()}"></span></p>
+                    <p><strong>현재가:</strong> <span id="current-highest-bid" th:text="${#numbers.formatInteger(highestBid, 0, 'COMMA')} + 'p'"></span></p>
+                    <p><strong>시작가:</strong> <span th:text="${#numbers.formatInteger(item.getStartingBid(), 0, 'COMMA')} + 'p'"></span></p>
+                    <p><strong>즉시구매가:</strong> <span id="buy-now-price" th:text="${#numbers.formatInteger(item.buyNowPrice, 0, 'COMMA')} + 'p'"></span></p>
+                    <p><strong>시작일:</strong> <span th:text="${#temporals.format(item.getStartTime(), 'yyyy-MM-dd HH:mm')}"></span></p>
+                    <p><strong>종료일:</strong> <span th:text="${#temporals.format(item.getEndTime(), 'yyyy-MM-dd HH:mm')}"></span></p>
                     <p><strong>상품 설명:</strong> <span th:text="${item.description}"></span></p>
-                    <p><strong>상품 상태:</strong> <span th:text="${item.getStatus()}"></span></p>
+                    <p><strong>상품 상태:</strong> 
+                        <span th:switch="${item.getStatus().name()}">
+                            <span th:case="'ONGOING'" th:text="진행중"></span>
+                            <span th:case="'BIDDING_END'" th:text="낙찰"></span>
+                            <span th:case="'COMPLETED'" th:text="거래완료"></span>
+                            <span th:case="'CANCELLED'" th:text="거래취소"></span>
+                            <span th:case="'PARTIALLY_APPROVE'" th:text="거래수락 대기"></span>
+                        </span>
+                    </p>
 
                     <div class="bid-section">
                         <form id="bid-form" action="/bid" method="post">
