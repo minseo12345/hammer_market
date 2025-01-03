@@ -1,28 +1,60 @@
-/* 사이드바 스타일 */
 .sidebar {
-    width: 200px;
-    height: 480px;
-    background-color: #F3EDF7;
-    color: black;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding-top: 20px;
-    margin-top: 85px;
-    border-radius: 10px;
-    margin-left: 30px;
+    display: inline-block;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e3e6ea;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.menu-item {
-    margin: 10px 0; /* 위아래 간격 추가 */
-    border-bottom: 1px solid black;
-    padding: 5px;
-    text-align: left;
+.sidebar h5 {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #343a40;
 }
 
-.menu-item a {
-    color: black;
+.sidebar .list-group {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.sidebar .list-group-item {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    transition: background-color 0.2s ease;
+    white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+}
+
+.sidebar .list-group-item a {
+    display: inline-block;
+    max-width: 100%; /* 부모 요소의 너비에 따라 자동 확장 */
+    color: #343a40;
     text-decoration: none;
-    display: block;
+    font-size: 16px;
+}
+
+.sidebar .list-group-item:hover {
+    background-color: #f1f1f1;
+}
+
+.sidebar .list-group-item a:hover {
+    color: #007bff;
+}
+
+.sidebar .list-group-item .badge {
+    font-size: 14px;
+    background-color: #007bff;
+    color: #fff;
+}
+.sticky-sidebar {
+    position: sticky;
+    top: 10px; /* 상단에서의 고정 위치 */
+    z-index: 1000; /* 다른 요소 위에 표시되도록 설정 */
+    max-height: calc(100vh - 20px); /* 화면 높이에 따라 제한 */
+    overflow-y: auto; /* 항목이 많을 경우 스크롤 활성화 */
 }

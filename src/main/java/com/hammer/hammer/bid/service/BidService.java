@@ -159,7 +159,7 @@ public class BidService {
 
     //최고 입찰금액 조회
     public BigDecimal getHighestBidAmount(Long itemId) {
-        return bidRepository.findHighestBidByItemId(itemId).orElse(BigDecimal.ZERO);
+        return bidRepository.findHighestBidByItemId(itemId).orElse(null);
     }
 
     /**
