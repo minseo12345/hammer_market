@@ -42,7 +42,9 @@ public class ItemServiceTest {
     public void setup() {
         mockItem = new Item();
         mockItem.setItemId(1L);
+
         mockItem.setTitle("Test Item");
+        mockItem.setDescription("Test Description");
         mockItem.setStartingBid(BigDecimal.valueOf(5000));
         mockItem.setBuyNowPrice(BigDecimal.valueOf(10000));
         mockItem.setStartTime(LocalDateTime.now());
@@ -90,7 +92,7 @@ public class ItemServiceTest {
 
         // When
         when(itemRepository.save(any(Item.class))).thenReturn(mockItem);
-        Item savedItem = itemService.createItem(mockItem, mockFile, null, "3일");
+        Item savedItem = itemService.createItem(mockItem, mockFile, "3일");
 
         // Then
         assertEquals("/uploads/test.jpg", savedItem.getFileUrl(), "파일 URL이 정확히 매핑되지 않았습니다.");

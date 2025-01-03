@@ -11,6 +11,7 @@ import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 import com.hammer.hammer.user.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +30,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
 @Slf4j
 @Controller
 @RequestMapping("/items")
@@ -42,18 +48,48 @@ public class ItemController {
     private final CategoryRepository categoryRepository;
 
     @PostMapping("/create")
-    public String createItem(@ModelAttribute Item item,
+    public String createItem(@Valid @ModelAttribute Item item,
+                             BindingResult bindingResult,
                              @RequestParam("image") MultipartFile image,
                              @RequestParam("itemPeriod") String itemPeriod,
                              RedirectAttributes redirectAttributes) throws IOException {
 
-        log.info("period:{}", itemPeriod);
-        log.info("img:{}", image.getOriginalFilename());
-        log.info("Item:{}", item.getTitle());
-        itemService.createItem(item, image,itemPeriod);
+        // 검증 오류 처리
+        if (bindingResult.hasErrors()) {
+            // 모든 에러 메시지를 수집
+            String errorMessage = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
+            
+            redirectAttributes.addFlashAttribute("error", errorMessage);
+            return "redirect:/items/create";
+        }
 
-        redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 생성되었습니다!");
-        return "redirect:list";
+        // 이미지 타입 검증
+        String contentType = image.getContentType();
+        if (contentType == null || !(contentType.equals("image/jpeg") || 
+                                    contentType.equals("image/png") || 
+                                    contentType.equals("image/jpg"))) {
+            redirectAttributes.addFlashAttribute("error", "JPG, JPEG 또는 PNG 형식의 이미지만 업로드 가능합니다.");
+            return "redirect:/items/create";
+        }
+
+        // 경매 기간 검증
+        if (itemPeriod == null || itemPeriod.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "경매 기간을 선택해주세요.");
+            return "redirect:/items/create";
+        }
+
+        try {
+            itemService.createItem(item, image, itemPeriod);
+            redirectAttributes.addFlashAttribute("message", "경매가 성공적으로 생성되었습니다!");
+            return "redirect:list";
+        } catch (Exception e) {
+            log.error("Item creation failed", e);
+            redirectAttributes.addFlashAttribute("error", "경매 생성 중 오류가 발생했습니다.");
+            return "redirect:/items/create";
+        }
     }
 
     @GetMapping("/list")
