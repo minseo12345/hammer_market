@@ -71,7 +71,7 @@ public class NotificationService {
             // 최종 거래 완료 알림 생성
             String completeMessage = String.format("%d상품의 거래가 완료되었습니다.", transactionId);
             Notification notification = new Notification(userId, item, completeMessage);
-            notificationRepository.save(notification);
+//            notificationRepository.save(notification);
 
             // WebSocket으로 실시간 알림 전송 ( 거래 완료 )
             messagingTemplate.convertAndSend("/topic/notifications", notification);
