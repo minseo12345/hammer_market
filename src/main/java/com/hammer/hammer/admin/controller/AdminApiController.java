@@ -28,7 +28,7 @@ public class AdminApiController {
     }
     
     @GetMapping("/categories/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable("id") Long id) {
         Optional<Category> optionalCategory = adminService.findById(id);
         if (optionalCategory.isPresent()) {
             return ResponseEntity.ok(optionalCategory.get());
@@ -36,7 +36,12 @@ public class AdminApiController {
         return ResponseEntity.notFound().build();
     }
 
-
+    @PostMapping("/categories/edit/{id}")
+    public String updateCategory(@PathVariable("id") Long id, @ModelAttribute("category") Category category) {
+    	 System.out.println("Category ID: " + id);
+    	adminService.updateCategory(id, category);
+        return "redirect:/admin/categories";
+    }
     // 카테고리 삭제
     @DeleteMapping("/categories/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {

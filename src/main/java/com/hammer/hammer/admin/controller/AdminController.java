@@ -51,7 +51,6 @@ public class AdminController {
     @GetMapping("/categories")
     public String getCategory(Model model) {
     	  List<Category> categories = adminService.findAll();
-    	    System.out.println("Categories sent to the view: " + categories);
     	    model.addAttribute("categories", categories);
     	    return "admin/categories";
     }
@@ -66,7 +65,7 @@ public class AdminController {
     @GetMapping("/categories/new")
     public String createCategoryForm(Model model) {
         model.addAttribute("category", new Category());
-        return "/admin/categories.new";
+        return "admin/categories.new";
     }
 
     
@@ -81,13 +80,5 @@ public class AdminController {
         return "redirect:/admin/categories";
     }
 
-    // 카테고리 상세 보기 화면
-    @GetMapping("/categories/{id}")
-    public String getCategoryById(@PathVariable Long id, Model model) {
-        Optional<Category> optionalCategory = adminService.findById(id);
-        if (optionalCategory.isPresent()) {
-            model.addAttribute("category", optionalCategory.get());
-        }
-        return "/admin/categories.detail";
-    }
+  
 }
