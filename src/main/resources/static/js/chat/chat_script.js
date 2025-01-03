@@ -243,6 +243,17 @@ messageInputEl.addEventListener('keypress', (event) => {
 // 메시지 전송 기능
 function sendMessage() {
     const content = messageInputEl.value.trim();
+    // 메시지가 비어있을 경우
+    if (content === "") {
+        alert("메세지를 입력해주세요.");
+        return;
+    }
+
+    // 메시지가 100자 이상일 경우
+    if (content.length > 100) {
+        alert("메세지는 100자 까지만 가능합니다.");
+        return;
+    }
     if (content && currentChatRoomId) {
         const message = {
             chatRoomId: currentChatRoomId,
