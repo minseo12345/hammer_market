@@ -45,7 +45,6 @@ public class Item{
     private String description;
 
     @NotNull(message = "시작 가격은 필수 입력 항목입니다.")
-    @DecimalMin(value = "100", message = "시작 가격은 100원 이상이어야 합니다.")
     @Column(nullable = false)
     private BigDecimal startingBid;
 

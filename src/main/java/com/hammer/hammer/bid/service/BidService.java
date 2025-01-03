@@ -168,7 +168,8 @@ public class BidService {
 
     //최고 입찰금액 조회
     public BigDecimal getHighestBidAmount(Long itemId) {
-        return bidRepository.findHighestBidByItemId(itemId).orElse(null);
+        Item item = itemRepository.findById(itemId).orElseThrow(()-> new IllegalStateException("상품을 찾을 수 없습니다."));
+        return bidRepository.findHighestBidByItemId(itemId).orElse(item.getStartingBid());
     }
 
     /**

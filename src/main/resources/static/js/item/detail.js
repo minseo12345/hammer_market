@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
         buyNowButton.disabled = true;
     }
 
-    // 입찰하기 버튼 클릭 이벤트
     submitBidButton.addEventListener('click', function(event) {
         if (itemStatus === 'BIDDING_END') {
             event.preventDefault();
@@ -47,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             xhr.onload = function() {
                 if (xhr.status === 200) {
                     alert('입찰 성공! 현재가가 갱신되었습니다.');
+                    location.reload();  // 성공하면 페이지 새로고침
                 } else {
                     var errorMessage = xhr.responseText || '입찰 실패! 다시 시도해주세요.';
                     alert(errorMessage);
@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 즉시 구매 버튼 클릭 이벤트
     buyNowButton.addEventListener('click', function(event) {
         if (itemStatus === 'BIDDING_END') {
             event.preventDefault();
@@ -81,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.onload = function() {
             if (xhr.status === 200) {
                 alert('즉시 구매가로 입찰 성공! 현재가가 갱신되었습니다.');
+                location.reload();
             } else {
                 var errorMessage = xhr.responseText || '입찰 실패! 다시 시도해주세요.';
                 alert(errorMessage);
