@@ -6,9 +6,11 @@ import com.hammer.hammer.transaction.entity.Transaction;
 //import com.hammer.hammer.transaction.entity.Transaction;
 import com.hammer.hammer.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +20,9 @@ import java.util.List;
 @Table(name = "items")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item{
 
     @Id
@@ -29,13 +34,19 @@ public class Item{
     @Column(name = "category_id", nullable = false)
     private Long categoryId;
 
-    @Column(name = "title", length = 100, nullable = false)
+    @NotBlank(message = "제목은 필수 입력 항목입니다.")
+    @Size(max = 100, message = "제목은 100자 이하여야 합니다.")
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @NotBlank(message = "상품 설명은 필수 입력 항목입니다.")
+    @Size(max = 1000, message = "상품 설명은 1000자 이하여야 합니다.")
+    @Column(nullable = false)
     private String description;
 
-    @Column(name = "starting_bid", precision = 12)
+    @NotNull(message = "시작 가격은 필수 입력 항목입니다.")
+    @DecimalMin(value = "100", message = "시작 가격은 100원 이상이어야 합니다.")
+    @Column(nullable = false)
     private BigDecimal startingBid;
 
     @Column(name = "buyNowPrice", precision = 12)

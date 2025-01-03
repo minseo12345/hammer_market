@@ -64,10 +64,10 @@ public class User implements UserDetails {
     @Column(name = "active")
     private boolean active = true; // 활성화 상태
 
-    @Column(name = "created_at", updatable = false, insertable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", insertable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist
