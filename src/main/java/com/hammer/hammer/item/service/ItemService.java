@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -40,36 +41,44 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
-    public Page<Item> getAllItems(int page,int size,String sortBy,String direction,String status) {
+    public Page<Item> getAllItems(int page,String sortBy,String direction,String status,Long categoryId) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, 12, sort);
 
-        if (status == null || status.isEmpty()) {
-            return itemRepository.findAll(pageable);
-        } else {
+        if (categoryId == null) {
             for(Item.ItemStatus itemStatus : Item.ItemStatus.values()) {
                 if(status.equals(itemStatus.name()))
                     return itemRepository.findByStatus(itemStatus, pageable);
             }
-            return null;
+        } else {
+            for(Item.ItemStatus itemStatus : Item.ItemStatus.values()) {
+                if(status.equals(itemStatus.name()))
+                    return itemRepository.findByStatusAndCategoryId(itemStatus, categoryId,pageable);
+            }
         }
+        return null;
     }
 
-    public Page<Item> searchItems(String keyword, int page,int size,String sortBy,String direction,String status) {
+    public Page<Item> searchItems(String keyword, int page,String sortBy,String direction,String status,Long categoryId) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, 12, sort);
 
-        if (status == null || status.isEmpty()) {
-            return itemRepository.findByTitleContainingIgnoreCase(keyword, pageable);
-        } else {
+        if (categoryId == null) {
             for(Item.ItemStatus itemStatus : Item.ItemStatus.values()) {
                 if(status.equals(itemStatus.name()))
                     return itemRepository.findByTitleContainingIgnoreCaseAndStatus(keyword, pageable,itemStatus);
             }
-            return null;
+        } else {
+            for(Item.ItemStatus itemStatus : Item.ItemStatus.values()) {
+                if(status.equals(itemStatus.name()))
+                    return itemRepository.findByTitleContainingIgnoreCaseAndStatusAndCategoryId(keyword, pageable,itemStatus,categoryId);
+            }
         }
+        return null;
     }
 
+
+    @Transactional
     public Item createItem(Item item, MultipartFile image, String itemPeriod) throws IOException {
         if (!image.isEmpty()) {
             String uploadPath = "C:/uploads/";
@@ -115,7 +124,7 @@ public class ItemService {
     }
 
 
-
+    @Transactional
     public Item updateAuctionStatus(Long itemId, Item.ItemStatus newStatus) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
@@ -132,18 +141,30 @@ public class ItemService {
                 .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다: " + id));
 
         // 상태 확인
-        updateItemStatus(item);
+        updateItemStatus();
 
         return item;
     }
+
     //상태확인
-    private void updateItemStatus(Item item) {
-        if (item.getEndTime().isBefore(LocalDateTime.now())) {
-            item.setStatus(Item.ItemStatus.COMPLETED);
-            itemRepository.save(item);
+
+    @Transactional
+    public void updateItemStatus() {
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        // 'ONGOING' 상태의 아이템들을 가져옵니다.
+        List<Item> ongoingItems = itemRepository.findByStatus(Item.ItemStatus.ONGOING);
+
+        for (Item it : ongoingItems) {
+            // 아이템의 endTime이 현재 시간보다 이전이면 상태를 'BIDDING_END'로 업데이트
+            if (it.getEndTime().isBefore(currentTime)) {
+                it.setStatus(Item.ItemStatus.BIDDING_END);
+                itemRepository.save(it); // 상태 업데이트
+            }
         }
     }
 
+    @Transactional
     public void deleteItem(Long id) {
         itemRepository.deleteById(id);
     }
@@ -156,5 +177,6 @@ public class ItemService {
 
         return itemRepository.findByUser_UserId(userId, pageable);
     }
+
 
 }

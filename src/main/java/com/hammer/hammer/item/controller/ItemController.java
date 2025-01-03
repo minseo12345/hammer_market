@@ -38,7 +38,7 @@ public class ItemController {
     private final ItemService itemService;
     private final BidService bidService;
     private final UserService userService;
-    private final CategoryRepository CategoryRepository;
+
     private final CategoryRepository categoryRepository;
 
     @PostMapping("/create")
@@ -58,21 +58,24 @@ public class ItemController {
 
     @GetMapping("/list")
     public String getAuctionListPage(@RequestParam(value = "page", defaultValue = "0") int page,
-                                     @RequestParam(value = "size", defaultValue = "12") int size,
                                      @RequestParam(value = "sortBy", defaultValue = "itemId") String sortBy,
-                                     @RequestParam(required = false, defaultValue = "") String status,
+                                     @RequestParam(value = "status", defaultValue = "ONGOING") String status,
                                      @RequestParam(value = "direction", defaultValue = "asc") String direction,
                                      @RequestParam(value = "search", required = false) String search,
+                                     @RequestParam(value = "categoryId", required = false) Long categoryId,
                                      Model model) {
+        itemService.updateItemStatus();
 
         List<String> statuses = itemService.getAllStatuses();
         Page<Item> items;
         if (search != null && !search.isEmpty()) {
-            items = itemService.searchItems(search,page,size,sortBy,direction,status); // 검색이 포함된 서비스 메서드 호출
+            items = itemService.searchItems(search,page,sortBy,direction,status,categoryId); // 검색이 포함된 서비스 메서드 호출
         } else {
-            items = itemService.getAllItems(page,size,sortBy,direction,status); // 검색 없이 모든 아이템 가져오기
+            items = itemService.getAllItems(page,sortBy,direction,status,categoryId); // 검색 없이 모든 아이템 가져오기
         }
+        List<Category> categories = categoryRepository.findAll();
 
+        model.addAttribute("categories", categories);
         model.addAttribute("items", items.getContent());
         model.addAttribute("currentPage", items.getNumber());
         model.addAttribute("totalPages", items.getTotalPages());
@@ -80,10 +83,12 @@ public class ItemController {
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("direction", direction);
         model.addAttribute("search", search);
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("status", status);
         model.addAttribute("statuses", statuses);
         return "item/list";
     }
+
     @GetMapping("/create")
     public String getAuctionCreatePage(Model model) {
         List<Category> categories=categoryRepository.findAll();
