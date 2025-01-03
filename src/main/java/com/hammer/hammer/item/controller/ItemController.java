@@ -115,7 +115,7 @@ public class ItemController {
             items = itemService.getAllItems(page,sortBy,direction,status,categoryId); // 검색 없이 모든 아이템 가져오기
         }
         List<Category> categories = categoryRepository.findAll();
-        log.info("get size{}",items.getSize());
+
 
         model.addAttribute("categories", categories);
         model.addAttribute("items", items.getContent());
@@ -150,7 +150,9 @@ public class ItemController {
         if (highestBid.compareTo(BigDecimal.ZERO) == 0) {
             highestBid = item.getStartingBid();
         }
+        List<Category> categories = categoryRepository.findAll();
 
+        model.addAttribute("categories", categories);
         model.addAttribute("item", item);
         model.addAttribute("highestBid", highestBid);
         model.addAttribute("bids",bids);

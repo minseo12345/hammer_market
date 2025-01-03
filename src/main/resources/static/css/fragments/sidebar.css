@@ -58,3 +58,8 @@
     max-height: calc(100vh - 20px); /* 화면 높이에 따라 제한 */
     overflow-y: auto; /* 항목이 많을 경우 스크롤 활성화 */
 }
+.category-link.active {
+    font-weight: bold;
+    color: #007bff;  /* 강조 색상 */
+    background-color: #e9ecef;  /* 선택된 배경 색상 */
+}
