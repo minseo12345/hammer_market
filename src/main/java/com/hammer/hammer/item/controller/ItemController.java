@@ -111,6 +111,7 @@ public class ItemController {
             items = itemService.getAllItems(page,sortBy,direction,status,categoryId); // 검색 없이 모든 아이템 가져오기
         }
         List<Category> categories = categoryRepository.findAll();
+        log.info("get size{}",items.getSize());
 
         model.addAttribute("categories", categories);
         model.addAttribute("items", items.getContent());
