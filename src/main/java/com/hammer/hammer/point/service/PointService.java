@@ -90,9 +90,6 @@ public class PointService {
 
         BigDecimal currentPoint = chargePointUser.getCurrentPoint();
 
-        if (requestChargePointDto.getPointAmount().compareTo(currentPoint) > 0) {
-            throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
-        }
 
         BigDecimal updatePoint = currentPoint.add(requestChargePointDto.getPointAmount());
 
@@ -145,6 +142,10 @@ public class PointService {
         User currencyUser = userRepository.findByUserId(userId).orElseThrow(
                 () -> new IllegalStateException("사용자를 찾을 수 없습니다.")
         );
+
+        if (requestChargePointDto.getPointAmount().compareTo(currencyUser.getCurrentPoint()) > 0) {
+            throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
+        }
 
         BigDecimal currentPoint = currencyUser.getCurrentPoint();
         BigDecimal updatePoint = currentPoint.subtract(requestChargePointDto.getPointAmount());

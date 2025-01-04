@@ -15,10 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -29,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/bid")
 @Slf4j
-public class BidController {
+public class BidApiController {
     private final BidService bidService;
     private final TransactionService transactionService;
 
@@ -79,32 +77,6 @@ public class BidController {
         }
     }
 
-
-    /**
-     * 사용자 별 입찰 내역 조회
-     */
-    @GetMapping("/user/{userId}")
-    public String getBidsByUser(@PathVariable Long userId,
-                                Model model,
-                                @PageableDefault(page = 0, size = 10) Pageable pageable,
-                                @RequestParam(defaultValue = "") String sort,
-                                @RequestParam(defaultValue = "") String itemName,
-                                @AuthenticationPrincipal UserDetails authenticatedPrincipal) {
-
-        if (userId == null) {
-            model.addAttribute("userError", "사용자가 없습니다.");
-        }
-
-        Page<ResponseBidByUserDto> bidsByUser = bidService.getBidsByUser(userId,pageable,sort,itemName,authenticatedPrincipal);
-        model.addAttribute("bids",bidsByUser);
-        model.addAttribute("currentPage", pageable.getPageNumber());
-        model.addAttribute("totalPages", bidsByUser.getTotalPages());
-        model.addAttribute("data-user-id",userId);
-        model.addAttribute("sortParam", sort);
-        model.addAttribute("itemName", itemName);
-
-        return "/bid/bidsByUser";
-    }
 
     /**
      *  상품 별 입찰 내역 조회
