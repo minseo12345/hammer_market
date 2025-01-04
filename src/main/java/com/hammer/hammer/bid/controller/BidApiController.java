@@ -103,7 +103,7 @@ public class BidController {
         model.addAttribute("sortParam", sort);
         model.addAttribute("itemName", itemName);
 
-        return "bid/bidsByUser";
+        return "/bid/bidsByUser";
     }
 
     /**

@@ -1,9 +1,51 @@
 <!-- fragments/sidebar.html -->
 <div th:fragment="sidebar">
-    <div class="sidebar">
-        <div class="menu-item"><a th:href="@{'/profile/myProfile'}">내 정보</a></div>
-        <div class="menu-item"><a th:href="@{'/bid/user/' + ${userId}}">입찰 내역 조회</a></div>
-        <div class="menu-item"><a th:href="@{'/profile/mySell'}">판매 내역 조회</a></div>
-        <div class="menu-item"><a th:href="@{'/points/select/' + ${userId}}">포인트 관리</a></div>
+    <div class="sidebar bg-light border rounded shadow-sm p-3 sticky-sidebar" id="sidebar-css">
+
+        <ul class = "list-group">
+            <li class = "list-group-item list-group-item-action">
+                <a th:href="@{'/profile/myProfile'}" >내 정보</a>
+            </li>
+
+            <li class = "list-group-item list-group-item-action">
+                <a th:href="@{'/bid/user/' + ${userId}}">입찰 내역 조회</a>
+            </li>
+
+
+            <li class = "list-group-item list-group-item-action">
+                <a th:href="@{'/profile/mySell'}">판매 내역 조회</a>
+            </li>
+
+            <li class = "list-group-item list-group-item-action">
+                <a th:href="@{'/points/select/' + ${userId}}">포인트 관리</a>
+            </li>
+
+        </ul>
+
     </div>
 </div>
+
+<!--<div th:fragment="sidebar">-->
+
+<!--        <h5 class="mb-3">카테고리</h5>-->
+<!--        <ul class="list-group">-->
+<!--            <li class="list-group-item list-group-item-action">-->
+<!--                <a th:href="@{/items/list(sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status})}"-->
+<!--                   class="text-decoration-none text-dark category-link" onclick="setActiveCategory(this)">전체 보기</a>-->
+<!--            </li>-->
+<!--            <li th:each="category : ${categories}"-->
+<!--                class="list-group-item list-group-item-action">-->
+<!--                <a th:href="@{/items/list(sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${category.categoryId})}"-->
+<!--                   th:text="${category.name}" class="text-decoration-none text-dark category-link" onclick="setActiveCategory(this)"></a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
+<!--    <script>-->
+<!--        function setActiveCategory(clickedElement) {-->
+<!--            // 이미 'active' 클래스가 있는지 확인하고, 없으면 추가-->
+<!--            if (!clickedElement.classList.contains('active')) {-->
+<!--                clickedElement.classList.add('active');-->
+<!--            }-->
+<!--        }-->
+<!--    </script>-->
+<!--</div>-->
