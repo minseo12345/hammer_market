@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const balanceElement = document.getElementById('balance');
-    let currentBalance = balanceElement.textContent.replace(',', '').replace('P', '').trim();  // balanceElement에서 값 가져오기
+    let currentBalance = balanceElement.textContent.replace(',', '').replace('P', '').trim();
 
     const pointButtons = document.querySelectorAll('.charge-points button');
     const nextButton = document.getElementById('next');

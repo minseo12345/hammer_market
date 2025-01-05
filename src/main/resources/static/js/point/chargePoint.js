@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const balanceElement = document.getElementById('balance');
-    let currentBalance = balanceElement.textContent.replace(',', '').replace('P', '').trim();  // balanceElement에서 값 가져오기
+    let currentBalance = balanceElement.textContent.replace(',', '').replace('P', '').trim();
 
     const pointButtons = document.querySelectorAll('.charge-points button');
     const nextButton = document.querySelector('.charge-footer .next');
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function resetState() {
         pointButtons.forEach(btn => btn.classList.remove('selected'));
-        nextButton.disabled = true;
+        nextButton.disabled = true;  // 포인트를 선택하지 않으면 버튼 비활성화
         descriptionInput.value = '';
     }
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => {
             pointButtons.forEach(btn => btn.classList.remove('selected'));
             button.classList.add('selected');
-            nextButton.disabled = false;
+            nextButton.disabled = false;  // 포인트 선택 시 버튼 활성화
         });
     });
 
@@ -28,25 +28,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     nextButton.addEventListener('click', () => {
         const selectedButton = document.querySelector('.charge-points button.selected');
+
+        // 포인트를 선택하지 않으면 경고 알림
         if (!selectedButton) {
             alert('충전할 포인트를 선택해주세요.');
-            return;
+            return;  // 선택이 없으면 함수 종료
         }
 
         const selectedValue = selectedButton.dataset.value;
-        if (!confirm(`${selectedValue.toLocaleString()}P를 충전하시겠습니까?`)) {
-            return;
+
+        if (!confirm(`${Number(selectedValue).toLocaleString()}P를 충전하시겠습니까?`)) {
+            return;  // 확인을 취소하면 충전하지 않음
         }
 
         processCharge(selectedValue);
     });
 
     function processCharge(selectedValue) {
+        // 보유 포인트에 충전 금액 더하기
         currentBalance = (parseInt(currentBalance.replace(',', '').replace('P', '').trim()) + parseInt(selectedValue)).toLocaleString();
-        balanceElement.textContent = `${currentBalance}P`;
+        balanceElement.textContent = `${currentBalance}`;  // 업데이트된 보유 포인트 표시
 
         const description = descriptionInput.value.trim() || '충전';
-        const userId = window.location.pathname.split("/")[3];  // 사용자 ID 가져오기
+        const userId = window.location.pathname.split("/")[3];
 
         const formData = new FormData();
         formData.append('pointAmount', selectedValue);
@@ -65,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.text();
             })
             .then(html => {
-                document.write(html);  // 서버에서 받은 응답 처리
-                alert(`${selectedValue.toLocaleString()}P 충전이 완료되었습니다.`);
+                document.write(html);
+                alert(`${Number(selectedValue).toLocaleString()}P 충전이 완료되었습니다.`);
             })
             .catch(error => {
                 console.error('충전 중 오류:', error);
