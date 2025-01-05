@@ -25,7 +25,7 @@
             <div class="points-summary">
                 <div class="points-info">
                     <h2>포인트</h2>
-                    <p th:text="${#numbers.formatInteger(currentPoint, 0, 'COMMA')}"></p>
+                    <p th:text="${#numbers.formatInteger(currentPoint, 0, 'COMMA')} + 'P'"></p>
 
                     <div class="points-buttons">
                         <form th:action="@{/points/charge/{userId}(userId=${userId})}" method="get">
@@ -63,8 +63,8 @@
                         <td th:text="${point.pointType}"></td>
                         <td th:text="${point.description}"></td>
                         <td th:text="${point.createAt}"></td>
-                        <td th:text="${point.pointAmount}"></td>
-                        <td th:text="${point.balanceAmount}"></td>
+                        <td th:text="${point.pointAmount} + 'P'"></td>
+                        <td th:text="${point.balanceAmount} + 'P'"></td>
                     </tr>
                     </tbody>
                 </table>
