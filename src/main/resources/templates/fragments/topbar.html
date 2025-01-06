@@ -50,7 +50,7 @@
                 </div>
             </div>
 <!--                <span id="userId" th:attr="data-user-id=${userId ?: '비로그인 사용자'}"></span>-->
-                <span id="userId" th:text="${userId}"></span>
+                <span id="userId" th:text="${userId}" style="display:none;"></span>
                 <div sec:authorize="!isAuthenticated()">
                 <a href="/login">로그인</a>
             </div>

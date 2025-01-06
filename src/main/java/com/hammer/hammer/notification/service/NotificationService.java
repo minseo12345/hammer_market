@@ -49,11 +49,19 @@ public class NotificationService {
 
         // 상태 변경 로직
         if (item.getStatus() == Item.ItemStatus.BIDDING_END) {
+            // 첫 번째 사용자 수락 -> PARTIALLY_APPROVE 상태로 변경
             item.setStatus(Item.ItemStatus.PARTIALLY_APPROVE);
-        } else if (item.getStatus() == Item.ItemStatus.PARTIALLY_APPROVE && !transaction.getModifiedBy().contains(userId)) {
-            item.setStatus(Item.ItemStatus.COMPLETED);
+            transaction.addModifiedBy(userId); // 사용자 추가
+        } else if (item.getStatus() == Item.ItemStatus.PARTIALLY_APPROVE) {
+            // 두 번째 사용자 수락 -> 거래 완료
+            if (transaction.getModifiedBy().size() < 2) {
+                throw new IllegalStateException("모든 사용자가 수락하지 않았습니다.");
+            }
 
-            transaction.addModifiedBy(userId); // 변경한 사용자 추가
+            item.setStatus(Item.ItemStatus.COMPLETED);
+            transaction.addModifiedBy(userId); // 사용자 추가
+
+
 
             // 포인트 처리
             pointService.processTransactionPoints(transaction);
