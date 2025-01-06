@@ -59,10 +59,16 @@ function loadCart(userId) {
 
         const bidInfo = document.createElement("p");
         bidInfo.innerHTML = `
-                <strong>시작가:</strong> ${item.startingBid} 원<br>
-                <strong>즉시 구매가:</strong> ${item.buyNowPrice} 원<br>
-                <strong>상태:</strong> ${item.status}
-            `;
+    <strong>시작가:</strong> ${item.startingBid} 원<br>
+    <strong>즉시 구매가:</strong> ${item.buyNowPrice != null ? item.buyNowPrice + ' 원' : '-'}<br>
+    <strong>상태:</strong> ${
+            item.status === 'ONGOING' ? '진행중' :
+                item.status === 'BIDDING_END' ? '낙찰' :
+                    item.status === 'COMPLETED' ? '거래완료' :
+                        item.status === 'CANCELLED' ? '거래취소' :
+                            item.status === 'PARTIALLY_APPROVE' ? '거래수락 대기' : '알 수 없음'
+        }
+`;
 
         // Add "Remove from Cart" button
         const removeButton = document.createElement("button");
