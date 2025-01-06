@@ -64,6 +64,14 @@ public class BidService {
         BigDecimal currentHighestBid = bidRepository.findHighestBidByItemId(requestBidDto.getItemId())
                 .orElse(BigDecimal.ZERO);
 
+        if(requestBidDto.getBidAmount().compareTo(item.getBuyNowPrice())>0){
+            throw new IllegalArgumentException("입찰 금액이 즉시구매가보다 클 수 없습니다.");
+        }
+
+        if(item.getStartingBid().compareTo(requestBidDto.getBidAmount())>0){
+            throw new IllegalArgumentException("입찰 금액이 시작가보다 작을 수 없습니다.");
+        }
+
         if (requestBidDto.getBidAmount().compareTo(currentHighestBid) <= 0) {
             throw new BidAmountTooLowException("입찰 금액이 현재 최고 입찰가보다 작습니다.");
         }
