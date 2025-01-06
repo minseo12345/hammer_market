@@ -68,9 +68,6 @@ public class BidService {
             throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
         }
 
-        if(item.getBuyNowPrice().compareTo(requestBidDto.getBidAmount()) == 0){
-            transactionService.createTransactionForImmediatePurchase(item.getItemId());
-        }
 
         BigDecimal currentHighestBid = bidRepository.findHighestBidByItemId(requestBidDto.getItemId())
                 .orElse(BigDecimal.ZERO);
@@ -93,6 +90,68 @@ public class BidService {
                     .bidAmount(requestBidDto.getBidAmount())
                     .bidTime(LocalDateTime.now())
                     .build();
+
+
+        bidRepository.save(newBid);
+
+        if(item.getBuyNowPrice().compareTo(requestBidDto.getBidAmount()) == 0){
+            transactionService.createTransactionForImmediatePurchase(item.getItemId());
+        }
+    }
+
+
+    /**
+     * 입찰 등록
+     */
+    @Transactional
+    public void saveBid(RequestBidDto requestBidDto, UserDetails userDetails, String buyNow) {
+
+        if (!requestBidDto.getUserId().toString().equals(userDetails.getUsername())) {
+            throw new IllegalStateException("접근 권한이 없습니다.");
+        }
+
+        User user = userRepository.findById(requestBidDto.getUserId()).orElseThrow(
+                ()-> new IllegalStateException("사용자를 찾을 수 없습니다.")
+        );
+
+        Item item = itemRepository.findById(requestBidDto.getItemId()).orElseThrow(
+                ()-> new IllegalStateException("상품을 찾을 수 없습니다.")
+        );
+
+        if (item.getStatus() != Item.ItemStatus.ONGOING) {
+            throw new IllegalStateException("종료된 경매입니다.");
+        }
+
+
+        if(item.getUser().getUserId().equals(requestBidDto.getUserId())) {
+            throw new IllegalStateException("판매자는 입찰을 등록할 수 없습니다.");
+        }
+
+        if (requestBidDto.getBidAmount().compareTo(user.getCurrentPoint()) > 0) {
+            throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
+        }
+
+        BigDecimal currentHighestBid = bidRepository.findHighestBidByItemId(requestBidDto.getItemId())
+                .orElse(BigDecimal.ZERO);
+
+        if(requestBidDto.getBidAmount().compareTo(item.getBuyNowPrice())>0){
+            throw new IllegalArgumentException("입찰 금액이 즉시구매가보다 클 수 없습니다.");
+        }
+
+        if(item.getStartingBid().compareTo(requestBidDto.getBidAmount())>0){
+            throw new IllegalArgumentException("입찰 금액이 시작가보다 작을 수 없습니다.");
+        }
+
+        if (requestBidDto.getBidAmount().compareTo(currentHighestBid) <= 0) {
+            throw new BidAmountTooLowException("입찰 금액이 현재 최고 입찰가보다 작습니다.");
+        }
+
+        Bid newBid = Bid.builder()
+                .user(user)
+                .item(item)
+                .bidAmount(requestBidDto.getBidAmount())
+                .bidTime(LocalDateTime.now())
+                .build();
 
 
         bidRepository.save(newBid);
