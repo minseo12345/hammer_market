@@ -139,7 +139,7 @@ public class BidService {
                     .description(bid.getItem().getDescription())
                     .itemName(bid.getItem().getTitle())
                     .createAt(bid.getItem().getCreatedAt())
-                    .username(item.getUser().getUsername())
+                    .username(bid.getUser().getUsername())
                     .imageUrl(item.getFileUrl())
                     .build();
         }).collect(Collectors.toList());
