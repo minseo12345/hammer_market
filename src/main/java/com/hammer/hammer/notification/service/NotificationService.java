@@ -27,10 +27,10 @@ public class NotificationService {
     private final PointService pointService;
 
     // 거래 확인 이벤트 처리
-    public void handleTransactionComplete(Long transactionId, Long userId) {
+    public void handleTransactionComplete(Long itemId, Long userId) {
         // 거래 확인
-        Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + transactionId));
+        Transaction transaction = transactionRepository.findByItem_ItemId(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + itemId));
 
         Item item = transaction.getItem();
 
@@ -54,22 +54,19 @@ public class NotificationService {
             transaction.addModifiedBy(userId); // 사용자 추가
         } else if (item.getStatus() == Item.ItemStatus.PARTIALLY_APPROVE) {
             // 두 번째 사용자 수락 -> 거래 완료
-            if (transaction.getModifiedBy().size() < 2) {
+            /*if (transaction.getModifiedBy().size() < 2) {
                 throw new IllegalStateException("모든 사용자가 수락하지 않았습니다.");
-            }
-
+            }*/
             item.setStatus(Item.ItemStatus.COMPLETED);
             transaction.addModifiedBy(userId); // 사용자 추가
-
-
 
             // 포인트 처리
             pointService.processTransactionPoints(transaction);
 
             // 최종 거래 완료 알림 생성
-            String completeMessage = String.format("%d상품의 거래가 완료되었습니다.", transactionId);
+            String completeMessage = String.format("%d상품의 거래가 완료되었습니다.", itemId);
             Notification notification = new Notification(userId, item, completeMessage);
-//            notificationRepository.save(notification);
+            // notificationRepository.save(notification);
 
             // WebSocket으로 실시간 알림 전송 ( 거래 완료 )
             messagingTemplate.convertAndSend("/topic/notifications", notification);
@@ -78,10 +75,10 @@ public class NotificationService {
     }
 
     // 거래 포기 이벤트 처리
-    public void handleTransactionCancel(Long transactionId, Long userId) {
+    public void handleTransactionCancel(Long itemId, Long userId) {
         // 거래 확인
-        Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + transactionId));
+        Transaction transaction = transactionRepository.findByItem_ItemId(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 거래를 찾을 수 없습니다. ID: " + itemId));
 
         // 아이템 상태를 CANCELLED로 변경
         Item item = transaction.getItem();
@@ -89,13 +86,14 @@ public class NotificationService {
         itemRepository.save(item);
 
         // 거래 포기 알림 생성
-        String cancelMessage = String.format("[%d]상품의 거래가 취소되었습니다.", transactionId);
+        String cancelMessage = String.format("[%d]상품의 거래가 취소되었습니다.", itemId);
         Notification notification = new Notification(userId, item, cancelMessage);
-        //notificationRepository.save(notification);
+        // notificationRepository.save(notification);
 
         // WebSocket으로 실시간 알림 전송
         messagingTemplate.convertAndSend("/topic/notifications", notification);
     }
+
 
     // 현재 사용자의 모든 알림 목록 조회
     public List<Notification> getNotificationsByUserId(Long userId) {
