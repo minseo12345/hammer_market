@@ -86,7 +86,7 @@
             </li>
 
             <!-- 마지막 페이지로 이동 -->
-            <li th:classappend="${bids.number == bids.totalPages - 1} ? 'disabled' : ''">
+            <li th:classappend="${bids.number == bids.totalPages - 1 or bids.totalPages == 0} ? 'disabled' : ''">
                 <a th:href="@{/bid/user/{userId}(userId=${userId}, page=${bids.totalPages - 1}, sort=${sortParam}, itemName=${itemName})}" th:text="'>>'"></a>
             </li>
         </ul>
