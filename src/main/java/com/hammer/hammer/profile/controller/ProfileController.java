@@ -33,8 +33,21 @@ public class ProfileController {
     public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model){
         Long userId = Long.valueOf(userDetails.getUsername());
         User userInfo = userService.getUserById(userId);
+        String translatedRoleName = translateRoleName(userInfo.getRole().getRoleName());
         model.addAttribute("userInfo", userInfo);
+        model.addAttribute("translatedRoleName", translatedRoleName);
         return "profile/myProfile";
+    }
+
+    private String translateRoleName(String roleName) {
+        switch (roleName) {
+            case "ROLE_ADMIN":
+                return "관리자";
+            case "ROLE_USER":
+                return "사용자";
+            default:
+                return roleName;
+        }
     }
 
     @GetMapping("/mySell")

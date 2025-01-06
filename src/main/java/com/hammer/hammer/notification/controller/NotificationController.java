@@ -76,8 +76,15 @@ public class NotificationController {
     }
 
     @PostMapping("/transaction/complete")
-    public String completeTransaction(@RequestParam Long transactionId, @RequestParam Long userId, Model model) {
-        notificationService.handleTransactionComplete(transactionId, userId);
+    public String completeTransaction(@RequestParam Long itemId, @RequestParam Long userId, Model model) {
+        try {
+            notificationService.handleTransactionComplete(itemId, userId);
+            System.out.println("handleTransactionComplete 실행 성공");
+        } catch (Exception e) {
+            System.err.println("handleTransactionComplete 실행 중 예외 발생:");
+            e.printStackTrace();
+            return "error";
+        }
         // 거래 완료 알림 데이터 추가
         List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
         model.addAttribute("notifications", notifications);
@@ -86,8 +93,8 @@ public class NotificationController {
     }
 
     @PostMapping("/transaction/cancel")
-    public String cancelTransaction(@RequestParam Long transactionId, @RequestParam Long userId, Model model) {
-        notificationService.handleTransactionCancel(transactionId, userId);
+    public String cancelTransaction(@RequestParam Long itemId, @RequestParam Long userId, Model model) {
+        notificationService.handleTransactionCancel(itemId, userId);
 
         // 거래 포기 알림 데이터 추가
         List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
@@ -95,6 +102,7 @@ public class NotificationController {
 
         return "notifications :: #notification-list";
     }
+
 
 
     // 알림 화면 렌더링

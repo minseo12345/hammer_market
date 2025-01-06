@@ -26,4 +26,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 	void deleteById(Long id);
 
 	Optional<Transaction> findById(Long id);
+	Optional<Transaction> findByItem_ItemId(Long itemId);
+
+
 }
