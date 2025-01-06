@@ -55,8 +55,6 @@
                 <div class="col-md-3 d-flex align-items-center">
 
                     <select name="status" class="form-select" id="status" onchange="submitFilterForm()">
-<!--                        <option th:each="state : ${statuses}" th:value="${state}" th:text="${state}"-->
-<!--                                th:selected="${status == state}"></option>-->
                         <option th:each="state : ${statuses}"
                                 th:value="${state}"
                                 th:text="${state == 'ONGOING' ? '진행중' :
