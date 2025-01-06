@@ -1,5 +1,34 @@
 let errorMessage = ''; // 전역에서 사용할 변수 선언
 
+document.addEventListener("DOMContentLoaded", () => {
+    const notificationIcon = document.getElementById("notification-icon");
+    const notificationList = document.getElementById("notification-list");
+    const userIdElement = document.getElementById("userId");
+
+    if (!notificationIcon || !notificationList || !userIdElement) {
+        console.error("Required DOM elements not found!");
+        return;
+    }
+
+    const userId = userIdElement.textContent.trim();
+
+    initializeWebSocket(userId); // WebSocket 초기화
+    fetchNotifications(); // 알림 목록 가져오기
+
+    if (errorMessage) {
+        alert(errorMessage); // 에러 메시지 표시
+        errorMessage = ''; // 메시지 초기화
+    }
+
+    const notificationModal = new bootstrap.Modal(document.getElementById("notification-modal"));
+
+    notificationIcon.addEventListener("click", () => {
+        notificationModal.show(); // 모달 열기
+        fetchNotifications(); // 알림 목록 새로 가져오기
+    });
+});
+
+
 // 알림 목록 가져오기
 async function fetchNotifications() {
     const notificationList = document.getElementById("notification-list");
@@ -198,7 +227,7 @@ function initializeWebSocket(userId) {
 
 async function completeTransaction(itemId, userId) {
     const params = new URLSearchParams();
-    params.append("transactionId", itemId);
+    params.append("itemId", itemId); // transactionId → itemId로 변경
     params.append("userId", userId);
 
     try {
@@ -209,23 +238,29 @@ async function completeTransaction(itemId, userId) {
             },
             body: params.toString(),
         });
+
+        console.log("Complete Transaction Request:", { itemId, userId });
         fetchNotifications();
+
         if (response.ok) {
+            const data = await response.json();
+            console.log("Transaction Completed Successfully:", data);
             alert("거래 완료 요청이 접수되었습니다.");
             location.reload();
         } else {
             errorMessage = "거래 완료 처리 중 오류가 발생했습니다.";
-            console.error("거래 완료 처리 중 오류 발생:", response.statusText);
+            console.error("Transaction Completion Error:");
         }
     } catch (error) {
         errorMessage = "거래 완료 요청 처리 중 예기치 않은 오류가 발생했습니다.";
-        console.error("Error completing transaction:", error);
+        console.error("Unexpected Error Completing Transaction:");
     }
 }
 
+
 async function cancelTransaction(itemId, userId) {
     try {
-        const response = await fetch(`/transaction/cancel?transactionId=${itemId}&userId=${userId}`, {
+        const response = await fetch(`/transaction/cancel?itemId=${itemId}&userId=${userId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -234,7 +269,6 @@ async function cancelTransaction(itemId, userId) {
         fetchNotifications();
         if (!response.ok) {
             errorMessage = "거래 포기 요청 처리 중 오류가 발생했습니다.";
-            console.error("거래 포기 처리 중 오류 발생:", response.statusText);
         }
     } catch (error) {
         errorMessage = "거래 포기 요청 처리 중 예기치 않은 오류가 발생했습니다.";
@@ -242,30 +276,3 @@ async function cancelTransaction(itemId, userId) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const notificationIcon = document.getElementById("notification-icon");
-    const notificationList = document.getElementById("notification-list");
-    const userIdElement = document.getElementById("userId");
-
-    if (!notificationIcon || !notificationList || !userIdElement) {
-        console.error("Required DOM elements not found!");
-        return;
-    }
-
-    const userId = userIdElement.textContent.trim();
-
-    initializeWebSocket(userId); // WebSocket 초기화
-    fetchNotifications(); // 알림 목록 가져오기
-
-    if (errorMessage) {
-        alert(errorMessage); // 에러 메시지 표시
-        errorMessage = ''; // 메시지 초기화
-    }
-
-    const notificationModal = new bootstrap.Modal(document.getElementById("notification-modal"));
-
-    notificationIcon.addEventListener("click", () => {
-        notificationModal.show(); // 모달 열기
-        fetchNotifications(); // 알림 목록 새로 가져오기
-    });
-});
