@@ -53,9 +53,10 @@ public class BidService {
                 ()-> new IllegalStateException("상품을 찾을 수 없습니다.")
         );
 
-        if(requestBidDto.getUserId().toString().equals(userDetails.getUsername())) {
+        if(item.getUser().getUserId().equals(requestBidDto.getUserId())) {
             throw new IllegalStateException("판매자는 입찰을 등록할 수 없습니다.");
         }
+
         if (requestBidDto.getBidAmount().compareTo(user.getCurrentPoint()) > 0) {
             throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
         }
