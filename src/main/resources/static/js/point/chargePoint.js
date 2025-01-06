@@ -22,9 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     cancelButton.addEventListener('click', () => {
-        alert('충전을 취소했습니다.');
-        resetState();
+        const userId = window.location.pathname.split("/")[3];
+        if (confirm('충전을 취소하고 이전 페이지로 돌아가시겠습니까?')) {
+            window.location.href = `/points/select/${userId}`;
+        }
     });
+
 
     nextButton.addEventListener('click', () => {
         const selectedButton = document.querySelector('.charge-points button.selected');
