@@ -55,8 +55,17 @@
                 <div class="col-md-3 d-flex align-items-center">
 
                     <select name="status" class="form-select" id="status" onchange="submitFilterForm()">
-                        <option th:each="state : ${statuses}" th:value="${state}" th:text="${state}"
-                                th:selected="${status == state}"></option>
+<!--                        <option th:each="state : ${statuses}" th:value="${state}" th:text="${state}"-->
+<!--                                th:selected="${status == state}"></option>-->
+                        <option th:each="state : ${statuses}"
+                                th:value="${state}"
+                                th:text="${state == 'ONGOING' ? '진행중' :
+                                           state == 'BIDDING_END' ? '낙찰' :
+                                           state == 'COMPLETED' ? '거래완료' :
+                                           state == 'CANCELLED' ? '거래취소' :
+                                           state == 'PARTIALLY_APPROVE' ? '거래수락 대기' : state}"
+                                th:selected="${status == state}">
+                        </option>
                     </select>
                 </div>
             </div>
