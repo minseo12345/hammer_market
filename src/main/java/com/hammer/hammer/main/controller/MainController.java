@@ -31,6 +31,6 @@ public class MainController {
 
         model.addAttribute("user", user);
 
-        return "/main/main";
+        return "main/main";
     }
 }

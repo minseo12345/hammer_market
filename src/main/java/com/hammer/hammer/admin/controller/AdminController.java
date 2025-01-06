@@ -27,7 +27,7 @@ public class AdminController {
     @GetMapping
     public String adminPage(Model model) {
         model.addAttribute("welcomeMessage", "관리자페이지에 오신 것을 환영합니다!");
-        return "/admin/dashboard";
+        return "admin/dashboard";
     }
     
     // 사용자 조회 화면
@@ -35,7 +35,7 @@ public class AdminController {
     public String getAllUsers(Model model) {
         List<User> userList = adminService.getAllUsers();
         model.addAttribute("users", userList);
-        return "/admin/users";
+        return "admin/users";
     }
 
     // 경매 현황 조회 화면
