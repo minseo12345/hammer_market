@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (Number(bidAmount) > Number(buyNowPrice)) {
             event.preventDefault();
             alert('입찰 금액이 즉시 구매가보다 높습니다. 다시 시도해주세요.');
-        } else {
+
+        }
+        else {
             var form = document.getElementById('bid-form');
             var formData = new FormData(form);
 
@@ -68,7 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // 즉시구매가 텍스트에서 숫자만 추출
         var buyNowPrice = document.getElementById('buy-now-price').textContent.trim();
+        buyNowPrice = buyNowPrice.replace(/[^0-9]/g, '');  // 숫자 외의 모든 문자 제거
+
+        // bidAmountInput에 즉시구매가 설정
         bidAmountInput.value = buyNowPrice;
 
         var form = document.getElementById('bid-form');
@@ -80,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.onload = function() {
             if (xhr.status === 200) {
                 alert('즉시 구매가로 입찰 성공! 현재가가 갱신되었습니다.');
-                location.reload();
+                location.reload();  // 성공하면 페이지 새로고침
             } else {
                 var errorMessage = xhr.responseText || '입찰 실패! 다시 시도해주세요.';
                 alert(errorMessage);
@@ -93,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         xhr.send(formData);
     });
+
 });
 document.querySelector('#contact-seller').addEventListener('click', function () {
     const sellerId = this.getAttribute('data-seller-id');

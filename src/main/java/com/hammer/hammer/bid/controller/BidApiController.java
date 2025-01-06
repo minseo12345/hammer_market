@@ -69,7 +69,8 @@ public class BidApiController {
         }
 
         try {
-            bidService.saveBid(requestBidDto, userDetails);
+
+            bidService.saveBid(requestBidDto, userDetails,"buyNow");
             transactionService.createTransactionForImmediatePurchase(requestBidDto.getItemId());
             return new ResponseEntity<>("즉시 구매가 성공적으로 처리되었습니다.", HttpStatus.OK);
         } catch (BidAmountTooLowException | IllegalStateException e) {
