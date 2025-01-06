@@ -59,8 +59,8 @@ function loadCart(userId) {
 
         const bidInfo = document.createElement("p");
         bidInfo.innerHTML = `
-    <strong>시작가:</strong> ${item.startingBid} 원<br>
-    <strong>즉시 구매가:</strong> ${item.buyNowPrice != null ? item.buyNowPrice + ' 원' : '-'}<br>
+    <strong>시작가:</strong> ${Math.floor(item.startingBid).toLocaleString()+'p'}<br>
+    <strong>즉시 구매가:</strong> ${item.buyNowPrice != null ? Math.floor(item.buyNowPrice).toLocaleString() + 'p' : '-'}<br>
     <strong>상태:</strong> ${
             item.status === 'ONGOING' ? '진행중' :
                 item.status === 'BIDDING_END' ? '낙찰' :
