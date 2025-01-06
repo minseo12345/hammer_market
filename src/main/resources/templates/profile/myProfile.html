@@ -34,7 +34,13 @@
                     <td th:text="${userInfo.email}">이메일</td>
                     <td th:text="${userInfo.name}">이름</td>
                     <td th:text="${userInfo.role.roleName}">권한</td>
-                    <td th:text="${userInfo.phoneNumber}">전화번호</td>
+                    <td th:text="${#strings.length(userInfo.phoneNumber) == 11 ?
+                                 userInfo.phoneNumber.substring(0, 3) + '-' + userInfo.phoneNumber.substring(3, 7) + '-' + userInfo.phoneNumber.substring(7) :
+                                 (userInfo.phoneNumber != null && #strings.length(userInfo.phoneNumber) == 10 ?
+                                 userInfo.phoneNumber.substring(0, 3) + '-' + userInfo.phoneNumber.substring(3, 6) + '-' + userInfo.phoneNumber.substring(6) :
+                                 '전화번호 없음')}">
+                        전화번호
+                    </td>
                     <td th:text="${#numbers.formatDecimal(userInfo.currentPoint, 0, 'COMMA', 0, 'POINT')} + 'p'">포인트</td>
                     <td>
                         <button onclick="location.href='/profile/edit'" class="edit-btn">수정</button>

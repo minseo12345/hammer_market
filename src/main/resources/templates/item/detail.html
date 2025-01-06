@@ -29,7 +29,7 @@
 
                     <p><strong>현재가:</strong> <span id="current-highest-bid" th:text="${#numbers.formatInteger(highestBid, 0, 'COMMA')} + 'p'"></span></p>
                     <p><strong>시작가:</strong> <span th:text="${#numbers.formatInteger(item.getStartingBid(), 0, 'COMMA')} + 'p'"></span></p>
-                    <p><strong>즉시구매가:</strong> <span id="buy-now-price" th:text="${#numbers.formatInteger(item.buyNowPrice, 0, 'COMMA')} + 'p'"></span></p>
+                    <p><strong>즉시구매가:</strong> <span id="buy-now-price" th:text="${item.buyNowPrice != null ? #numbers.formatInteger(item.buyNowPrice, 0, 'COMMA') + 'p' : '-p'}">즉시 구매가</span></p>
                     <p><strong>시작일:</strong> <span th:text="${#temporals.format(item.getStartTime(), 'yyyy-MM-dd HH:mm')}"></span></p>
                     <p><strong>종료일:</strong> <span th:text="${#temporals.format(item.getEndTime(), 'yyyy-MM-dd HH:mm')}"></span></p>
                     <p><strong>상품 설명:</strong> <span th:text="${item.description}"></span></p>
