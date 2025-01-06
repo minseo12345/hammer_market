@@ -26,7 +26,7 @@ public class AdminController {
     // 관리자 대시보드
     @GetMapping
     public String adminPage(Model model) {
-        model.addAttribute("welcomeMessage", "Welcome to the admin page!");
+        model.addAttribute("welcomeMessage", "관리자페이지에 오신 것을 환영합니다!");
         return "/admin/dashboard";
     }
     
