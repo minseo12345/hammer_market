@@ -54,8 +54,9 @@ public class User implements UserDetails {
     @JsonIgnore
     private String password; // 비밀번호
 
+    @Builder.Default
     @Column(precision = 10, scale = 2)
-    private BigDecimal currentPoint;
+    private BigDecimal currentPoint = BigDecimal.ZERO;
 
     @Column(name = "phone_number")
     private String phoneNumber; // 사용자 전화번호
