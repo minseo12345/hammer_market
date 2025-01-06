@@ -175,28 +175,27 @@ public class ItemService {
                 .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다: " + id));
 
         // 상태 확인
-        updateItemStatus();
 
         return item;
     }
 
     //상태확인
 
-    @Transactional
-    public void updateItemStatus() {
-        LocalDateTime currentTime = LocalDateTime.now();
-
-        // 'ONGOING' 상태의 아이템들을 가져옵니다.
-        List<Item> ongoingItems = itemRepository.findByStatus(Item.ItemStatus.ONGOING);
-
-        for (Item it : ongoingItems) {
-            // 아이템의 endTime이 현재 시간보다 이전이면 상태를 'BIDDING_END'로 업데이트
-            if (it.getEndTime().isBefore(currentTime)) {
-                it.setStatus(Item.ItemStatus.BIDDING_END);
-                itemRepository.save(it); // 상태 업데이트
-            }
-        }
-    }
+//    @Transactional
+//    public void updateItemStatus() {
+//        LocalDateTime currentTime = LocalDateTime.now();
+//
+//        // 'ONGOING' 상태의 아이템들을 가져옵니다.
+//        List<Item> ongoingItems = itemRepository.findByStatus(Item.ItemStatus.ONGOING);
+//
+//        for (Item it : ongoingItems) {
+//            // 아이템의 endTime이 현재 시간보다 이전이면 상태를 'BIDDING_END'로 업데이트
+//            if (it.getEndTime().isBefore(currentTime)) {
+//                it.setStatus(Item.ItemStatus.BIDDING_END);
+//                itemRepository.save(it); // 상태 업데이트
+//            }
+//        }
+//    }
 
     @Transactional
     public void deleteItem(Long id) {
