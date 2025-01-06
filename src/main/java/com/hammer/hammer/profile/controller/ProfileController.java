@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -57,18 +59,4 @@ public class ProfileController {
         return "profile/editProfile";
     }
 
-    @PostMapping("/edit")
-    public String updateProfile(@ModelAttribute ProfileUpdateRequestDto request,
-                                @AuthenticationPrincipal UserDetails userDetails,
-                                RedirectAttributes redirectAttributes) {
-        try {
-            Long userId = Long.valueOf(userDetails.getUsername());
-            userService.updateProfile(userId, request);
-            redirectAttributes.addFlashAttribute("message", "회원정보가 성공적으로 수정되었습니다.");
-            return "redirect:/profile/myProfile";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "회원정보 수정 중 오류가 발생했습니다.");
-            return "redirect:/profile/edit";
-        }
-    }
 }
