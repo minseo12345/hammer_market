@@ -102,12 +102,14 @@
                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                     <a class="page-link" th:href="@{/items/list(page=${currentPage - 1}, sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${categoryId})}">이전</a>
                 </li>
-                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                <li class="page-item"
+                    th:each="i : ${totalPages > 0 ? #numbers.sequence(0, totalPages - 1) : #numbers.sequence(0, 0)}"
                     th:classappend="${i == currentPage} ? 'active'">
-                    <a class="page-link" th:href="@{/items/list(page=${i}, sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${categoryId})}"
-                       th:text="${i + 1}">1</a>
+                    <a class="page-link"
+                       th:href="@{/items/list(page=${i}, sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${categoryId})}"
+                       th:text="${i + 1}"></a>
                 </li>
-                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <li class="page-item" th:classappend="${totalPages == 0 || currentPage == totalPages - 1} ? 'disabled'">
                     <a class="page-link" th:href="@{/items/list(page=${currentPage + 1}, sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${categoryId})}">다음</a>
                 </li>
             </ul>
@@ -116,6 +118,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/item/item_list.js"></script>
+<script src="/js/item/list.js"></script>
 </body>
 </html>
