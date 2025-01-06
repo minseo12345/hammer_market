@@ -9,6 +9,7 @@ import com.hammer.hammer.bid.exception.BidAmountTooLowException;
 import com.hammer.hammer.bid.repository.BidRepository;
 import com.hammer.hammer.item.entity.Item;
 import com.hammer.hammer.item.repository.ItemRepository;
+import com.hammer.hammer.transaction.service.TransactionService;
 import com.hammer.hammer.user.entity.User;
 import com.hammer.hammer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class BidService {
     private final BidRepository bidRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final TransactionService transactionService;
 
     /**
      * 입찰 등록
@@ -53,12 +55,21 @@ public class BidService {
                 ()-> new IllegalStateException("상품을 찾을 수 없습니다.")
         );
 
+        if (item.getStatus() != Item.ItemStatus.ONGOING) {
+            throw new IllegalStateException("종료된 경매입니다.");
+        }
+
+
         if(item.getUser().getUserId().equals(requestBidDto.getUserId())) {
             throw new IllegalStateException("판매자는 입찰을 등록할 수 없습니다.");
         }
 
         if (requestBidDto.getBidAmount().compareTo(user.getCurrentPoint()) > 0) {
             throw new IllegalArgumentException("사용자의 포인트가 부족합니다.");
+        }
+
+        if(item.getBuyNowPrice().compareTo(requestBidDto.getBidAmount()) == 0){
+            transactionService.createTransactionForImmediatePurchase(item.getItemId());
         }
 
         BigDecimal currentHighestBid = bidRepository.findHighestBidByItemId(requestBidDto.getItemId())
