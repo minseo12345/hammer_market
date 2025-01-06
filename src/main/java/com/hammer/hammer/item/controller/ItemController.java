@@ -105,7 +105,6 @@ public class ItemController {
                                      @RequestParam(value = "search", required = false) String search,
                                      @RequestParam(value = "categoryId", required = false) Long categoryId,
                                      Model model) {
-        itemService.updateItemStatus();
 
         List<String> statuses = itemService.getAllStatuses();
         Page<ItemResponseDto> items;

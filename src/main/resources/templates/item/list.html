@@ -55,7 +55,6 @@
                 <div class="col-md-3 d-flex align-items-center">
 
                     <select name="status" class="form-select" id="status" onchange="submitFilterForm()">
-                        <option value="" th:selected="${status == null}">경매상태</option>
                         <option th:each="state : ${statuses}" th:value="${state}" th:text="${state}"
                                 th:selected="${status == state}"></option>
                     </select>
