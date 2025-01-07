@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +55,9 @@ public class PointService {
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                .withZone(ZoneId.of("Asia/Seoul"));
+
 
         return selectPointPage.map(point -> {
             String formattedCreateDate = point.getCreateDate() != null
