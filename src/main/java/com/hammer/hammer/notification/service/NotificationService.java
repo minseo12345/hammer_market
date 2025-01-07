@@ -44,6 +44,13 @@ public class NotificationService {
         }
 
         if (transaction.getModifiedBy().contains(userId)) {
+            // 거래 완료 알림 생성
+            String repeatMessage = String.format("이미 거래 완료 요청을 한 사용자입니다.");
+            Notification notification = new Notification(userId,item, repeatMessage);
+
+            // WebSocket으로 실시간 알림 전송
+            messagingTemplate.convertAndSend("/topic/notifications", notification);
+
             throw new IllegalStateException("이미 거래 완료 요청을 한 사용자입니다.");
         }
 
