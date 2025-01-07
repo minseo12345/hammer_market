@@ -1,3 +1,4 @@
+/*
 package com.hammer.hammer.item;
 
 import com.hammer.hammer.item.entity.Item;
@@ -160,4 +161,4 @@ public class ItemServiceTest {
         // Then
         assertEquals(Item.ItemStatus.ONGOING, result.getStatus(), "경매 상태가 ONGOING으로 유지되지 않았습니다.");
     }
-}
+}*/

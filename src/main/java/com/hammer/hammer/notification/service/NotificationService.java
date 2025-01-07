@@ -45,8 +45,8 @@ public class NotificationService {
 
         if (transaction.getModifiedBy().contains(userId)) {
             // 거래 완료 알림 생성
-            String repeatMessage = String.format("이미 거래 완료 요청을 한 사용자입니다.");
-            Notification notification = new Notification(userId,item, repeatMessage);
+            String repeatMessage = "이미 거래 완료 요청을 한 사용자입니다.";
+            Notification notification = new Notification(userId, item, repeatMessage);
 
             // WebSocket으로 실시간 알림 전송
             messagingTemplate.convertAndSend("/topic/notifications", notification);
@@ -70,8 +70,9 @@ public class NotificationService {
             // 포인트 처리
             pointService.processTransactionPoints(transaction);
 
+
             // 최종 거래 완료 알림 생성
-            String completeMessage = String.format("%d상품의 거래가 완료되었습니다.", itemId);
+            String completeMessage = String.format("'%s' 상품의 거래가 완료되었습니다.", item.getTitle()); // 상품 이름으로 변경
             Notification notification = new Notification(userId, item, completeMessage);
             // notificationRepository.save(notification);
 
@@ -93,7 +94,7 @@ public class NotificationService {
         itemRepository.save(item);
 
         // 거래 포기 알림 생성
-        String cancelMessage = String.format("[%d]상품의 거래가 취소되었습니다.", itemId);
+        String cancelMessage = String.format("'%s' 상품의 거래가 취소되었습니다.", item.getTitle()); // 상품 이름으로 변경
         Notification notification = new Notification(userId, item, cancelMessage);
         // notificationRepository.save(notification);
 
