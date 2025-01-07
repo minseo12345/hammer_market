@@ -85,8 +85,12 @@ public class TransactionService {
 
         // 판매자 알림 생성
         DecimalFormat df = new DecimalFormat("#");
-        String sellerMessage = String.format("등록하신 %d상품이 %s원으로 판매되었습니다! 구매자ID : %s",
-                item.getItemId(), df.format(transaction.getFinalPrice()), transaction.getBuyer().getUsername());
+        String sellerMessage = String.format(
+                "등록하신 '%s' 상품이 %s원으로 판매되었습니다! 구매자ID : %s",
+                item.getTitle(),
+                df.format(transaction.getFinalPrice()),
+                transaction.getBuyer().getUsername()
+        );
         Notification sellerNotification = new Notification(transaction.getSeller().getUserId(), item, sellerMessage);
         notificationRepository.save(sellerNotification);
 
@@ -95,14 +99,18 @@ public class TransactionService {
         System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 알림 발송");
 
         // 구매자 알림 생성
-        String buyerMessage = String.format("입찰하신 %d상품이 %s원으로 낙찰되었습니다! 판매자ID: %s",
-                item.getItemId(), df.format(transaction.getFinalPrice()), transaction.getSeller().getUsername());
+        String buyerMessage = String.format(
+                "입찰하신 '%s' 상품이 %s원으로 낙찰되었습니다! 판매자ID: %s",
+                item.getTitle(), // 상품 이름으로 변경
+                df.format(transaction.getFinalPrice()),
+                transaction.getSeller().getUsername()
+        );
         Notification buyerNotification = new Notification(transaction.getBuyer().getUserId(), item, buyerMessage);
         notificationRepository.save(buyerNotification);
 
-        // WebSocket을 통해 구매자에게 알림 전송
+// WebSocket을 통해 구매자에게 알림 전송
         messagingTemplate.convertAndSend("/topic/notifications", buyerNotification);
-        System.out.println("아이템 ID: " + item.getItemId() + "에 대한 거래 생성 알림 발송");
+        System.out.println("아이템 이름: " + item.getTitle() + "에 대한 거래 생성 알림 발송");
     }
 
     // 즉시구매에 의한 낙찰

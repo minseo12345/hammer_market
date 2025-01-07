@@ -271,7 +271,7 @@ async function completeTransaction(itemId, userId) {
         });
 
         console.log("Complete Transaction Request:", { itemId, userId });
-        fetchNotifications();
+        await fetchNotifications();
 
         if (response.ok) {
             const data = await response.json();
@@ -297,7 +297,7 @@ async function cancelTransaction(itemId, userId) {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
         });
-        fetchNotifications();
+        await fetchNotifications();
         if (!response.ok) {
             errorMessage = "거래 포기 요청 처리 중 오류가 발생했습니다.";
         }
