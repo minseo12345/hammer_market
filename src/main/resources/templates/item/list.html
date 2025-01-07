@@ -86,7 +86,7 @@
                             <strong>현재가:</strong>
                             <span th:text="${item.currentPrice != null ? #numbers.formatInteger(item.currentPrice, 0, 'COMMA') : #numbers.formatInteger(item.startingBid, 0, 'COMMA')} + 'p'">현재가</span><br>
                             <strong>즉시 구매가:</strong>
-                            <span th:text="${item.buyNowPrice != null ? #numbers.formatInteger(item.buyNowPrice, 0, 'COMMA') + 'p' : '-p'}">즉시 구매가</span><br>
+                            <span th:text="${item.buyNowPrice != null ? #numbers.formatInteger(item.buyNowPrice, 0, 'COMMA') + 'p' : '즉시구매불가'}">즉시 구매가</span><br>
                             <strong>남은 시간:</strong>
                             <span th:if="${item.status != null and item.status.name() == 'ONGOING'}"
                                 class="time-remaining"
