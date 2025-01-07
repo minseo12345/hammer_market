@@ -53,6 +53,11 @@ public class UserController {
         return "redirect:/login";
     }
 
+    @GetMapping
+    public String mainPage() {
+        return "redirect:items/list";
+    }
+
     // 아이디 찾기
     @GetMapping("/login/find-id")
     public String findId() {
