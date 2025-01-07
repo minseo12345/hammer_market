@@ -26,6 +26,7 @@ public class NotificationController {
     @MessageMapping("/notify")
     @SendTo("/topic/notifications")
     public Notification notifyUser(Notification notification) {
+        System.out.println("Sending Notification: " + notification);
         return notification; // 클라이언트로 전송
     }
 

@@ -115,40 +115,67 @@ async function fetchNotifications() {
                 }
             }
 
-            // 카테고리별 UI 생성
             Object.keys(categories).forEach(category => {
                 const categoryTitle = {
-                    BIDDING_END: "<낙찰>",
-                    PARTIALLY_APPROVE: "<거래수락 대기>",
-                    COMPLETED: "<완료된 거래>",
-                    CANCELLED: "<취소된 거래>",
-                    OTHER: "<기타 알림>"
-                }[category] || "<기타 알림>";
+                    BIDDING_END: "낙찰",
+                    PARTIALLY_APPROVE: "거래수락 대기",
+                    COMPLETED: "완료된 거래",
+                    CANCELLED: "취소된 거래",
+                    OTHER: "기타 알림"
+                }[category] || "기타 알림";
 
-                const categoryElement = document.createElement("div");
-                categoryElement.innerHTML = `<h3>${categoryTitle}</h3>`;
-                notificationList.appendChild(categoryElement);
+                const categoryClass = {
+                    BIDDING_END: "list-group-item-primary",
+                    PARTIALLY_APPROVE: "list-group-item-warning",
+                    COMPLETED: "list-group-item-success",
+                    CANCELLED: "list-group-item-danger",
+                    OTHER: "list-group-item-secondary"
+                }[category] || "list-group-item-secondary";
+
+                // 새로운 컨테이너 생성
+                const categoryContainer = document.createElement("div");
+                categoryContainer.classList.add("category-container");
+
+                // 카테고리 제목 생성
+                const titleElement = document.createElement("div");
+                titleElement.textContent = categoryTitle;
+                titleElement.classList.add("category-bar", categoryClass);
+                categoryContainer.appendChild(titleElement);
+
+                // 알림 리스트 생성
+                const itemList = document.createElement("ul");
+                itemList.classList.add("list-group");
 
                 if (categories[category].length > 0) {
                     categories[category].forEach(notification => {
-                        const li = document.createElement("li");
-                        li.innerHTML = `
-                            <p>${notification.message}</p>
-                            ${
+                        const listItem = document.createElement("li");
+                        listItem.classList.add("list-group-item");
+                        listItem.innerHTML = `
+                <p>${notification.message}</p>
+                ${
                             ["BIDDING_END", "PARTIALLY_APPROVE"].includes(category)
                                 ? `<button onclick="completeTransaction(${notification.itemId}, ${notification.userId})">거래수락</button>
-                                           <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
+                       <button onclick="cancelTransaction(${notification.itemId}, ${notification.userId})">거래포기</button>`
                                 : ""
                         }
-                        `;
-                        notificationList.appendChild(li);
+            `;
+                        itemList.appendChild(listItem);
                     });
                 } else {
-                    const emptyMessage = document.createElement("p");
+                    const emptyMessage = document.createElement("li");
+                    emptyMessage.classList.add("list-group-item");
                     emptyMessage.textContent = "알림이 없습니다.";
-                    categoryElement.appendChild(emptyMessage);
+                    itemList.appendChild(emptyMessage);
                 }
+
+                categoryContainer.appendChild(itemList);
+
+                // 알림 리스트를 최종 DOM에 추가
+                const notificationList = document.getElementById("notification-list");
+                notificationList.appendChild(categoryContainer);
             });
+
+
         } else {
             errorMessage = "알림 목록을 가져오는 중 오류가 발생했습니다.";
             console.error("Failed to fetch notifications:", response.statusText);
@@ -195,6 +222,10 @@ function initializeWebSocket(userId) {
 
             if (notifications.userId === parseInt(userId)) {
                 if (!notifications.isRead) {
+                    const notificationList = document.getElementById("notification-list");
+                    const li = document.createElement("li");
+                    li.textContent = notifications.message;
+                    notificationList.prepend(li);
                     Toastify({
                         text: notifications.message,
                         duration: 10000,
