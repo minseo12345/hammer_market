@@ -1,0 +1,154 @@
+.points-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.points-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.points-section {
+    display: flex;
+    gap: 20px;
+}
+
+.points-summary {
+    flex: 1;
+    padding: 20px;
+    background-color: #f4f8fc;
+    border-radius: 8px;
+    height: 200px;
+    overflow: hidden;
+}
+
+.points-history {
+    flex: 2;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.points-info h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.points-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.points-total {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.points-settings {
+    display: flex;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.points-tabs {
+    display: flex;
+    gap: 10px;
+}
+
+.points-tabs button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.points-tabs button.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.points-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.points-table th, .points-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.points-table th {
+    background-color: #f4f4f4;
+}
+
+.points-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    font-size: 16px;
+    flex-direction: row;
+}
+
+.points-pagination ul{
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.points-pagination {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.points-pagination li {
+    margin: 0 5px;
+}
+
+.points-pagination a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.points-pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.points-pagination a:hover {
+    background-color: #f2f2f2;
+}
+
+.points-pagination li.disabled a {
+    pointer-events: none;
+    color: #ccc;
+    text-decoration: none;
+}
+
+.points-pagination li.active a {
+    font-weight: bold;
+    color: #007bff;
+    pointer-events: none;
+}

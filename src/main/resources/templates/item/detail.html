@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경매 상세</title>
+    <link rel="stylesheet" href="/css/item/detail.css">
+    <link rel="stylesheet" href="/css/fragments/topbar.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/fragments/sidebar.css">
+</head>
+<body>
+
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+<div th:insert="~{'fragments/header' :: header}"></div>
+
+<div class="main-container">
+
+    <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
+
+    <div class="detail-container">
+        <div id="item-details" data-item-id="123" data-highest-bid="${highestBid}">
+            <h1 class="item-title" th:text="${item.title}">상품 상세</h1>
+            <div class="item-content">
+                <div class="item-details">
+                    <div class="item-image">
+                        <img th:src="${item.fileUrl}" alt="상품 이미지">
+                    </div>
+
+                    <p><strong>현재가:</strong> <span id="current-highest-bid" th:text="${#numbers.formatInteger(highestBid, 0, 'COMMA')} + 'p'"></span></p>
+                    <p><strong>시작가:</strong> <span th:text="${#numbers.formatInteger(item.getStartingBid(), 0, 'COMMA')} + 'p'"></span></p>
+                    <p><strong>즉시구매가:</strong> <span id="buy-now-price" th:text="${item.buyNowPrice != null ? #numbers.formatInteger(item.buyNowPrice, 0, 'COMMA') + 'p' : '-p'}">즉시 구매가</span></p>
+                    <p><strong>시작일:</strong> <span th:text="${#temporals.format(item.getStartTime(), 'yyyy-MM-dd HH:mm')}"></span></p>
+                    <p><strong>종료일:</strong> <span th:text="${#temporals.format(item.getEndTime(), 'yyyy-MM-dd HH:mm')}"></span></p>
+                    <p><strong>상품 설명:</strong> <span th:text="${item.description}"></span></p>
+                    <p><strong>상품 상태:</strong> 
+                        <span th:switch="${item.getStatus().name()}">
+                            <span th:case="'ONGOING'" th:text="진행중"></span>
+                            <span th:case="'BIDDING_END'" th:text="낙찰"></span>
+                            <span th:case="'COMPLETED'" th:text="거래완료"></span>
+                            <span th:case="'CANCELLED'" th:text="거래취소"></span>
+                            <span th:case="'PARTIALLY_APPROVE'" th:text="거래수락 대기"></span>
+                        </span>
+                    </p>
+
+                    <div class="bid-section">
+                        <form id="bid-form" action="/bid" method="post">
+                            <label for="bidAmount"><strong>입찰 금액:</strong></label>
+                            <input type="number" id="bidAmount" name="bidAmount" class="form-control" min="1" required>
+                            <input type="hidden" name="itemId" th:value="${item.itemId}">
+                            <input type="hidden" name="userId" th:value="${userId}">
+                        </form>
+                        <div class="bid-buttons">
+                            <button type="button" id="submit-bid" class="btn btn-primary">입찰하기</button>
+                            <button type="button" id="buy-now" class="btn btn-danger">즉시구매</button>
+                        </div>
+                        <!-- 구매자와 대화 버튼 -->
+                        <button type="button" id="contact-seller"
+                                th:attr="data-seller-id=${item.user.userId}, data-buyer-id=${userId}">
+                            판매자와 대화
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bids-list">
+                    <h3>입찰 내역</h3>
+                    <div th:each="bid : ${bids}" class="bid-entry">
+                        <span class="bid-username" th:text="${bid.username}"></span>
+                        <span class="bid-amount" th:text="${bid.bidAmount}"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/item/detail.js"></script>
+</body>
+</html>

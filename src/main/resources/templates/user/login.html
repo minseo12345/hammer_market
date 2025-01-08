@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/user/login.css">
+    <title>로그인 페이지</title>
+</head>
+<body>
+</div>
+<div class="loginContainer">
+    <p class="loginTitle">로그인</p>
+    <div>
+<!--        <form id="loginForm" class="loginForm">-->
+        <form id="loginForm" class="loginForm" action="/login" method="post">
+            <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+            <div class="id">
+                <label for="username">이메일</label>
+                <input type="email" name="username" id="username" placeholder="이메일" required>
+            </div>
+            <div class="pw">
+                <label for="password">비밀번호</label>
+                <input type="password" name="password" id="password" placeholder="비밀번호" required>
+            </div>
+            <div class="loginOption">
+                <input type="checkbox" name="remember-me" id="remember-me">
+                <label for="remember-me">자동 로그인</label>
+            </div>
+            <button type="submit" class="loginBtn">로그인</button>
+            <button type="button" class="signUpBtn" onclick="location.href='/signup'">회원가입</button>
+        </form>
+    </div>
+    <div class="signUpFind">
+        <a th:href="@{'/login/find-id'}">아이디찾기</a> |
+        <a th:href="@{'/login/find-pw'}">비밀번호찾기</a>
+    </div>
+</div>
+<script th:src="@{/js/user/login.js}"></script>
+<!--<script th:src="@{/js/fragments/notifications.js}"></script>-->
+<!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">-->
+<!--<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>-->
+</body>
+</html>

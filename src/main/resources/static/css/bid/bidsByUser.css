@@ -1,0 +1,131 @@
+.bid-body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+}
+.bids-by-user-container{
+    margin-top: 30px;
+    display: flex;
+    gap: 50px;
+}
+.bid-container {
+    width: 75%;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.table-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.bid-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.bid-table th, .bid-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.bid-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.item-img {
+    width: 80px;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.pagination{
+    display: flex;
+    justify-content: center;
+}
+.pagination ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.pagination a:hover {
+    background-color: #f2f2f2;
+}
+.pagination li.disabled a {
+    pointer-events: none;
+    color: #ccc;
+    text-decoration: none;
+}
+
+.pagination li.active a {
+    font-weight: bold;
+    color: #007bff;
+    pointer-events: none;
+}
+
+.search-bar {
+    margin-top: 10px;
+    position: static; /* 위치 고정을 제거 */
+    float: right; /* 오른쪽 정렬 */
+    display: flex;
+    align-items: center;
+}
+
+
+.sort-bar {
+    position: static; /* 위치 고정을 제거 */
+    float: right; /* 왼쪽 정렬 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.sort-bar select {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.sort-bar select:hover {
+    background-color: #ddd;
+}
+
+.search-bar input {
+    padding: 5px;
+    font-size: 14px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

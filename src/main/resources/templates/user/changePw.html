@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/user/changePw.css">
+    <title>비밀번호 변경</title>
+</head>
+<body>
+<div class="changePwContainer">
+    <p class="findPwTitle">비밀번호 변경</p>
+    <div class="signUpContent">
+        <form id="changePwForm">
+            <div>
+                <label for="email">이메일</label>
+                <input type="email" name="email" id="email" maxlength="50" required placeholder="이메일" readonly
+                       th:value="${userEmail}">
+            </div>
+            <div>
+                <label for="newPassword">새 비밀번호</label>
+                <input type="password" name="newPassword" id="newPassword" maxlength="20" required placeholder="비밀번호">
+                <span id="passwordError" class="error-message"></span>
+            </div>
+            <div>
+                <label for="newConfirmPw">새 비밀번호 확인</label>
+                <input type="password" name="newConfirmPw" id="newConfirmPw" maxlength="20" required placeholder="비밀번호 확인">
+                <span id="confirmPwError" class="error-message"></span>
+            </div>
+            <div class="btnSection">
+                <button type="submit" class="pwChangeBtn">비밀번호 변경</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/user/changePw.js}"></script>
+</body>
+</html>

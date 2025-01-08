@@ -1,0 +1,147 @@
+/* 숫자 입력의 스핀 버튼을 숨김 */
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 전체 페이지 스타일 */
+body {
+    background-color: #f4f7fa;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* 비밀번호 찾기 컨테이너 */
+.findPwContainer {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+/* 비밀번호 찾기 타이틀 */
+.findPwTitle {
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* 비밀번호 찾기 폼 스타일 */
+.findPwContent form {
+    display: flex;
+    flex-direction: column;
+}
+
+.findPwContent label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* 입력 필드 스타일 */
+.findPwContent input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease;
+}
+
+.findPwContent input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* 인증번호 입력란이 비활성화된 상태 */
+#sendCtfNo:disabled {
+    background-color: #f5f5f5;
+    color: #ccc;
+}
+
+/* 인증번호 확인 버튼 기본 스타일 */
+.sendCtfNoBtn {
+    background-color: #007bff; /* 활성화된 버튼 색상 */
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    display: block;
+}
+
+/* 인증번호 확인 버튼 Hover 효과 */
+.sendCtfNoBtn:hover {
+    background-color: #0056b3;
+}
+
+/* 인증번호 확인 버튼 비활성화 스타일 */
+.sendCtfNoBtn:disabled {
+    background-color: #ddd; /* 비활성화된 상태의 버튼 색상 (회색) */
+    cursor: not-allowed;
+    transition: background-color 0.3s;
+}
+
+/* 버튼 섹션 */
+.btnSection {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* 인증번호 확인 버튼 */
+.comCtfNoBtn {
+    width: 48%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.comCtfNoBtn:hover {
+    background-color: #0056b3;
+}
+
+/* 인증번호 확인 버튼 비활성화 스타일 */
+.comCtfNoBtn:disabled {
+    background-color: #ddd; /* 비활성화된 상태의 버튼 색상 (회색) */
+    cursor: not-allowed;
+    transition: background-color 0.3s;
+}
+
+/* 취소 버튼 */
+.cancelBtn {
+    width: 48%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #dc3545;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.cancelBtn:hover {
+    background-color: #5a6268;
+}

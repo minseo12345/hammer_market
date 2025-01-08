@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Transaction Detail</title>
+</head>
+<body>
+<h1>거래 상세 정보</h1>
+<div>
+    <p>거래ID: <span th:text="${transaction.transactionId}"></span></p>
+    <p>낙찰자: <span th:text="${transaction.buyer.username}"></span></p>
+    <p>판매자: <span th:text="${transaction.seller.username}"></span></p>
+    <p>품  명: <span th:text="${transaction.item.title}"></span></p>
+    <p>낙찰가: <span th:text="${transaction.finalPrice}"></span></p>
+    <p>거래 날짜: <span th:text="${#temporals.format(transaction.transactionDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+</div>
+<a href="/transactions">거래 목록으로 돌아가기</a>
+</body>
+</html>
+

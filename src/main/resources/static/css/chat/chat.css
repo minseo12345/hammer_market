@@ -1,0 +1,135 @@
+.chat-room-list {
+    display: flex; /* 유연한 배치를 위해 flexbox 사용 */
+    flex-direction: column; /* 세로 방향으로 콘텐츠 배치 */
+    justify-content: flex-start; /* 콘텐츠를 상단에 정렬 */
+    align-items: stretch; /* 자식 요소를 부모의 너비에 맞춤 */
+    padding: 15px; /* 내부 여백 */
+    background-color: #f9f9f9; /* 연한 배경색 */
+    border-radius: 8px; /* 둥근 모서리 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 */
+    height: 100%; /* 부모의 높이에 맞춤 */
+    overflow-y: auto; /* 세로 스크롤 필요 시 표시 */
+}
+#chat-html {
+    height: 100%;
+    overflow: hidden; /* 스크롤 제거 */
+}
+
+#chat-body {
+
+    height: 100%; /* 부모 크기와 일치 */
+    display: flex;
+    flex-direction: column;
+}
+
+#app {
+    display: flex;
+    flex: 1;
+    background-color: #f8f9fa;
+    overflow: hidden; /* 스크롤 방지 */
+}
+
+#chat-box {
+    flex: 3; /* 중앙에 더 큰 공간 차지 */
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    overflow: hidden; /* 내부 스크롤 방지 */
+    height: 100%; /* 전체 높이 사용 */
+    padding: 10px;
+}
+
+#messages {
+    flex: 1;
+    overflow-y: auto; /* 세로 스크롤 필요 시만 표시 */
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+}
+
+#input-box {
+    display: flex;
+    flex-shrink: 0;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f8f9fa;
+}
+
+#input-box input {
+    border: 1px solid #ddd;
+    border-radius: 0;
+    flex: 1;
+}
+
+#input-box button {
+    border-radius: 0;
+    margin-left: 5px;
+}
+
+.message {
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-wrap: break-word;
+    font-size: 14px;
+}
+
+/* 보낸 메시지 (오른쪽 정렬) */
+.message-sent {
+    text-align: right;
+    background-color: #d1f7ff;
+    margin-left: auto;
+}
+
+/* 받은 메시지 (왼쪽 정렬) */
+.message-received {
+    text-align: left;
+    background-color: #f1f1f1;
+}
+
+#seller-room-list, #buyer-room-list {
+     display: inline-block;
+     vertical-align: top;
+     width: auto;
+     max-width: 100%;
+     overflow-x: auto;
+     word-wrap: break-word;
+     padding: 15px;
+     background-color: #f9f9f9;
+     border-radius: 8px;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#seller-room-list ul, #buyer-room-list ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#seller-room-list li, #buyer-room-list li {
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+#seller-room-list li:hover, #buyer-room-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#seller-room-list h5, #buyer-room-list h5 {
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #444;
+}

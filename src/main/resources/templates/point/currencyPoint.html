@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포인트 충전</title>
+  <link rel="stylesheet" href="/css/fragments/topbar.css">
+  <link rel="stylesheet" href="/css/fragments/sidebar.css">
+  <link rel="stylesheet" href="/css/point/chargePoint.css">
+</head>
+<body>
+
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+
+<div class="charge-page">
+
+  <div th:insert="~{'fragments/userSidebar' :: sidebar(userId=${userId})}"></div>
+
+  <div class="charge-content">
+    <div class="charge-header">
+      포인트 환전
+    </div>
+    <div class="charge-body">
+      <h3>환전 포인트 선택</h3>
+      <div class="charge-points">
+        <button id="point-10000" data-value="10000">10,000P</button>
+        <button id="point-30000" data-value="30000">30,000P</button>
+        <button id="point-50000" data-value="50000">50,000P</button>
+        <button id="point-100000" data-value="100000">100,000P</button>
+        <button id="point-300000" data-value="300000">300,000P</button>
+        <button id="point-500000" data-value="500000">500,000P</button>
+      </div>
+
+      <div class="description-section">
+        <label for="description">메모:</label>
+        <input type="text" id="description" placeholder="(선택사항)">
+      </div>
+    </div>
+
+    <div class="charge-footer">
+      <button id="cancel" class="cancel">취소</button>
+      <button id="next" class="next" disabled>환전하기</button>
+    </div>
+
+    <p class="balance-info" data-currentPoint="${currentPoint}">현재 보유 포인트:
+      <span id="balance" th:text="${#numbers.formatInteger(currentPoint, 0, 'COMMA')}">0</span>P
+    </p>
+  </div>
+</div>
+
+<script src="/js/point/currencyPoint.js"></script>
+</body>
+</html>

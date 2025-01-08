@@ -1,0 +1,71 @@
+.sidebar {
+    display: inline-block;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e3e6ea;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h5 {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #343a40;
+}
+
+.sidebar .list-group {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    gap: 10px;
+
+}
+
+.sidebar .list-group-item {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #73b3fb00;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+}
+
+.sidebar .list-group-item a {
+    display: inline-block;
+    max-width: 100%; /* 부모 요소의 너비에 따라 자동 확장 */
+    color: #343a40;
+    text-decoration: none;
+    font-size: 16px;
+}
+#sidebar-css{
+    background-color: #73b3fb54 !important;
+}
+.sidebar .list-group-item:hover {
+    background-color: #f1f1f1;
+}
+
+.sidebar .list-group-item a:hover {
+    color: #007bff;
+}
+
+.sidebar .list-group-item .badge {
+    font-size: 14px;
+    background-color: #007bff;
+    color: #fff;
+}
+.sticky-sidebar {
+    margin-top: 25px;
+    height: 100%;
+    position: sticky;
+    top: 10px; /* 상단에서의 고정 위치 */
+    z-index: 1000; /* 다른 요소 위에 표시되도록 설정 */
+    min-height: 350px;
+}
+.category-link.active {
+    font-weight: bold;
+    color: #0069d9; /* 짙은 파란색 (텍스트) */
+    background-color: #d6f0ff; /* 연한 하늘색 (배경) */
+    border-radius: 4px; /* 부드러운 모서리 */
+    padding: 5px 10px;
+}

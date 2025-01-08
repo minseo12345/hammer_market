@@ -1,0 +1,44 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/fragments/topbar.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+ 	  <link rel="stylesheet" href="/css/admin/dashboard.css">
+</head>
+<body>
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+<div th:insert="~{'fragments/header' :: header}"></div>
+<div class="container-fluid d-flex">
+
+    <!-- Main Content -->
+    <div class="content-container flex-grow-1 p-4">
+        <div class="main-box">
+            <h1>관리자 페이지</h1>
+            <p th:text="${welcomeMessage}">관리자페이지에 오신 것을 환영합니다!</p>
+
+            <h2>기능 목록</h2>
+            <ul>
+                <li><a href="/admin/users">회원 목록 조회</a></li>
+                <li><a href="/admin/transactions">경매 현황 조회</a></li>
+                <li><a href="/admin/categories">카테고리 조회</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 장바구니에 아이템 추가하는 함수
+    function addToCart(itemId) {
+        // 장바구니에 추가하는 로직을 여기에 작성
+        console.log("아이템이 장바구니에 추가되었습니다: " + itemId);
+        alert("아이템이 장바구니에 추가되었습니다.");
+    }
+</script>
+</body>
+</html>

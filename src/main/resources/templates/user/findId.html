@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/user/findId.css">
+    <title>아이디 찾기 페이지</title>
+</head>
+<body>
+<div class="findIdContainer">
+    <p class="findIdTitle">아이디 찾기</p>
+    <div class="findIdContent">
+        <form id="findIdForm" method="POST">
+            <div>
+                <label for="userName">이름</label>
+                <input type="text" name="userName" id="userName" required placeholder="이름">
+            </div>
+            <div>
+                <label for="phoneNumber">연락처</label>
+                <input type="number" id="phoneNumber" name="phoneNumber" maxlength="12" required placeholder="연락처를 입력해주세요">
+            </div>
+            <div class="btnSection">
+                <button type="submit" class="ctfBtn" id="ctfBtn">아이디 찾기</button>
+                <button type="button" class="cancelBtn" onclick="location.href='/login'">취소</button>
+            </div>
+        </form>
+        <div id="resultContainer" style="display:none; margin-top:20px;">
+            <p>찾은 아이디: <span id="userId"></span></p>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/user/findId.js}"></script>
+</body>
+</html>

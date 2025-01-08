@@ -1,0 +1,67 @@
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 한 줄에 4개의 카드 */
+    gap: 1rem;
+}
+
+.auction-card {
+    border: 1px solid black; /* 얇은 검정색 실선 테두리 추가 */
+    border-radius: 8px; /* 카드의 모서리를 둥글게 */
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.auction-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    flex-grow: 1;
+}
+
+/* 좋아요 하트 아이콘 버튼 */
+.like-btn {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    font-size: 1.2rem; /* 작은 아이콘 크기 */
+    cursor: pointer;
+    transition: color 0.3s;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.unlike-btn {
+background-color: transparent;
+    border: none;
+    color: #ff4081;
+    font-size: 1.2rem; /* 작은 아이콘 크기 */
+    cursor: pointer;
+    transition: color 0.3s;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.like-btn:hover {
+    color: #ff4081; /* 호버 시 색상 변경 */
+}
+
+.card-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.list-body{
+    overflow-x: hidden;
+}

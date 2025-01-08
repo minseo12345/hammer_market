@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Notifications</title>
+</head>
+<body>
+<div id="notification-list">
+    <ul>
+        <li th:each="notification : ${notifications}">
+            <span th:text="${notification.message ?: '메시지가 없습니다'}"></span>
+        </li>
+    </ul>
+    <p th:if="${#lists.isEmpty(notifications)}">알림이 없습니다.</p>
+</div>
+</div>
+</body>
+</html>
+

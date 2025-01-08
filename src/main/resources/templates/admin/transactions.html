@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경매현황 관리 페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/fragments/topbar.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+ 	<link rel="stylesheet" href="/css/admin/users.css">
+
+</head>
+<body>
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+<div th:insert="~{'fragments/header' :: header}"></div>
+<div class="container-fluid">
+    <h1>경매현황</h1>
+
+    <div class="table-container">
+        <div class="filter-container">
+            <div>
+                <label>
+                    <input type="checkbox" id="statusONGOING" onclick="filterTransactions()">
+                    경매 진행중
+                </label>
+                <label>
+                    <input type="checkbox" id="statusCOMPLETED" onclick="filterTransactions()">
+                    거래 완료
+                </label>
+                <label>
+                    <input type="checkbox" id="statusBIDDING_END" onclick="filterTransactions()">
+                    경매 완료
+                </label>
+            </div>
+            <div>
+                <label for="sortFilter">정렬 기준:</label>
+                <select id="sortFilter" onchange="filterTransactions()">
+                    <option value="latest" selected>낙찰일 최신 순</option>
+                    <option value="oldest">낙찰일 오래된 순</option>
+                    <option value="highPrice">금액 높은 순</option>
+                    <option value="lowPrice">금액 낮은 순</option>
+                </select>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>판매자 ID</th>
+                    <th>판매자 이메일</th>
+                    <th>상품 이름</th>
+                    <th>낙찰가</th>
+                    <th>낙찰일</th>
+                    <th>낙찰자 이메일</th>
+                    <th>상태</th>
+                </tr>
+            </thead>
+            <tbody id="transactionTable">
+                <tr th:if="${#lists.isEmpty(transactions)}">
+                    <td colspan="7">거래 데이터가 없습니다.</td>
+                </tr>
+                <tr th:each="transaction : ${transactions}" 
+                    th:data-status="${transaction.status}"
+                    th:data-finalprice="${transaction.finalPrice}"
+                    th:data-transactiondate="${transaction.transactionDate}">
+                    <td th:text="${transaction.sellerId}"></td>
+                    <td th:text="${transaction.sellerEmail}"></td>
+                    <td th:text="${transaction.itemTitle}"></td>
+                    <td th:text="${transaction.finalPrice}"></td>
+                    <td th:text="${transaction.transactionDate}"></td>
+                    <td th:text="${transaction.buyerEmail}"></td>
+	                <td>
+					
+				    <span th:if="${transaction.status.name() == 'BIDDING_END'}">경매 완료</span>
+				    <span th:if="${transaction.status.name() == 'COMPLETED'}">거래 완료</span>
+				    <span th:if="${transaction.status.name() == 'ONGOING'}">경매 진행중</span>
+				    <span th:if="${transaction.status.name() == 'CANCELLED'}">경매 취소</span>
+				    <span th:if="${transaction.status.name() == 'WAITING_FOR_MY_APPROVAL'}">경매 진행중</span>
+				    <span th:if="${transaction.status.name() == 'WAITING_FOR_OTHER_APPROVAL'}">경매 진행중</span>
+
+					</td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="/js/admin/transaction_filter.js"></script>
+</body>
+</html>

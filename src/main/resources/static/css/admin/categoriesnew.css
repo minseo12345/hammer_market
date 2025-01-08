@@ -1,0 +1,30 @@
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold !important;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-container label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .form-container input,
+        .form-container textarea {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        .btn-save {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }

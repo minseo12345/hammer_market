@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경매 목록</title>
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/fragments/topbar.css">
+    <link rel="stylesheet" href="/css/fragments/sidebar.css">
+    <link rel="stylesheet" href="/css/fragments/header.css">
+    <link rel="stylesheet" href="/css/item/list.css">
+</head>
+<body class="list-body">
+<div th:insert="~{'fragments/topbar' :: topbar}"></div>
+<div th:insert="~{'fragments/header' :: header}"></div>
+<div class="container-fluid d-flex">
+    <div th:insert="~{'fragments/sidebar' :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="content-container flex-grow-1 p-4">
+
+        <!-- 검색 및 정렬 -->
+        <form action="/items/list" method="get" class="mb-4" id="searchForm">
+            <input type="hidden" name="search" th:value="${search}">
+            <input type="hidden" name="categoryId" th:value="${categoryId}">
+            <div class="row align-items-center">
+                <!-- 정렬 기준 -->
+                <div class="col-md-6 d-flex align-items-center">
+
+                    <select name="sortBy" class="form-select" id="sortBy">
+                        <option value="title" th:selected="${sortBy == 'title'}">정렬기준</option>
+                        <option value="startingBid" th:selected="${sortBy == 'startingBid'}">시작가</option>
+                        <option value="buyNowPrice" th:selected="${sortBy == 'buyNowPrice'}">즉시구매가</option>
+                        <option value="startTime" th:selected="${sortBy == 'startTime'}">시작시간</option>
+                        <option value="endTime" th:selected="${sortBy == 'endTime'}">마감시간</option>
+                    </select>
+                </div>
+
+                <!-- 정렬 방향 -->
+                <div class="col-md-3 d-flex align-items-center">
+                    <div class="form-check form-check-inline mb-0">
+                        <input class="form-check-input" type="radio" name="direction" id="asc" value="asc"
+                               th:checked="${direction == 'asc'}">
+                        <label class="form-check-label" for="asc">오름차순</label>
+                    </div>
+                    <div class="form-check form-check-inline mb-0">
+                        <input class="form-check-input" type="radio" name="direction" id="desc" value="desc"
+                               th:checked="${direction == 'desc'}">
+                        <label class="form-check-label" for="desc">내림차순</label>
+                    </div>
+                </div>
+
+                <!-- 경매 상태 -->
+                <div class="col-md-3 d-flex align-items-center">
+
+                    <select name="status" class="form-select" id="status" onchange="submitFilterForm()">
+                        <option th:each="state : ${statuses}"
+                                th:value="${state}"
+                                th:text="${state == 'ONGOING' ? '진행중' :
+                                           state == 'BIDDING_END' ? '낙찰' :
+                                           state == 'COMPLETED' ? '거래완료' :
+                                           state == 'CANCELLED' ? '거래취소' :
+                                           state == 'PARTIALLY_APPROVE' ? '거래수락 대기' : state}"
+                                th:selected="${status == state}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <!-- 카드 컨테이너 -->
+        <div class="card-container">
+            <a th:href="@{/items/detail/{id}(id=${item.itemId})}" class="card auction-card" th:each="item : ${items}"  th:id="'item-card-' + ${item.itemId}"
+               th:data-title="${item.title}"
+               th:data-starting-bid="${item.startingBid}"
+               th:data-current-price="${item.currentPrice}"
+               th:data-status="${item.status}"
+               th:data-buy-Now-Price="${item.buyNowPrice}"
+               th:data-img-src="${item.fileUrl}">
+                <img th:src="${item.fileUrl}" alt="상품 이미지" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${item.title}">상품 제목</h5>
+                    <div class="card-text">
+                        <p>
+                            <strong>현재가:</strong>
+                            <span th:text="${item.currentPrice != null ? #numbers.formatInteger(item.currentPrice, 0, 'COMMA') : #numbers.formatInteger(item.startingBid, 0, 'COMMA')} + 'p'">현재가</span><br>
+                            <strong>즉시 구매가:</strong>
+                            <span th:text="${item.buyNowPrice != null ? #numbers.formatInteger(item.buyNowPrice, 0, 'COMMA') + 'p' : '즉시구매불가'}">즉시 구매가</span><br>
+                            <strong>남은 시간:</strong>
+                            <span th:if="${item.status != null and item.status.name() == 'ONGOING'}"
+                                class="time-remaining"
+                                th:data-end-time="${item.endTime}">남은 시간</span>
+                            <span th:unless="${item.status != null and item.status.name() == 'ONGOING'}">TimeOver</span>
+                        </p>
+                        <!-- 장바구니 추가 버튼 -->
+                        <button class="like-btn" onclick="addToCart(event)">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 페이징 -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/items/list(page=${currentPage - 1}, sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${categoryId})}">이전</a>
+                </li>
+                <li class="page-item"
+                    th:each="i : ${totalPages > 0 ? #numbers.sequence(0, totalPages - 1) : #numbers.sequence(0, 0)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/items/list(page=${i}, sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${categoryId})}"
+                       th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${totalPages == 0 || currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/items/list(page=${currentPage + 1}, sortBy=${sortBy}, direction=${direction}, search=${search}, status=${status}, categoryId=${categoryId})}">다음</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/item/list.js"></script>
+</body>
+</html>
